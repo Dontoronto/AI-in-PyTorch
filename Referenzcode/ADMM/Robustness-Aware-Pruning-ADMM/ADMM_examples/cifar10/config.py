@@ -44,7 +44,7 @@ class Config:
                 self.lr_scheduler = raw_dict[stage]['lr_scheduler']             
                 self.optimizer = raw_dict[stage]['optimizer']                
                 self.save_model = raw_dict[stage]['save_model']
-                self.load_model = raw_dict[stage]['load_model'] #None  # otherwise key error
+                self.load_model = None #raw_dict[stage]['load_model'] #None  # otherwise key error
                 self.masked_progressive = None 
                 if stage !='pretrain':
                     self.load_model = raw_dict[stage]['load_model']

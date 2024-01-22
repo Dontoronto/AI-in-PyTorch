@@ -89,9 +89,9 @@ def train(train_loader,criterion, optimizer, epoch, config):
         else:
             scheduler.step()
 
-        #if config.gpu is not None:
-        #    input = input.cuda(config.gpu, non_blocking=True)
-        #target = target.cuda(config.gpu, non_blocking=True)
+        if config.gpu is not None:
+            input = input.cuda(config.gpu, non_blocking=True)
+        target = target.cuda(config.gpu, non_blocking=True)
 
         if config.mixup:
             input, target_a, target_b, lam = mixup_data(input, target, config.alpha)
@@ -165,9 +165,9 @@ def validate(val_loader,criterion, config):
     with torch.no_grad():
         end = time.time()
         for i, (input, target) in enumerate(val_loader):
-            #if config.gpu is not None:
-            #    input = input.cuda(config.gpu, non_blocking=True)
-            #target = target.cuda(config.gpu, non_blocking=True)
+            if config.gpu is not None:
+                input = input.cuda(config.gpu, non_blocking=True)
+            target = target.cuda(config.gpu, non_blocking=True)
 
             # compute output
             output = config.model(input)
@@ -327,7 +327,7 @@ if __name__ == '__main__':
         ADMM.ADMM_U = checkpoint['admm']['ADMM_U']
         ADMM.ADMM_Z = checkpoint['admm']['ADMM_Z']
 
-    criterion = CrossEntropyLossMaybeSmooth(smooth_eps=config.smooth_eps)#.cuda(config.gpu)
+    criterion = CrossEntropyLossMaybeSmooth(smooth_eps=config.smooth_eps).cuda(config.gpu)
     config.smooth = config.smooth_eps > 0.0
     config.mixup = config.alpha > 0.0
 

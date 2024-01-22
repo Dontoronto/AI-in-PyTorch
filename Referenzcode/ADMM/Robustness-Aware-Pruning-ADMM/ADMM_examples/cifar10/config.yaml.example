@@ -51,7 +51,7 @@ general:
  resume:  
   False 
  gpu_id:  
-  1
+  0
  arch: 
   vgg16
  workers: 
@@ -68,13 +68,11 @@ pretrain:
  lr:
   0.1
  epochs: 
-  2
+  200
  warmup_lr:
   0.0001
  warmup_epochs:
   0
- load_model:
-   vgg16_pretrained.pt
  save_model: 
   vgg16_pretrained.pt
  optimizer:
