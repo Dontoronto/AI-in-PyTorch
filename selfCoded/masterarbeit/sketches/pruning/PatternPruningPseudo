@@ -1,0 +1,68 @@
+# Initialization of pattern library with K = 126 patterns
+pattern_library = [M1, M2, ..., MK]  # Assume MK are the pattern matrices
+
+# Define neural network model, assume it's already initialized
+model = MyNeuralNetwork()
+
+# Define your optimizer here (e.g., Adam, SGD)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+# Retrieve initial weights of the model
+W = model.weights
+
+# Training process
+for i in range(200):
+    if len(pattern_library) <= 12:
+        W = prune_weights_and_update_weights(W, pattern_library, model, data_loader, optimizer)
+    else:
+        # Fetch one batch of data
+        inputs, labels = next(iter(data_loader))
+
+        # Forward pass
+        outputs = model(inputs)
+        loss = loss_function(outputs, labels)  # Assuming loss_function is defined elsewhere
+
+        # Zero the parameter gradients
+        optimizer.zero_grad()
+
+        # Backward pass
+        loss.backward()
+
+        # Update weights
+        optimizer.step()
+
+        # Retrieve updated weights
+        W = model.weights
+
+    # Re-initialize pattern library
+    pattern_library = [M1, M2, ..., MK]  # Assume MK are the pattern matrices
+
+    # Iterate through the defined K values
+    K = 126  # Starting value for K
+    while K > 12:
+
+        ### Es fehlt noch pro batch einmal den Dataloader für die nicht konvexe funktion durchzugehen. 
+        Im Algo sagen sie dass durch den innerloop nicht jede epoche 100% der Daten durchläuft, sondern nur 
+        vllt 10-20%. 
+        #### Im oberen Loop mit update & prune weights wird noch ein batch genommen das geprunte netz einmal 
+        trainiert um W^i+1 zu erhalten
+
+
+        # Solving (Proximal) using current pattern_library
+        # Placeholder for solving proximal, which should be defined with the actual implementation
+        proximal_solver(pattern_library, W)
+
+        # Update mu here
+        # Placeholder for updating mu, which should be defined with the actual implementation
+        mu = update_mu(mu, pattern_library, W)
+
+        # Calculate pattern distribution of current pattern_library
+        # Placeholder for pattern distribution calculation
+        pattern_distribution = calculate_pattern_distribution(pattern_library)
+
+        # Remove patterns with fewest occurrences in pattern_library
+        # Placeholder for pattern removal, implement actual logic to remove patterns
+        pattern_library = remove_least_common_patterns(pattern_library, pattern_distribution)
+
+        # Decrement K to the next value in the sequence 126, 12, 8, 4
+        K = len(pattern_library)
