@@ -1,0 +1,29 @@
+{
+  "path": {
+    "path": "testImages/tisch_v2.jpeg"
+  },
+  "stringExample": "This is a string",
+  "numberExample": 42,
+  "floatingNumberExample": 3.14,
+  "booleanExample": true,
+  "nullExample": null,
+  "objectExample": {
+    "key1": "value1",
+    "key2": 2,
+    "nestedObject": {
+      "nestedKey1": "nestedValue1",
+      "nestedKey2": false
+    }
+  },
+  "arrayExample": [
+    "item1",
+    2,
+    3.14,
+    true,
+    null,
+    {
+      "objectInArrayKey1": "value",
+      "objectInArrayKey2": 3.14
+    }
+  ]
+}

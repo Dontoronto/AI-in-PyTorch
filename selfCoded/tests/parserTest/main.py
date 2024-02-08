@@ -8,8 +8,11 @@ from PIL import Image
 import torchvision.transforms as T
 import numpy as np
 
-print(os.path.exists("testImages/balloon.jpeg"))
+print(os.path.exists("testImages/tisch_v2.jpeg"))
 
+#img = read_image("testImages/balloon.jpeg")
+#img = Image.open("testImages/desk.jpeg")
+#img = Image.open("testImages/balloon.jpeg")
 img = Image.open("testImages/tisch_v2.jpeg")
 
 np_image1 = np.array(img)
