@@ -1,4 +1,23 @@
 {
+  "transform": {
+    "transformParam": {
+      "crop_size_Enabled": true,
+      "crop_size": 224,
+      "resize_size_Enabled": true,
+      "resize_size": 256,
+      "normalize_Enabled": true,
+      "normalize": {
+        "mean_Enabled": true,
+        "mean": [0.485, 0.456, 0.406],
+        "std_Enabled": true,
+        "std": [0.229, 0.224, 0.225]
+      },
+      "interpolation_Enabled": true,
+      "interpolation": true,
+      "antialias_Enabled": true,
+      "antialias": true
+    }
+  },
   "path": {
     "path": "testImages/tisch_v2.jpeg"
   },

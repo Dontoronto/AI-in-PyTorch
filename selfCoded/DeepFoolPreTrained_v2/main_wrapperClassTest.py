@@ -8,6 +8,23 @@ from PIL import Image
 import torchvision.transforms as T
 import numpy as np
 
+import torch.nn as nn
+import torchvision.models as models
+
+class ExtendedResNet(nn.Module):
+    def __init__(self, pretrained_resnet):
+        super(ExtendedResNet, self).__init__()
+        self.resnet = pretrained_resnet  # Instance of the pretrained ResNet model
+
+    # Example of an additional method
+    def new_method(self):
+        print("test of wrapper class")
+        pass
+
+    def forward(self, x):
+        # Delegate the call to the ResNet model's forward method
+        return self.resnet(x)
+
 
 print(os.path.exists("testImages/balloon.jpeg"))
 
@@ -25,8 +42,13 @@ img = preprocess(img)
 
 # Step 1: Initialize model with the best available weights
 weights = ResNet101_Weights.IMAGENET1K_V1
-model = resnet101(weights=weights)
+model_test = resnet101(weights=weights)
+#model_test.eval()
+
+model = ExtendedResNet(model_test)
+model.new_method()
 model.eval()
+
 
 # Step 2: Initialize the inference transforms
 preprocess = weights.transforms()
