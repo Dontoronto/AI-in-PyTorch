@@ -20,14 +20,6 @@ def main():
     Model.eval()
 
 
-    # TODO: noch testen ob man gradienten so einfach extrahieren kann für z.B. torchattacks
-    # for name, module in Model.named_modules():
-    #     print(name, ":", module)
-    #     break
-    #print(Model.model.layer1[0].conv1)
-    #print(Model)
-
-    #print(Model.__getstate__())
     Configurator = configurator.Configurator()
     DataHandler = dataHandler.DataHandler(Configurator)
 
