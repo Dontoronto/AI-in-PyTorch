@@ -19,7 +19,7 @@ preprocess = T.Compose([
     T.CenterCrop(224),
     T.ToTensor(),
 ])
-img = preprocess(img)
+#img = preprocess(img)
 
 #img = read_image("test/assets/encode_jpeg/grace_hopper_517x606.jpg")
 

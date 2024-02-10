@@ -3,23 +3,27 @@ import torchvision.transforms as T
 from torchvision.transforms import ToPILImage
 from PIL import Image
 
-import configurator
+from SharedServices.utils import singleton
 
 import logging
 logger = logging.getLogger(__name__)
 
-
+@singleton
 class DataHandler:
-    def __init__(self):
+    def __init__(self, Configurator=None):
         self.transform = None
         self.std = None
         self.mean = None
-        # TODO: schauen wie man Configurator zu einem Singleton macht so dass immer nur eine Instanz existiert
-        self.Configurator = configurator.Configurator()
+        self.Configurator = Configurator
         self.configHandlerData = None
+
+    def setConfigurator(self, Configurator):
+        self.Configurator = Configurator
 
     def loadTransformer(self):
 
+        if not self.configHandlerData:
+            logging.critical("No Configurator configured. Please initialize with Configurator or use setConfigurator()")
         self.configHandlerData = self.Configurator.loadDataHandlerConfig()
 
         transformerList = list()
@@ -38,7 +42,7 @@ class DataHandler:
                 logger.info("Possible Values would be: nearest, nearest-exact, bilinear, bicubic, box, hamming, laczos")
                 interpolation = T.InterpolationMode("bilinear")
 
-            if not self.configHandlerData.get('antialias'):
+            if self.configHandlerData.get('antialias') is False:
                 antialias = False
                 logger.info("Preprocessing Resize Antialias deactivated")
             else:

@@ -1,18 +1,20 @@
-2024-02-09 23:02:43,528 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
-2024-02-09 23:02:43,528 - configParser - INFO - {'crop_size': 224, 'resize_size': 256, 'interpolation': 'bilinear', 'antialias': True, 'dtype': 'float', 'normalize': {'mean': [0.485, 0.456, 0.406], 'std': [0.229, 0.224, 0.225]}}
-2024-02-09 23:02:43,528 - dataHandler - INFO - Preprocessing Resize interpolation is set to: bilinear
-2024-02-09 23:02:43,528 - dataHandler - INFO - Preprocessing Resize Antialias activated
-2024-02-09 23:02:43,528 - dataHandler - INFO - Preprocessing crop_size is set so: 224
-2024-02-09 23:02:43,528 - dataHandler - INFO - Preprocessing dtype is set so: float
-2024-02-09 23:02:43,528 - dataHandler - INFO - Preprocessing Normalization is activated
-2024-02-09 23:02:43,528 - dataHandler - INFO - Preprocessing Normalization std is set to: [0.229, 0.224, 0.225]
-2024-02-09 23:02:43,528 - dataHandler - INFO - Preprocessing Normalization mean is set to: [0.485, 0.456, 0.406]
-2024-02-09 23:02:43,528 - dataHandler - INFO - Preprocessing Steps will be:
-2024-02-09 23:02:43,528 - dataHandler - INFO - Compose(
+2024-02-10 16:14:12,203 - root - CRITICAL - No Configurator configured. Please initialize with Configurator or use setConfigurator()
+2024-02-10 16:14:12,203 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
+2024-02-10 16:14:12,203 - configParser - INFO - {'crop_size': 224, 'resize_size': 256, 'interpolation': 'bilinear', 'antialias': True, 'dtype': 'float', 'normalize': {'mean': [0.485, 0.456, 0.406], 'std': [0.229, 0.224, 0.225]}}
+2024-02-10 16:14:12,204 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-02-10 16:14:12,204 - dataHandler - INFO - Preprocessing Resize interpolation is set to: bilinear
+2024-02-10 16:14:12,204 - dataHandler - INFO - Preprocessing Resize Antialias activated
+2024-02-10 16:14:12,204 - dataHandler - INFO - Preprocessing crop_size is set so: 224
+2024-02-10 16:14:12,204 - dataHandler - INFO - Preprocessing dtype is set so: float
+2024-02-10 16:14:12,204 - dataHandler - INFO - Preprocessing Normalization is activated
+2024-02-10 16:14:12,204 - dataHandler - INFO - Preprocessing Normalization std is set to: [0.229, 0.224, 0.225]
+2024-02-10 16:14:12,204 - dataHandler - INFO - Preprocessing Normalization mean is set to: [0.485, 0.456, 0.406]
+2024-02-10 16:14:12,204 - dataHandler - INFO - Preprocessing Steps will be:
+2024-02-10 16:14:12,204 - dataHandler - INFO - Compose(
     Resize(size=256, interpolation=bilinear, max_size=None, antialias=True)
     CenterCrop(size=(224, 224))
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 )
-2024-02-09 23:02:43,528 - dataHandler - INFO - Loading image from: testImages/tisch_v2.jpeg
+2024-02-10 16:14:12,204 - dataHandler - INFO - Loading image from: testImages/tisch_v2.jpeg

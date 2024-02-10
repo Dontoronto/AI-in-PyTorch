@@ -4,11 +4,13 @@ import torch
 
 import modelWrapper
 import dataHandler
+import configurator
 
 from SharedServices.logging_config import setup_logging
 setup_logging()
 import logging
 logger = logging.getLogger(__name__)
+
 
 def main():
     # Step 1: Initialize model with the best available weights
@@ -22,14 +24,18 @@ def main():
     # for name, module in Model.named_modules():
     #     print(name, ":", module)
     #     break
-    print(Model.model.layer1[0].conv1)
+    #print(Model.model.layer1[0].conv1)
+    #print(Model)
 
-    DataHandler = dataHandler.DataHandler()
+    #print(Model.__getstate__())
+    Configurator = configurator.Configurator()
+    DataHandler = dataHandler.DataHandler(Configurator)
 
     # DataHandler.setTransformer(_weights.transforms())
     DataHandler.loadTransformer()
 
     img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
+
 
     # TODO: Datahandler soll batching noch übernehmen, schauen wie man das mit Dataset Klasse vereinen kann
     batch = DataHandler.preprocess(img).unsqueeze(0)

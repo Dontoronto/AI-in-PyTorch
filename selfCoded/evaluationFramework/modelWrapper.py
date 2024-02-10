@@ -1,23 +1,27 @@
 import torch
 import torch.nn as nn
-import torchvision.models as models
+
 
 # TODO: Datahandler mit Architektur syncen und evtl. erneut sachen verschieben
-# TODO: schauen ob man hier die layer extrahieren kann, ob sie namen haben Standard herausfinden etc.
-#       TODO: ModelWrapper soll sich wie das richtige Model verhalten
 class ModelWrapper(nn.Module):
     def __init__(self, _model):
         super(ModelWrapper, self).__init__()
         self.model = _model  # Instance of the pretrained ResNet model
 
-    # Example of an additional method
-    def new_method(self):
-        print("test of wrapper class")
-        pass
-
     def forward(self, x):
         # Delegate the call to the ResNet model's forward method
         return self.model(x)
+
+    def __getattr__(self, name: str):
+        """
+        Umleiten von Zugriffen auf Attribute, die nicht direkt in der Wrapper-Klasse definiert sind,
+        an das PyTorch-Modell.
+        """
+        try:
+            return super().__getattr__(name)
+        except AttributeError:
+            return getattr(self.model, name)
+
 
 
 
