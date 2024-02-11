@@ -1,4 +1,6 @@
 # dataset class
+from logging_config import setup_logging
+setup_logging()
 from torch.utils.data import Dataset
 import h5py
 import numpy
@@ -6,12 +8,15 @@ import torch
 import matplotlib.pyplot as plt
 from functools import reduce
 
+import logging
+logger = logging.getLogger(__name__)
+
 class H5PYImageDataset(Dataset):
 
-    def __init__(self, path, query=None, transform=None):
+    def __init__(self, root, query=None, transform=None):
         """
 
-        :param path: path to file
+        :param root: path to file
         :param query: should be array of Strings
             Example:
                 hdf5_file = '/Volumes/PortableSSD/Projekte/datasets/celeba_dataset/IMG/celeba_aligned_small.h5py'
@@ -19,7 +24,11 @@ class H5PYImageDataset(Dataset):
                 dataset = h5pyImageDataset.H5PYImageDataset(path=hdf5_file, query=query)
         :__getitem__() -> just image tensor without label
         """
-        self.file_object = h5py.File(path, 'r')
+        try:
+            self.file_object = h5py.File(root, 'r')
+            logger.info("h5py-file was successfully loaded")
+        except OSError as e:
+            logger.exception("OSError")
         # Dynamically access the dataset based on the query path
         self.dataset = reduce(lambda obj, key: obj[key], query, self.file_object)
         self.transform = transform

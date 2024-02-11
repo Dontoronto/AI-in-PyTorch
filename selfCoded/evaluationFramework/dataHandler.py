@@ -18,8 +18,11 @@ class DataHandler:
         self.configHandlerData = None
 
     def setConfigurator(self, Configurator):
+        logger.info("Configurator was manually set to: " + str(self.Configurator))
         self.Configurator = Configurator
 
+    # TODO: evtl auf kwargs umstellen so dass variablen automatisch zugewiesen werden und nur reihenfolge fix sein soll
+    # TODO: evtl. nur prüfen ob Format passt bzw. datentyp von den eigenen variablen
     def loadTransformer(self):
 
         if not self.configHandlerData:

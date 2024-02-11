@@ -1,0 +1,46 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+from h5pyImageDataset import H5PYImageDataset
+from torchvision.datasets import CIFAR10, CIFAR100, MNIST
+
+@staticmethod
+def kwargs_filter(kwargs, expected_keys):
+    """
+    Filters out the dictionary and removes unnecessary key,values
+    without changing the original dictionary
+    :param kwargs: -> dictionary
+    :param expected_keys:  -> dictionary
+    :return: -> filtered dictionary
+    """
+    return {k: v for k, v in kwargs.items() if k in expected_keys}
+
+
+
+# TODO: make singleton test
+class DatasetFactory:
+    @staticmethod
+    #datasetName: str, storageType: str,
+    #storageType == "h5py"
+    def createDataset(kwargs):
+        #if datasetName == 'custom':
+        if kwargs['datasetName'] == "custom":
+            #TODO: evtl noch für Daten in Ordnerstrukturen eigenes Dataset erstellen
+            #TODO: https://github.com/pytorch/vision/blob/a52607ece94aedbe41107617ace22a8da91efc25/torchvision/datasets/folder.py#L107
+            #TODO: ImageFolder klasse
+            if kwargs['storageType'] == "h5py":
+                expected_keys = {"root", "query", "transform"}
+                return H5PYImageDataset(**kwargs_filter(kwargs,expected_keys))
+
+        elif kwargs['datasetName'] == 'cifar10':
+            expected_keys = {"root","download","train","transform","target_transform"}
+            return CIFAR10(**kwargs_filter(kwargs,expected_keys))
+
+        elif kwargs['datasetName'] == 'cifar100':
+            expected_keys = {"root","download","train","transform","target_transform"}
+            return CIFAR100(**kwargs_filter(kwargs,expected_keys))
+
+        elif kwargs['datasetName'] == 'mnist':
+            expected_keys = {"root","download","train","transform","target_transform"}
+            return MNIST(**kwargs_filter(kwargs,expected_keys))

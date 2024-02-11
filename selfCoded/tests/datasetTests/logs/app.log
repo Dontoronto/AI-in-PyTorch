@@ -1,0 +1,9 @@
+2024-02-09 21:31:18,965 - __main__ - INFO - Application start
+2024-02-09 21:31:18,965 - utils - INFO - This is an info message from some_util_function
+2024-02-09 21:31:18,965 - utils - CRITICAL - hallo critical
+2024-02-09 21:31:18,965 - utils - INFO - This is an info message from some_util_function
+2024-02-09 21:31:18,966 - utils - CRITICAL - hallo critical
+2024-02-09 21:31:18,966 - utils - INFO - This is an info message from some_util_function
+2024-02-09 21:31:18,966 - utils - CRITICAL - hallo critical
+2024-02-09 21:31:18,966 - utils - INFO - This is an info message from some_util_function
+2024-02-09 21:31:18,966 - utils - CRITICAL - hallo critical
