@@ -15,3 +15,8 @@ class Configurator:
         self.configHandlerData = self.ConfigParser.getDataHandlerConfig()
         logger.info("DataHandlerConfig was loaded via ConfigParser")
         return self.configHandlerData
+
+    def loadDatasetConfig(self):
+        self.configDataset = self.ConfigParser.getDatasetConfig()
+        logger.info("DatasetConfig was loaded via ConfigParser")
+        return self.configDataset

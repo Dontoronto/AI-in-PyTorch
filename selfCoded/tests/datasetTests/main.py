@@ -1,9 +1,16 @@
 import sys, os
+
+import torch
+
 sys.path.append(os.getcwd())
 
 import h5pyImageDataset
 from datasetFactory import DatasetFactory
 from configParser import ConfigParser
+from torch.utils.data import DataLoader
+import torchvision.transforms as T
+
+import copy
 
 
 
@@ -19,21 +26,35 @@ def main():
                  'storageType': "h5py",
                  'datasetName': "custom"}
 
+    preprocess = T.Compose([
+        T.Resize(256, interpolation=T.InterpolationMode("bilinear"), antialias=True),
+        T.CenterCrop(224),
+        T.ToTensor(),
+        T.ConvertImageDtype(dtype=torch.float),
+        T.Normalize(std=[0.229, 0.224, 0.225], mean=[0.485, 0.456, 0.406])
+    ])
+
     loaded_args = ConfigParser().getDatasetConfig()
 
+    #loaded_args['transform'] = preprocess
     print(loaded_args)
 
     dataset = DatasetFactory.createDataset(loaded_args)
+    DatasetFactory.updateTransformer(dataset,preprocess)
+
+    # dataset = DatasetFactory.createDataset(arguments)
+
+
+    dataloader = DataLoader(dataset, batch_size=16)
     counter = 0
-    for i in dataset:
-        print(i)
-        #i[0].show()
+    for batch, labels in dataloader:
+        print(batch.shape)
+        for img in batch:
+            print(img.shape)
         counter +=1
         if counter ==2:
             break
-    # dataset = DatasetFactory.createDataset(arguments)
 
-    #dataset.plot_image(45)
     pass
 
 if __name__ == '__main__':

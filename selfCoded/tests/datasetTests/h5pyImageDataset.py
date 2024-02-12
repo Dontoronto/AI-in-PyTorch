@@ -1,10 +1,7 @@
 # dataset class
-from logging_config import setup_logging
-setup_logging()
 from torch.utils.data import Dataset
 import h5py
 import numpy
-import torch
 import matplotlib.pyplot as plt
 from functools import reduce
 
@@ -13,10 +10,10 @@ logger = logging.getLogger(__name__)
 
 class H5PYImageDataset(Dataset):
 
-    def __init__(self, root, query=None, transform=None):
+    def __init__(self, path, query=None, transform=None):
         """
 
-        :param root: path to file
+        :param path: path to file
         :param query: should be array of Strings
             Example:
                 hdf5_file = '/Volumes/PortableSSD/Projekte/datasets/celeba_dataset/IMG/celeba_aligned_small.h5py'
@@ -25,13 +22,16 @@ class H5PYImageDataset(Dataset):
         :__getitem__() -> just image tensor without label
         """
         try:
-            self.file_object = h5py.File(root, 'r')
+            self.file_object = h5py.File(path, 'r')
             logger.info("h5py-file was successfully loaded")
         except OSError as e:
             logger.exception("OSError")
+
         # Dynamically access the dataset based on the query path
         self.dataset = reduce(lambda obj, key: obj[key], query, self.file_object)
         self.transform = transform
+        if self.transform is None:
+            logger.info("In H5PYImageDataset is no transformer applied")
 
 
     def __len__(self):
@@ -41,13 +41,12 @@ class H5PYImageDataset(Dataset):
         if (index >= len(self.dataset)):
             raise IndexError()
         if self.transform is not None:
-            imgTensor = self.transform(numpy.array(self.dataset[str(index)+'.jpg']))
+            img = self.transform(numpy.array(self.dataset[str(index)+'.jpg']))
         else:
-            img = numpy.array(self.dataset[str(index)+'.jpg'])/255
-            imgTensor = torch.tensor(img, dtype=torch.float32)
-        return imgTensor
+            img = numpy.array(self.dataset[str(index)+'.jpg'])#/255
+            # imgTensor = torch.tensor(img, dtype=torch.float32)
+        return img
 
     def plot_image(self, index):
         plt.imshow(numpy.array(self.dataset[str(index)+'.jpg']), interpolation='nearest')
-
-
+        pass

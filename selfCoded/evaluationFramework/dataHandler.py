@@ -4,6 +4,7 @@ from torchvision.transforms import ToPILImage
 from PIL import Image
 
 from SharedServices.utils import singleton
+from IOComponent.datasetFactory import DatasetFactory
 
 import logging
 logger = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ class DataHandler:
         self.mean = None
         self.Configurator = Configurator
         self.configHandlerData = None
+        self.configDataset = None
 
     def setConfigurator(self, Configurator):
         logger.info("Configurator was manually set to: " + str(self.Configurator))
@@ -25,8 +27,10 @@ class DataHandler:
     # TODO: evtl. nur prüfen ob Format passt bzw. datentyp von den eigenen variablen
     def loadTransformer(self):
 
-        if not self.configHandlerData:
-            logging.critical("No Configurator configured. Please initialize with Configurator or use setConfigurator()")
+        if not self.Configurator:
+            logging.critical("No Configurator configured in DataHandler. "
+                             "Please initialize with Configurator or use setConfigurator()")
+            return
         self.configHandlerData = self.Configurator.loadDataHandlerConfig()
 
         transformerList = list()
@@ -113,3 +117,24 @@ class DataHandler:
     def loadImage(path):
         logger.info("Loading image from: " + path)
         return Image.open(path)
+
+    def loadDataset(self):
+        if not self.Configurator:
+            logging.critical("No Configurator configured in DataHandler. "
+                             "Please initialize with Configurator or use setConfigurator()")
+            return
+        self.configDataset = self.Configurator.loadDatasetConfig()
+        dataset = DatasetFactory.createDataset(self.configDataset)
+        if self.configDataset.get('transform') == True:
+            if self.transform is not None:
+                DatasetFactory.updateTransformer(dataset,self.transform)
+                logger.info("Transformer loaded into Dataset")
+            else:
+                logger.critical("Tried to load Transformer into Dataset. Transformer not configured.")
+        return dataset
+
+
+    #TODO: if you want to create the Dataset via Code
+    def createDataset(self):
+        pass
+
