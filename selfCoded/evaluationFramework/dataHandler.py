@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 @singleton
 class DataHandler:
     def __init__(self, Configurator=None):
+        logger.info("Datahandler initialized")
         self.transform = None
         self.std = None
         self.mean = None
@@ -96,10 +97,19 @@ class DataHandler:
         logger.info("Preprocessing Steps will be:")
         logger.info(self.transform)
 
-    def preprocess(self, img):
+    def getTransformer(self):
+        if self.transform is not None:
+            logger.info("DataHandler returned Transformer")
+            return self.transform
+        logger.info("Transformer is not configured")
+
+    def preprocessNonBatched(self, img):
         return self.transform(img)
 
-    def preprocessBackwards(self, tensor):
+    def preprocessBatched(self, img):
+        return self.transform(img).unsqueeze(0)
+
+    def preprocessBackwardsNonBatched(self, tensor):
         # TODO: evtl. müssen wir nicht image tensoren sondern auch batch tensoren zurück umwandeln. Hier
         # TODO: testen und evtl. anpassen damit automatisch erkannt wird was gefordert ist
         tensorBack = tensor.clone().detach()
@@ -111,6 +121,22 @@ class DataHandler:
         to_pil = ToPILImage()
         image = to_pil(tensorBack)
         return image
+
+    def preprocessBackwardsBatched(self, batch):
+        # TODO: evtl. müssen wir nicht image tensoren sondern auch batch tensoren zurück umwandeln. Hier
+        # TODO: testen und evtl. anpassen damit automatisch erkannt wird was gefordert ist
+        tensors = batch.clone().detach()
+        image_list = list()
+        for tensor in tensors:
+            if self.mean is not None and self.std is not None:
+                meanBack = torch.tensor(self.mean).view(-1, 1, 1)
+                stdBack = torch.tensor(self.std).view(-1, 1, 1)
+                tensor = tensor * stdBack + meanBack
+            tensorBack = torch.clamp(tensor, 0, 1)
+            to_pil = ToPILImage()
+            image = to_pil(tensorBack)
+            image_list.append(image)
+        return image_list
 
     # loading images in standardized format example jpeg -> (244,244,3)
     @staticmethod

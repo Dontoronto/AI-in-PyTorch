@@ -1,12 +1,16 @@
 import torch
 import torch.nn as nn
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 # TODO: Datahandler mit Architektur syncen und evtl. erneut sachen verschieben
 class ModelWrapper(nn.Module):
     def __init__(self, _model):
         super(ModelWrapper, self).__init__()
         self.model = _model  # Instance of the pretrained ResNet model
+        logger.info("ModelWrapper was initialized")
 
     def forward(self, x):
         # Delegate the call to the ResNet model's forward method

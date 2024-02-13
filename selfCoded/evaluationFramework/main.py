@@ -27,18 +27,20 @@ def main():
     Configurator = configurator.Configurator()
     DataHandler = dataHandler.DataHandler(Configurator)
 
-    DataHandler.setTransformer(_weights.transforms())
-    #DataHandler.loadTransformer()
-
-    img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
+    # DataHandler.setTransformer(_weights.transforms())
+    # #DataHandler.loadTransformer()
+    #
+    # img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
 
     dataset = DataHandler.loadDataset()
-    dataloader = DataLoader(dataset, batch_size=8,shuffle=True)
+    dataset.show_image(45)
+    exit()
+    dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
 
     count = 0
 
-    # TODO: Datahandler soll batching noch übernehmen, schauen wie man das mit Dataset Klasse vereinen kann
-    #batch = DataHandler.preprocess(img).unsqueeze(0)
+
+
     for batch, labels in dataloader:
         count +=1
         if count == 2:
@@ -54,6 +56,10 @@ def main():
             else:
                 # Assuming 'Model' is your model instance and 'batch' is your input batch of tensors
                 predictions = Model(batch.clone().detach())
+                dataset_image = DataHandler.preprocessBackwardsBatched(batch)
+                for i in dataset_image:
+                    i.show()
+
                 softmax_predictions = torch.softmax(predictions, dim=1)  # Apply softmax on the correct dimension
 
                 for i, prediction in enumerate(softmax_predictions):

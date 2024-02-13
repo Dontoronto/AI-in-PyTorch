@@ -2,9 +2,8 @@
 from torch.utils.data import Dataset
 import h5py
 import numpy
-import matplotlib.pyplot as plt
-import torch
 from functools import reduce
+from PIL import Image
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,10 +40,10 @@ class H5PYImageDataset(Dataset):
         if self.transform is not None:
             img = self.transform(numpy.array(self.dataset[str(index)+'.jpg']))
         else:
-            img = numpy.array(self.dataset[str(index)+'.jpg'])/255
+            #img = numpy.array(self.dataset[str(index)+'.jpg'])
+            img = Image.fromarray(numpy.array(self.dataset[str(index)+'.jpg']))
         return img
 
-    def plot_image(self, index):
-        plt.imshow(numpy.array(self.dataset[str(index)+'.jpg']), interpolation='nearest')
-
+    def show_image(self, index):
+        Image.fromarray(numpy.array(self.dataset[str(index)+'.jpg'])).show()
 
