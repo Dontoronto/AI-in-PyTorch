@@ -1,11 +1,12 @@
 import configParser
+from SharedServices.utils import singleton
 
 import logging
 logger = logging.getLogger(__name__)
 
 
 # TODO: hier hier für jeden Abschnitt eigenen loader erstellen
-
+@singleton
 class Configurator:
     def __init__(self):
 
