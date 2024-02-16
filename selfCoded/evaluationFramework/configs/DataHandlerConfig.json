@@ -32,7 +32,7 @@
   },
   "trainer": {
     "optimizer": "Adam",
-    "loss": "BinaryCrossEntropyLoss",
+    "loss": "CrossEntropyLoss",
     "epoch":  2,
     "lr": 0.1,
     "weight_decay": 1e-4

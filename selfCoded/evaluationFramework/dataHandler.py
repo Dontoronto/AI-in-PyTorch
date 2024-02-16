@@ -111,7 +111,6 @@ class DataHandler:
             logger.info("Transformer of Dataset was changed to:")
             logger.info(self.transform)
             self.dataset.transform = self.transform
-            self.dataset.target_transform = ytrafo #lambda y: torch.zeros(1000, dtype=torch.float).scatter_(0, torch.tensor(y), value=1)
 
     #TODO: if you want to create the Dataset via Code
     def createDataset(self):

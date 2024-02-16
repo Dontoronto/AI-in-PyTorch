@@ -11,6 +11,8 @@ logger = logging.getLogger(__name__)
 # TODO: DefaultTrainer(..,Analyzer.defaultTrainingMode() -> "Configured Analyzer",..)
 
 # TODO: extra variable per __init__ übergeben wo seperate Dataloader Optionen sind, evtl. TrainerConfig.json erstellen
+
+# TODO: falls man andere Loss function benutzt kann man hier Dataset anpassen sodass target_transformiert wird
 class DefaultTrainer(Trainer):
     def __init__(self,
                  model,
@@ -44,7 +46,7 @@ class DefaultTrainer(Trainer):
         if self.dataset is None:
             logger.warning("No DatasetConfigs were found in DataHandlerConfig.json")
             return
-        dataloader = DataLoader(self.dataset,batch_size=8, shuffle=True, num_workers=4)
+        dataloader = DataLoader(self.dataset,batch_size=16, shuffle=True)
         self.model.train()
         for batch, (X, y) in enumerate(dataloader):
 

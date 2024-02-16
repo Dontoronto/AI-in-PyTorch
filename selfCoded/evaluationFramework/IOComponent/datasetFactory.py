@@ -55,16 +55,4 @@ class DatasetFactory:
             expected_keys = {"root","download","train"}
             return MNIST(**kwargs_filter(kwargs,expected_keys))
 
-    @staticmethod
-    def updateTransformer(dataset: torch.utils.data.Dataset, transformation = None):
-        if isinstance(dataset, torch.utils.data.Dataset):
-            logger.info("Transformer of Dataset was changed to:")
-            logger.info(transformation)
-            dataset.transform = transformation
-        else:
-            logger.info("Given Dataset is not of type Dataset, couldn't change transform variable")
 
-    # TODO: needs to be implemented in the future maybe
-    @staticmethod
-    def updateTargetTransformer():
-        pass

@@ -39,11 +39,17 @@ class TrainerFactory:
         # TODO: eigene funktion für auswahl des loss function
         if kwargs.get('loss') == "BinaryCrossEntropyLoss":
             loss = torch.nn.BCEWithLogitsLoss()
+        elif kwargs.get('loss') == "CrossEntropyLoss":
+            loss = torch.nn.CrossEntropyLoss()
 
         # TODO: eigene funktion für asuwahl des Optimizers
         if kwargs.get('optimizer') == "Adam":
             tempConfig = TrainerFactory.filterOptimizerConfigs(kwargs)
             logger.info("Filtered OptimizerConfig: " + str(tempConfig))
             optimizer = torch.optim.Adam(model.parameters(), **tempConfig)
+        elif kwargs.get('optimizer') == "SGD":
+            tempConfig = TrainerFactory.filterOptimizerConfigs(kwargs)
+            logger.info("Filtered OptimizerConfig: " + str(tempConfig))
+            optimizer = torch.optim.SGD(model.parameters(), **tempConfig)
 
         return DefaultTrainer(model, dataHandler, loss=loss, optimizer=optimizer, epoch=epoch)
