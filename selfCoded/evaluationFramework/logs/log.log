@@ -1,7 +1,0 @@
-2024-02-13 20:55:51,715 - modelWrapper - INFO - ModelWrapper was initialized
-2024-02-13 20:55:51,715 - dataHandler - INFO - Datahandler initialized
-2024-02-13 20:55:51,716 - configParser - INFO - Dataset Configs from DataHandlerConfig.json:
-2024-02-13 20:55:51,716 - configParser - INFO - {'datasetName': 'custom', 'storageType': 'h5py', 'root': '/Volumes/PortableSSD/Projekte/datasets/celeba_dataset/IMG/celeba_aligned_small.h5py', 'query': ['Volumes', 'PortableSSD', 'Projekte', 'datasets', 'celeba_dataset', 'IMG', 'img_align_celeba'], 'download': True, 'train': False, 'transform': False, 'target_transform': None}
-2024-02-13 20:55:51,716 - configurator - INFO - DatasetConfig was loaded via ConfigParser
-2024-02-13 20:55:51,716 - IOComponent.datasetFactory - INFO - Creating Custom Dataset of h5py-file
-2024-02-13 20:55:51,716 - IOComponent.h5pyImageDataset - INFO - h5py-file was successfully loaded

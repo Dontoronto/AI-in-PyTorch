@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class Trainer(ABC):
-    def __init__(self, model, configurator):
+    def __init__(self, model):
         self.model = model
-        self.Configurator = configurator
+        #self.Configurator = configurator
 
     @abstractmethod
     def train(self):
@@ -14,6 +14,10 @@ class Trainer(ABC):
     def test(self):
         pass
 
-    def setConfigurator(self, configurator):
-        self.Configurator = configurator
+    @abstractmethod
+    def prepareDataset(self):
         pass
+
+    # def setConfigurator(self, configurator):
+    #     self.Configurator = configurator
+    #     pass

@@ -29,5 +29,12 @@
     "train": false,
     "transform": true,
     "target_transform": null
+  },
+  "trainer": {
+    "optimizer": "Adam",
+    "loss": "BinaryCrossEntropyLoss",
+    "epoch":  2,
+    "lr": 0.1,
+    "weight_decay": 1e-4
   }
 }

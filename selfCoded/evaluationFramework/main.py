@@ -5,11 +5,13 @@ from torchvision.models import resnet101, ResNet101_Weights
 from torch.utils.data import DataLoader
 import torch
 import numpy as np
+import torchvision.transforms as T
 
 import modelWrapper
 import dataHandler
 import configurator
 
+from Trainer.trainerFactory import TrainerFactory
 from SharedServices.logging_config import setup_logging
 setup_logging()
 import logging
@@ -27,46 +29,41 @@ def main():
     Configurator = configurator.Configurator()
     DataHandler = dataHandler.DataHandler(Configurator)
 
-    # DataHandler.setTransformer(_weights.transforms())
-    # #DataHandler.loadTransformer()
-    #
+    DataHandler.setTransformer(_weights.transforms())
+    #DataHandler.setTransformer(Configurator.loadTransformer())
+
     # img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
 
-    dataset = DataHandler.loadDataset()
-    dataset.show_image(45)
-    exit()
-    dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
+    Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
+    Trainer.train()
 
-    count = 0
-
-
-
-    for batch, labels in dataloader:
-        count +=1
-        if count == 2:
-            break
-        with torch.no_grad():
-            if len(batch) == 1:
-                # Step 4: Use the model and print the predicted category
-                prediction = Model(batch.clone().detach()).squeeze(0).softmax(0)
-                class_id = prediction.argmax().item()
-                score = prediction[class_id].item()
-                category_name = _weights.meta["categories"][class_id]
-                print(f"{category_name}: {100 * score:.1f}%")
-            else:
-                # Assuming 'Model' is your model instance and 'batch' is your input batch of tensors
-                predictions = Model(batch.clone().detach())
-                dataset_image = DataHandler.preprocessBackwardsBatched(batch)
-                for i in dataset_image:
-                    i.show()
-
-                softmax_predictions = torch.softmax(predictions, dim=1)  # Apply softmax on the correct dimension
-
-                for i, prediction in enumerate(softmax_predictions):
-                    class_id = prediction.argmax().item()
-                    score = prediction[class_id].item()
-                    category_name = _weights.meta["categories"][class_id]
-                    print(f"Tensor {labels[i]}: {category_name}: {100 * score:.1f}%")
+    # count = 0
+    # for batch, labels in dataloader:
+    #     count +=1
+    #     if count == 2:
+    #         break
+    #     with torch.no_grad():
+    #         if len(batch) == 1:
+    #             # Step 4: Use the model and print the predicted category
+    #             prediction = Model(batch.clone().detach()).squeeze(0).softmax(0)
+    #             class_id = prediction.argmax().item()
+    #             score = prediction[class_id].item()
+    #             category_name = _weights.meta["categories"][class_id]
+    #             print(f"{category_name}: {100 * score:.1f}%")
+    #         else:
+    #             # Assuming 'Model' is your model instance and 'batch' is your input batch of tensors
+    #             predictions = Model(batch.clone().detach())
+    #             dataset_image = DataHandler.preprocessBackwardsBatched(batch)
+    #             for i in dataset_image:
+    #                 i.show()
+    #
+    #             softmax_predictions = torch.softmax(predictions, dim=1)  # Apply softmax on the correct dimension
+    #
+    #             for i, prediction in enumerate(softmax_predictions):
+    #                 class_id = prediction.argmax().item()
+    #                 score = prediction[class_id].item()
+    #                 category_name = _weights.meta["categories"][class_id]
+    #                 print(f"Tensor {labels[i]}: {category_name}: {100 * score:.1f}%")
 
 
 

@@ -1,10 +1,11 @@
 import torch
 import torchvision.transforms as T
+from torch.utils.data import Dataset
 from torchvision.transforms import ToPILImage
 from PIL import Image
 
 from SharedServices.utils import singleton
-from IOComponent.datasetFactory import DatasetFactory
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -17,83 +18,25 @@ class DataHandler:
         self.std = None
         self.mean = None
         self.Configurator = Configurator
-        self.configHandlerData = None
-        self.configDataset = None
+        self.dataset = None
+
+        if self.Configurator:
+            self.setTransformer(Configurator.loadTransformer())
 
     def setConfigurator(self, Configurator):
         logger.info("Configurator was manually set to: " + str(self.Configurator))
         self.Configurator = Configurator
 
-    # TODO: evtl auf kwargs umstellen so dass variablen automatisch zugewiesen werden und nur reihenfolge fix sein soll
-    # TODO: evtl. nur prüfen ob Format passt bzw. datentyp von den eigenen variablen
-    def loadTransformer(self):
-
-        if not self.Configurator:
-            logging.critical("No Configurator configured in DataHandler. "
-                             "Please initialize with Configurator or use setConfigurator()")
-            return
-        self.configHandlerData = self.Configurator.loadDataHandlerConfig()
-
-        transformerList = list()
-
-        # TODO: Hier schauen mit Exceptions dass alle Werte immer irgendwie gesetzt werden oder falls falsch gesetzt wurde
-        if self.configHandlerData.get('resize_size') is not None:
-
-            # Interpolation is used when input image is smaller the resize size. Pixels will be filled with values
-            # corresponding to other pixels dependent on interpolation method
-            if self.configHandlerData.get('interpolation') is not None:
-                logger.info("Preprocessing Resize interpolation is set to: " +
-                            self.configHandlerData.get('interpolation'))
-                interpolation = T.InterpolationMode(self.configHandlerData.get('interpolation'))
-            else:
-                logger.info("Preprocessing Resize interpolation is set to: DEFAULT")
-                logger.info("Possible Values would be: nearest, nearest-exact, bilinear, bicubic, box, hamming, laczos")
-                interpolation = T.InterpolationMode("bilinear")
-
-            if self.configHandlerData.get('antialias') is False:
-                antialias = False
-                logger.info("Preprocessing Resize Antialias deactivated")
-            else:
-                antialias = True
-                logger.info("Preprocessing Resize Antialias activated")
-            transformerList.append(T.Resize(self.configHandlerData['resize_size'],
-                                            interpolation=interpolation,
-                                            antialias=antialias))
-
-        if self.configHandlerData.get('crop_size') is not None:
-            logger.info("Preprocessing crop_size is set so: " + str(self.configHandlerData.get('crop_size')))
-            transformerList.append(T.CenterCrop(self.configHandlerData.get('crop_size')))
-
-        transformerList.append(T.ToTensor())
-
-        if self.configHandlerData.get('dtype') is not None:
-            if self.configHandlerData.get('dtype') == "float":
-                logger.info("Preprocessing dtype is set so: " + str(self.configHandlerData.get('dtype')))
-                transformerList.append((T.ConvertImageDtype(dtype=torch.float)))
-
-        if self.configHandlerData.get('normalize') is not None:
-                logger.info("Preprocessing Normalization is activated")
-
-                # TODO: ausnahmefälle heraussuchen und implementieren
-                # TODO: prüfen ob datenformat richtig ist und typ
-                # Falls keine Normalisierung stattfindet muss hier ein anderer Wert hin. evtl mean[0,0,0] und std[1,1,1]
-                # siehe OneNote und Formel für inverse Preprocessing
-                self.std = self.configHandlerData['normalize'].get('std')
-                self.mean = self.configHandlerData['normalize'].get('mean')
-                logger.info("Preprocessing Normalization std is set to: " + str(self.std))
-                logger.info("Preprocessing Normalization mean is set to: " + str(self.mean))
-                transformerList.append((T.Normalize(mean=self.mean
-                                                    , std=self.std)))
-
-        self.transform = T.Compose(transformerList)
-        logger.info("Preprocessing Steps will be:")
-        logger.info(self.transform)
-
-
     def setTransformer(self, transformer):
         self.transform = transformer
-        self.std = transformer.std
-        self.mean = transformer.mean
+        if isinstance(transformer, T.Compose):
+            for t in transformer.transforms:
+                if isinstance(transformer, T.Normalize):
+                    self.mean = t.mean
+                    self.std = t.std
+        else:
+            self.std = transformer.std
+            self.mean = transformer.mean
         logger.info("Preprocessing Steps will be:")
         logger.info(self.transform)
 
@@ -144,23 +87,35 @@ class DataHandler:
         logger.info("Loading image from: " + path)
         return Image.open(path)
 
+    def setDataset(self, dataset):
+        if isinstance(dataset, Dataset):
+            self.dataset = dataset
+        else:
+            logger.warning("Failed to set Dataset, Dataset is not of type torch.utils.data.Dataset")
+
     def loadDataset(self):
-        if not self.Configurator:
+        if self.Configurator is None and self.dataset is None:
             logging.critical("No Configurator configured in DataHandler. "
                              "Please initialize with Configurator or use setConfigurator()")
             return
-        self.configDataset = self.Configurator.loadDatasetConfig()
-        dataset = DatasetFactory.createDataset(self.configDataset)
-        if self.configDataset.get('transform') == True:
-            if self.transform is not None:
-                DatasetFactory.updateTransformer(dataset,self.transform)
-                logger.info("Transformer loaded into Dataset")
-            else:
-                logger.critical("Tried to load Transformer into Dataset. Transformer not configured.")
-        return dataset
+        self.dataset = self.Configurator.loadDataset()
+        if self.transform is not None:
+            self.updateDatasetTransformer()
+            logger.info("Transformer loaded into Dataset")
+        else:
+            logger.warning("Tried to load Transformer into Dataset. Transformer not configured.")
+        return self.dataset
 
+    def updateDatasetTransformer(self):
+        if isinstance(self.dataset, Dataset):
+            logger.info("Transformer of Dataset was changed to:")
+            logger.info(self.transform)
+            self.dataset.transform = self.transform
+            self.dataset.target_transform = ytrafo #lambda y: torch.zeros(1000, dtype=torch.float).scatter_(0, torch.tensor(y), value=1)
 
     #TODO: if you want to create the Dataset via Code
     def createDataset(self):
         pass
 
+def ytrafo(y):
+    return torch.zeros(1000, dtype=torch.float).scatter_(0, torch.tensor(y), value=1)
