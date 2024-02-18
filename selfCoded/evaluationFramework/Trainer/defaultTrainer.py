@@ -40,13 +40,54 @@ class DefaultTrainer(Trainer):
         self.dataset = self.DataHandler.loadDataset()
         logger.info("Dataset was prepared for Trainer class")
 
+    def checkLabelEncoding(self):
+        # Nehmen Sie das erste Label, um die Dimension und den Wert zu überprüfen
+        first_label = self.dataset[0][1]
+        logger.critical(type(first_label))
+        if isinstance(self.loss, torch.nn.CrossEntropyLoss):
+            if isinstance(first_label, int):
+                logger.info("Labels of Dataset are in the correct form to be processed with " + str(self.loss))
+            else:
+                self.dataset.target_transform = labelHotEncodedToInt
+                logger.warning("Labels of Dataset are transformed to one-hot-encoding "
+                            "to be processed with " + str(self.loss))
+        elif isinstance(self.loss, torch.nn.BCEWithLogitsLoss):
+            if isinstance(first_label, torch.Tensor):
+                logger.info("Labels of Dataset are in the correct form to be processed with " + str(self.loss))
+            else:
+                logger.critical("check")
+                self.dataset.target_transform = labelIntToHotEncoded
+                logger.warning("Labels of Dataset are transformed to one-hot-encoding "
+                            "to be processed with " + str(self.loss))
+
+
+
+        #
+        #
+        # # Inspecting the model to find the output size
+        # for name, module in self.model.named_modules():
+        #     if isinstance(module, torch.nn.Linear):  # Checking for the last Linear layer
+        #         last_linear_layer_name, last_linear_layer = name, module
+        #
+        # logger.critical(type(last_linear_layer.out_features))
+        # exit()
+        # # Überprüfen Sie, ob die Dimension der Labels mit der erwarteten One-Hot-Encoded-Dimension übereinstimmt
+        # if first_label.ndim == 1 and ((first_label == 0) | (first_label == 1)).all():
+        #     # Überprüfen Sie, ob genau ein Wert im Label 1 ist
+        #     logger.critical("check")
+        #     exit()
+        #     is_one_hot = (first_label.sum() == 1)
+        #     return is_one_hot
+        # return False
+
 
     def train(self):
         self.prepareDataset()
+        self.checkLabelEncoding()
         if self.dataset is None:
             logger.warning("No DatasetConfigs were found in DataHandlerConfig.json")
             return
-        dataloader = DataLoader(self.dataset,batch_size=16, shuffle=True)
+        dataloader = DataLoader(self.dataset,batch_size=16, shuffle=True, num_workers=2)
         self.model.train()
         for batch, (X, y) in enumerate(dataloader):
 
@@ -71,3 +112,10 @@ class DefaultTrainer(Trainer):
 
     def test(self):
         pass
+
+def labelIntToHotEncoded(y):
+    return torch.zeros(1000, dtype=torch.float).scatter_(0, torch.tensor(y), value=1)
+
+def labelHotEncodedToInt(y):
+    logger.critical(y)
+    return torch.argmax(y, dim=0)

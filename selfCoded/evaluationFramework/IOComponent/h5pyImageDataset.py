@@ -30,7 +30,6 @@ class H5PYImageDataset(Dataset):
         self.dataset = reduce(lambda obj, key: obj[key], query, self.file_object)
         self.transform = transform
 
-
     def __len__(self):
         return len(self.dataset)
 

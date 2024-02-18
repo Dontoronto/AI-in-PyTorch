@@ -111,6 +111,7 @@ class DataHandler:
             logger.info("Transformer of Dataset was changed to:")
             logger.info(self.transform)
             self.dataset.transform = self.transform
+            self.dataset.target_transform = ytrafo
 
     #TODO: if you want to create the Dataset via Code
     def createDataset(self):

@@ -37,7 +37,7 @@ class TrainerFactory:
         if kwargs.get('epoch') is not None:
             epoch = kwargs.get('epoch')
         # TODO: eigene funktion für auswahl des loss function
-        if kwargs.get('loss') == "BinaryCrossEntropyLoss":
+        if kwargs.get('loss') == "BCEWithLogitsLoss":
             loss = torch.nn.BCEWithLogitsLoss()
         elif kwargs.get('loss') == "CrossEntropyLoss":
             loss = torch.nn.CrossEntropyLoss()
