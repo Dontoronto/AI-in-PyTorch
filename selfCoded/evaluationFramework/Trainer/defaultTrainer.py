@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 
 import torch
 import logging
+import functools
 logger = logging.getLogger(__name__)
 
 
@@ -10,9 +11,6 @@ logger = logging.getLogger(__name__)
 # TODO: Analyzer evtl. übergeben mit Preconfigured settings oder
 # TODO: DefaultTrainer(..,Analyzer.defaultTrainingMode() -> "Configured Analyzer",..)
 
-# TODO: extra variable per __init__ übergeben wo seperate Dataloader Optionen sind, evtl. TrainerConfig.json erstellen
-
-# TODO: falls man andere Loss function benutzt kann man hier Dataset anpassen sodass target_transformiert wird
 class DefaultTrainer(Trainer):
     def __init__(self,
                  model,
@@ -27,7 +25,7 @@ class DefaultTrainer(Trainer):
         self.DataHandler = dataHandler
         self.epoch = epoch
         self.dataset = None
-
+        self.testset = None
 
         logger.info("Trainer was configured")
         logger.info("Epochs: " + str(self.epoch))
@@ -36,58 +34,86 @@ class DefaultTrainer(Trainer):
         logger.info("DataHandler: " + str(self.DataHandler))
         pass
 
-    def prepareDataset(self):
-        self.dataset = self.DataHandler.loadDataset()
-        logger.info("Dataset was prepared for Trainer class")
+    def prepareDataset(self, testset=False):
+        if testset is False and self.dataset is None:
+            self.dataset = self.DataHandler.loadDataset()
+            logger.info("Dataset was loaded in Trainer class")
+        elif testset is True and self.testset is None:
+            self.testset = self.DataHandler.loadDataset(testset=testset)
+            logger.info("Testet was loaded in Trainer class")
 
-    def checkLabelEncoding(self):
-        # Nehmen Sie das erste Label, um die Dimension und den Wert zu überprüfen
-        first_label = self.dataset[0][1]
-        logger.critical(type(first_label))
+    def checkModelOutputFeatures(self, sampleLabel):
+        '''
+        Inspecting the model to find the output size (amount of neurons)
+        :param sampleLabel: just a label example of dataset
+        :return: Bool of Dimensions of model and label matches
+        '''
+        for name, module in self.model.named_modules():
+            if isinstance(module, torch.nn.Linear):  # Checking for the last Linear layer
+                last_linear_layer_name, last_linear_layer = name, module
+        return last_linear_layer.out_features == sampleLabel.size(0)
+
+    def getAmountModelOutputClasses(self):
+        for name, module in self.model.named_modules():
+            if isinstance(module, torch.nn.Linear):  # Checking for the last Linear layer
+                last_linear_layer_name, last_linear_layer = name, module
+        return last_linear_layer.out_features
+
+    def checkLabelEncoding(self, SampleDataset):
+        '''
+        Generic Label Loss-function adapter function
+        checks output format onehot/int of dataset __getitem__() output. If output doesn't match with loss function
+        target_transform variable will be adapted that it works
+        target_transform: You can give a method which will be executed to transform the input. When None the input
+        won't be transformed
+        '''
+        modelOutputClasses = self.getAmountModelOutputClasses()
+        if modelOutputClasses != SampleDataset.classes:
+            # TODO: production mode is with lines below uncommented
+            logger.critical("Model Output Neurons {} and Dataset classes {} "
+                            "doesn't match".format(modelOutputClasses,len(SampleDataset.classes)))
+            logger.critical("Training of Model is not possible")
+            # raise ValueError("Model Output Neurons {} and Dataset classes {} "
+            #                  "doesn't match".format(modelOutputClasses,len(self.dataset.classes)))
+        first_label = SampleDataset[0][1]
         if isinstance(self.loss, torch.nn.CrossEntropyLoss):
             if isinstance(first_label, int):
                 logger.info("Labels of Dataset are in the correct form to be processed with " + str(self.loss))
-            else:
-                self.dataset.target_transform = labelHotEncodedToInt
-                logger.warning("Labels of Dataset are transformed to one-hot-encoding "
+            elif SampleDataset.target_transform is None:
+                SampleDataset.target_transform = labelHotEncodedToInt
+                logger.warning("Labels of Dataset are transformed to Integer with target_transform of Dataset"
                             "to be processed with " + str(self.loss))
+            else:
+                SampleDataset.target_transform = None
+                if isinstance(SampleDataset[0][1], int):
+                    logger.warning("Labels of Dataset transformed to Integer deleted target_transform var of Dataset "
+                                   "to be processed with " + str(self.loss))
+                else:
+                    logger.critical("tried to change transformation of label for using loss function still not integer")
         elif isinstance(self.loss, torch.nn.BCEWithLogitsLoss):
             if isinstance(first_label, torch.Tensor):
                 logger.info("Labels of Dataset are in the correct form to be processed with " + str(self.loss))
             else:
-                logger.critical("check")
-                self.dataset.target_transform = labelIntToHotEncoded
+                SampleDataset.target_transform = functools.partial(labelIntToHotEncoded, size = modelOutputClasses)
                 logger.warning("Labels of Dataset are transformed to one-hot-encoding "
                             "to be processed with " + str(self.loss))
 
+    def createDataLoader(self, sampleDataset):
+        if self.dataloaderConfig is not None:
+            logger.info("Created Dataloader with settings: " + str(self.dataloaderConfig))
+            return DataLoader(sampleDataset, **self.dataloaderConfig)
+        else:
+            logger.warning("No Configs for Dataloader available, creating Dataloader with default arguments")
+            return DataLoader(sampleDataset)
 
 
-        #
-        #
-        # # Inspecting the model to find the output size
-        # for name, module in self.model.named_modules():
-        #     if isinstance(module, torch.nn.Linear):  # Checking for the last Linear layer
-        #         last_linear_layer_name, last_linear_layer = name, module
-        #
-        # logger.critical(type(last_linear_layer.out_features))
-        # exit()
-        # # Überprüfen Sie, ob die Dimension der Labels mit der erwarteten One-Hot-Encoded-Dimension übereinstimmt
-        # if first_label.ndim == 1 and ((first_label == 0) | (first_label == 1)).all():
-        #     # Überprüfen Sie, ob genau ein Wert im Label 1 ist
-        #     logger.critical("check")
-        #     exit()
-        #     is_one_hot = (first_label.sum() == 1)
-        #     return is_one_hot
-        # return False
-
-
-    def train(self):
+    def train(self, test = False):
         self.prepareDataset()
-        self.checkLabelEncoding()
         if self.dataset is None:
             logger.warning("No DatasetConfigs were found in DataHandlerConfig.json")
             return
-        dataloader = DataLoader(self.dataset,batch_size=16, shuffle=True, num_workers=2)
+        self.checkLabelEncoding(self.dataset)
+        dataloader = self.createDataLoader(self.dataset)
         self.model.train()
         for batch, (X, y) in enumerate(dataloader):
 
@@ -103,19 +129,44 @@ class DefaultTrainer(Trainer):
             if batch % 2 == 0:
                 loss, current = loss.item(), batch * len(X)
                 print(f"loss: {loss:>7f}  [{current:>5d}/{len(dataloader.dataset):>5d}]")
+                break
+
+        if test is True:
+            self.test()
 
 
 
 
 
         pass
+
+
 
     def test(self):
+        self.prepareDataset(testset=True)
+        if self.testset is None:
+            logger.warning("No DatasetConfigs were found in DataHandlerConfig.json")
+            return
+        self.checkLabelEncoding(self.testset)
+        # TODO: evtl. andere Configs für Dataloader bei tests
+        dataloader = self.createDataLoader(self.testset)
+        self.model.eval()
+        for batch, (X, y) in enumerate(dataloader):
+
+            # Compute prediction and loss
+            pred = self.model(X)
+            loss = self.loss(pred, y)
+
+            if batch % 2 == 0:
+                loss, current = loss.item(), batch * len(X)
+                print(f"loss: {loss:>7f}  [{current:>5d}/{len(dataloader.dataset):>5d}]")
+                break
         pass
 
-def labelIntToHotEncoded(y):
-    return torch.zeros(1000, dtype=torch.float).scatter_(0, torch.tensor(y), value=1)
+
+
+def labelIntToHotEncoded(y,size):
+    return torch.zeros(size, dtype=torch.float).scatter_(0, torch.tensor(y), value=1)
 
 def labelHotEncodedToInt(y):
-    logger.critical(y)
-    return torch.argmax(y, dim=0)
+    return torch.argmax(y, dim=0).item()

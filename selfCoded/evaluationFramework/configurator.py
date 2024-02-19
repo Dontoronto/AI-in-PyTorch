@@ -18,6 +18,8 @@ class Configurator:
         self.ConfigParser = configParser.ConfigParser()
         self.configHandlerData = None
         self.configDataset = None
+        self.configTrainer = None
+        self.configDataloader = None
 
     def loadTransformer(self):
 
@@ -78,8 +80,15 @@ class Configurator:
         logger.info(self.transform)
         return self.transform
 
-    def loadDataset(self):
+    def loadDataset(self, train=True):
+        '''
+        returns instance of a Dataset
+        :param train: if False we download the testset if true we download the testset, if no testset is available
+        testset and training dataset are the same
+        :return:
+        '''
         self.configDataset = self._loadDatasetConfig()
+        self.configDataset["train"] = train
         return DatasetFactory.createDataset(self.configDataset)
 
     def _loadDataHandlerConfig(self):
@@ -95,7 +104,12 @@ class Configurator:
     # TODO: will be changing in the future. Initialization should be here
     def loadTrainingConfig(self):
         self.configTrainer = self.ConfigParser.getTrainerConfig()
-        logger.info("TrainerConfig was loaded via ConfigParser")
+        logger.info("TrainerConfig settings was loaded via ConfigParser")
         return self.configTrainer
+
+    def loadDataloaderConfig(self):
+        self.configDataloader = self.ConfigParser.getDataLoaderConfig()
+        logger.info("Dataloader settings was loaded via ConfigParser")
+        return self.configDataloader
 
 

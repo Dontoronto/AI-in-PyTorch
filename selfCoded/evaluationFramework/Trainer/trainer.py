@@ -3,7 +3,13 @@ from abc import ABC, abstractmethod
 
 class Trainer(ABC):
     def __init__(self, model):
+        '''
+
+        :param model: neuronal model
+        :param dataloaderConfig: arguments for DataLoader Class saved as dict
+        '''
         self.model = model
+        self.dataloaderConfig = None
         #self.Configurator = configurator
 
     @abstractmethod
@@ -18,6 +24,9 @@ class Trainer(ABC):
     def prepareDataset(self):
         pass
 
-    # def setConfigurator(self, configurator):
-    #     self.Configurator = configurator
-    #     pass
+    def setDataLoaderSettings(self, kwargs: dict):
+        '''
+        sets custom Dataloader configuration
+        '''
+        self.dataloaderConfig = kwargs
+

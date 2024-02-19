@@ -35,7 +35,8 @@ def main():
     # img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
 
     Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
-    Trainer.train()
+    Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
+    Trainer.train(test=True)
 
     # count = 0
     # for batch, labels in dataloader:

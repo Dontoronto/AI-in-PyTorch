@@ -19,6 +19,7 @@ class DataHandler:
         self.mean = None
         self.Configurator = Configurator
         self.dataset = None
+        self.testset = None
 
         if self.Configurator:
             self.setTransformer(Configurator.loadTransformer())
@@ -81,9 +82,13 @@ class DataHandler:
             image_list.append(image)
         return image_list
 
-    # loading images in standardized format example jpeg -> (244,244,3)
     @staticmethod
     def loadImage(path):
+        '''
+        loading images in standardized format example jpeg -> (244,244,3)
+        :param path: path to file
+        :return: PIL Image Instance of image
+        '''
         logger.info("Loading image from: " + path)
         return Image.open(path)
 
@@ -93,29 +98,48 @@ class DataHandler:
         else:
             logger.warning("Failed to set Dataset, Dataset is not of type torch.utils.data.Dataset")
 
-    def loadDataset(self):
-        if self.Configurator is None and self.dataset is None:
-            logging.critical("No Configurator configured in DataHandler. "
-                             "Please initialize with Configurator or use setConfigurator()")
-            return
-        self.dataset = self.Configurator.loadDataset()
-        if self.transform is not None:
-            self.updateDatasetTransformer()
-            logger.info("Transformer loaded into Dataset")
+    def setTestset(self, testset):
+        if isinstance(testset, Dataset):
+            self.testset = testset
         else:
-            logger.warning("Tried to load Transformer into Dataset. Transformer not configured.")
-        return self.dataset
+            logger.warning("Failed to set Testset, Testset is not of type torch.utils.data.Dataset")
+
+    def loadDataset(self, testset = False):
+        if testset is False:
+            if self.Configurator is None and self.dataset is None:
+                logging.critical("No Configurator  or Dataset configured in DataHandler. "
+                                 "Please initialize with Configurator or use setConfigurator()")
+                return
+            self.dataset = self.Configurator.loadDataset()
+            self.updateDatasetTransformer()
+            if self.transform is not None:
+                self.updateDatasetTransformer()
+                logger.info("Transformer loaded into Dataset")
+            else:
+                logger.warning("Tried to load Transformer into Dataset. Transformer not configured.")
+            return self.dataset
+
+        elif testset is True:
+            if self.Configurator is None and self.testset is None:
+                logging.critical("No Configurator or Testset configured in DataHandler. "
+                                 "Please initialize with Configurator or use setConfigurator()")
+                return
+            self.testset = self.Configurator.loadDataset(train=testset)
+            if self.transform is not None:
+                self.updateDatasetTransformer()
+                logger.info("Transformer loaded into Testset")
+            else:
+                logger.warning("Tried to load Transformer into Testset. Transformer not configured.")
+            return self.testset
+
 
     def updateDatasetTransformer(self):
         if isinstance(self.dataset, Dataset):
             logger.info("Transformer of Dataset was changed to:")
             logger.info(self.transform)
             self.dataset.transform = self.transform
-            self.dataset.target_transform = ytrafo
+        if isinstance(self.testset, Dataset):
+            logger.info("Transformer of Testset was changed to:")
+            logger.info(self.transform)
+            self.testset.transform = self.transform
 
-    #TODO: if you want to create the Dataset via Code
-    def createDataset(self):
-        pass
-
-def ytrafo(y):
-    return torch.zeros(1000, dtype=torch.float).scatter_(0, torch.tensor(y), value=1)
