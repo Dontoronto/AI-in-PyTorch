@@ -34,9 +34,43 @@ def main():
 
     # img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
 
+
+
+
+    # for name, weight in Model.state_dict().items():
+    #     print(f"{name}: {type(weight)}")
+
     Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
     Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
-    Trainer.train(test=True)
+    #logger.critical(Configurator.loadConfigFromRegistry("admm_settings"))
+    Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
+    Trainer.train(test=False)
+    Trainer.testZCopy()
+
+    # Iterate over model parameters
+    # for name, param in Model.named_parameters():
+    #     logger.info(f"Layer Name: {name} Parameter Tensor Type: {type(param.data)} Gradients Tensor Type: {type(param.grad)}")
+
+    #Trainer.layerArchitectureExtractor()
+
+    # for name, module in Model.named_modules():
+    #     logger.info(f"Layer Name: {name}  Module Type: {type(module)} ")
+
+
+    # # Access gradients of a specific layer
+    # for name, parameter in Model.named_parameters():
+    #     if parameter.requires_grad:
+    #         #print(f"{name} gradients:", parameter.grad)
+    #         return
+
+    #logger.critical(getattr(Model, "model.conv1.weight"))
+    #logger.critical(Model._modules["model.layer1.0.conv1.weight"])
+    # logger.critical(Model.state_dict()['model.layer4.2.bn3.weight'])
+    # ['layer1.0.conv1.weight']
+
+    #torch.save(Model.state_dict(), 'model_weights.pth')
+
+
 
     # count = 0
     # for batch, labels in dataloader:

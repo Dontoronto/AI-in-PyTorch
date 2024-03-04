@@ -48,5 +48,16 @@ class ConfigParser:
 
         return self.dataloaderConfig
 
+    def getConfigFromRegistry(self, configName):
+        with open('configs/ConfigRegistry.json', 'r') as json_file:
+            path = json.load(json_file)[configName]
+            logger.info(f"Loaded {configName} from ConfigRegistry.json")
+            logger.info(f"Loaded {configName} has path: {path}")
+            with open(path, 'r') as config:
+                logger.info(f"Loaded {configName}")
+                configFile = json.load(config)
+                return configFile
+
+
 
 

@@ -8,8 +8,8 @@
     "pre_optimization_tuning_path": true
   },
   "dataloader": {
-    "batch_size": 1,
+    "batch_size": 16,
     "shuffle": true,
-    "num_workers": 1
+    "num_workers": 2
   }
 }

@@ -98,6 +98,13 @@ class DefaultTrainer(Trainer):
                 logger.warning("Labels of Dataset are transformed to one-hot-encoding "
                             "to be processed with " + str(self.loss))
 
+    def preTrainingChecks(self):
+        self.prepareDataset()
+        if self.dataset is None:
+            logger.warning("No DatasetConfigs were found in DataHandlerConfig.json")
+            return
+        self.checkLabelEncoding(self.dataset)
+
     def createDataLoader(self, sampleDataset):
         if self.dataloaderConfig is not None:
             logger.info("Created Dataloader with settings: " + str(self.dataloaderConfig))
@@ -107,38 +114,38 @@ class DefaultTrainer(Trainer):
             return DataLoader(sampleDataset)
 
 
+
+
     def train(self, test = False):
-        self.prepareDataset()
-        if self.dataset is None:
-            logger.warning("No DatasetConfigs were found in DataHandlerConfig.json")
-            return
-        self.checkLabelEncoding(self.dataset)
+        self.preTrainingChecks()
         dataloader = self.createDataLoader(self.dataset)
         self.model.train()
         for batch, (X, y) in enumerate(dataloader):
+
+            # remove existing settings
+            self.optimizer.zero_grad()
 
             # Compute prediction and loss
             pred = self.model(X)
             loss = self.loss(pred, y)
 
             # Backpropagation
-            self.optimizer.zero_grad()
             loss.backward()
+
+            return
+            # Apply optimization with gradients
             self.optimizer.step()
 
             if batch % 2 == 0:
                 loss, current = loss.item(), batch * len(X)
                 print(f"loss: {loss:>7f}  [{current:>5d}/{len(dataloader.dataset):>5d}]")
-                break
+
 
         if test is True:
             self.test()
 
-
-
-
-
         pass
+
 
 
 

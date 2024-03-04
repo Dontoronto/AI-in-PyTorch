@@ -1,5 +1,7 @@
 import torch
+import os
 import torch.nn as nn
+import json
 
 import logging
 logger = logging.getLogger(__name__)
@@ -25,6 +27,11 @@ class ModelWrapper(nn.Module):
             return super().__getattr__(name)
         except AttributeError:
             return getattr(self.model, name)
+
+
+    def __getitem__(self, key):
+        # Forward item access to the model
+        return self.model[key]
 
 
 

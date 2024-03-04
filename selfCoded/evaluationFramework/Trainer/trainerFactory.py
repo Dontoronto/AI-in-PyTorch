@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 
 from .trainer import Trainer
 from .defaultTrainer import DefaultTrainer
+from .admmTrainer import ADMMTrainer
 import torch
 import copy
 
@@ -25,6 +26,7 @@ class TrainerFactory:
         del tempConfig['epoch']
         del tempConfig['loss']
         del tempConfig['optimizer']
+        del tempConfig['pre_optimization_tuning_path']
         return tempConfig
 
 
@@ -52,4 +54,9 @@ class TrainerFactory:
             logger.info("Filtered OptimizerConfig: " + str(tempConfig))
             optimizer = torch.optim.SGD(model.parameters(), **tempConfig)
 
-        return DefaultTrainer(model, dataHandler, loss=loss, optimizer=optimizer, epoch=epoch)
+        if kwargs.get('pre_optimization_tuning_path') == True:
+            logger.info("Creating ADMMTrainer.")
+            return ADMMTrainer(model, dataHandler, loss=loss, optimizer=optimizer, epoch=epoch)
+        elif kwargs.get('pre_optimization_tuning_path') == False:
+            logger.info("Creating DefaultTrainer.")
+            return DefaultTrainer(model, dataHandler, loss=loss, optimizer=optimizer, epoch=epoch)
