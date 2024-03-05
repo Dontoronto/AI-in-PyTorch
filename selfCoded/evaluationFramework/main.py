@@ -44,8 +44,8 @@ def main():
     Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
     #logger.critical(Configurator.loadConfigFromRegistry("admm_settings"))
     Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
-    Trainer.train(test=False)
-    Trainer.testZCopy()
+    #Trainer.train(test=False)
+    Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
 
     # Iterate over model parameters
     # for name, param in Model.named_parameters():
