@@ -104,6 +104,7 @@ class DataHandler:
         else:
             logger.warning("Failed to set Testset, Testset is not of type torch.utils.data.Dataset")
 
+    #TODO: missmatch in train and test dataset when calling configurator first testset then argument train
     def loadDataset(self, testset = False):
         if testset is False:
             if self.Configurator is None and self.dataset is None:
@@ -124,7 +125,7 @@ class DataHandler:
                 logging.critical("No Configurator or Testset configured in DataHandler. "
                                  "Please initialize with Configurator or use setConfigurator()")
                 return
-            self.testset = self.Configurator.loadDataset(train=testset)
+            self.testset = self.Configurator.loadDataset(train=False)
             if self.transform is not None:
                 self.updateDatasetTransformer()
                 logger.info("Transformer loaded into Testset")

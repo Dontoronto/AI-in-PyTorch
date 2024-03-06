@@ -9,6 +9,7 @@ class ConfigParser:
         self.datasetConfig = None
         self.trainerConfig = None
         self.dataloaderConfig = None
+        self.snapshotConfig = None
 
     # TODO: need to be more general
     # TODO: if get method is called but no file is there error message that loading didn't work
@@ -47,6 +48,14 @@ class ConfigParser:
                 logger.info(self.dataloaderConfig)
 
         return self.dataloaderConfig
+
+    def getSnapshotConfig(self):
+        if self.snapshotConfig == None:
+            with open('configs/TrainerConfig.json', 'r') as json_file:
+                self.snapshotConfig = json.load(json_file)['snapshot']
+                logger.info("Snapshot Configs from TrainerConfig.json:")
+                logger.info(self.snapshotConfig)
+        return  self.snapshotConfig
 
     def getConfigFromRegistry(self, configName):
         with open('configs/ConfigRegistry.json', 'r') as json_file:

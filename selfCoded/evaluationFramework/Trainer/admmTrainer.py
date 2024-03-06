@@ -101,7 +101,8 @@ class ADMMTrainer(DefaultTrainer):
 
             else:
                 continue
-        logger.critical(self.pruningLayers)
+        logger.critical(self.pruningLayers[0].param.grad)
+        #logger.critical(self.pruningLayers[0].module.weight.data)
 
     # def testGradientModification(self):
     #     for name, param in self.model.named_parameters():
@@ -150,45 +151,45 @@ class ADMMTrainer(DefaultTrainer):
     def admmFilter(self):
         pass
 
-    def train(self, test = False):
-        self.preTrainingChecks()
-        dataloader = self.createDataLoader(self.dataset)
-        self.model.train()
-
-        count = 0
-        for i in range(self.epoch):
-            for batch, (X, y) in enumerate(dataloader):
-
-                if count == self.main_iterations:
-                    return
-
-                # remove existing settings
-                self.optimizer.zero_grad()
-
-                # Compute prediction and loss
-                pred = self.model(X)
-                loss = self.loss(pred, y)
-
-                # Backpropagation
-                loss.backward()
-
-                # here should the logic of admm cycle be located
-                self.admmFilter()
-
-                # Apply optimization with gradients
-                self.optimizer.step()
-
-                if batch % 2 == 0:
-                    loss, current = loss.item(), batch * len(X)
-                    print(f"Epoch number: {i}")
-                    print(f"loss: {loss:>7f}  [{current:>5d}/{len(dataloader.dataset):>5d}]")
-
-                # if it hits main_iterations count it will end the admm training
-                count += 1
-
-
-        if test is True:
-            self.test()
-
-        pass
+    # def train(self, test = False):
+    #     self.preTrainingChecks()
+    #     dataloader = self.createDataLoader(self.dataset)
+    #     self.model.train()
+    #
+    #     count = 0
+    #     for i in range(self.epoch):
+    #         for batch, (X, y) in enumerate(dataloader):
+    #
+    #             if count == self.main_iterations:
+    #                 return
+    #
+    #             # remove existing settings
+    #             self.optimizer.zero_grad()
+    #
+    #             # Compute prediction and loss
+    #             pred = self.model(X)
+    #             loss = self.loss(pred, y)
+    #
+    #             # Backpropagation
+    #             loss.backward()
+    #
+    #             # here should the logic of admm cycle be located
+    #             self.admmFilter()
+    #
+    #             # Apply optimization with gradients
+    #             self.optimizer.step()
+    #
+    #             if batch % 2 == 0:
+    #                 loss, current = loss.item(), batch * len(X)
+    #                 print(f"Epoch number: {i}")
+    #                 print(f"loss: {loss:>7f}  [{current:>5d}/{len(dataloader.dataset):>5d}]")
+    #
+    #             # if it hits main_iterations count it will end the admm training
+    #             count += 1
+    #
+    #
+    #     if test is True:
+    #         self.test()
+    #
+    #     pass
 

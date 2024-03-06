@@ -112,6 +112,11 @@ class Configurator:
         logger.info("Dataloader settings was loaded via ConfigParser")
         return self.configDataloader
 
+    def loadSnapshotConfig(self):
+        self.configSnapshot = self.ConfigParser.getSnapshotConfig()
+        logger.info("Snapshot settings was loaded via ConfigParser")
+        return self.configSnapshot
+
     def loadConfigFromRegistry(self, configName):
         temp = self.ConfigParser.getConfigFromRegistry(configName)
         logger.info(f"Loaded {configName} from Registry")

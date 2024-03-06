@@ -10,7 +10,8 @@ class Trainer(ABC):
         '''
         self.model = model
         self.dataloaderConfig = None
-        #self.Configurator = configurator
+        self.snapshotConfig = None
+
 
     @abstractmethod
     def train(self):
@@ -29,4 +30,10 @@ class Trainer(ABC):
         sets custom Dataloader configuration
         '''
         self.dataloaderConfig = kwargs
+
+    def setSnapshotSettings(self, kwargs: dict):
+        '''
+        sets snapshot configuration
+        '''
+        self.snapshotConfig = kwargs
 
