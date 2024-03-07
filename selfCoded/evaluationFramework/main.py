@@ -21,7 +21,7 @@ setup_logging()
 import logging
 logger = logging.getLogger(__name__)
 
-#test
+# NOTE: currently we are testing with LeNet-model
 from models.lenet import LeNet
 
 
@@ -49,9 +49,9 @@ def main():
     Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
     Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
     Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
-    # Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
-    Trainer.train(test=True)
-    # Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
+    Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
+    Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
+    Trainer.train(test=False)
 
     #Trainer.layerArchitectureExtractor()
 

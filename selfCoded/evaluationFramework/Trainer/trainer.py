@@ -37,3 +37,4 @@ class Trainer(ABC):
         '''
         self.snapshotConfig = kwargs
 
+

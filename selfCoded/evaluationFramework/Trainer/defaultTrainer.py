@@ -260,9 +260,8 @@ class DefaultTrainer(Trainer):
                         logger.info(f"New raw best Model will be safed to: {self.snapshot_model_path_raw}")
                         torch.save(self.model.state_dict(),self.snapshot_model_path_raw)
 
-    # TODO: new method with new name for exportet models. Function can be useful in general
+    # NOTE: this method is for saving a model state with a log-message
     def export_model(self, model_path):
-
         torch.save(self.model.state_dict(), model_path)
         logger.info('Model state_dict saved to %s', model_path)
 

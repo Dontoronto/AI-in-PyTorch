@@ -4,7 +4,7 @@
     "loss": "CrossEntropyLoss",
     "epoch":  10,
     "lr": 0.0001,
-    "pre_optimization_tuning_path": false
+    "pre_optimization_tuning_path": true
   },
   "dataloader": {
     "batch_size": 64,
@@ -13,7 +13,7 @@
   },
   "snapshot": {
     "name": "LeNet",
-    "snapshot_enabled": true,
+    "snapshot_enabled": false,
     "snapshot_model_path": "models/LeNet/",
     "snapshot_model_path_raw": "models/LeNet/",
     "recovery_epoch": 3
