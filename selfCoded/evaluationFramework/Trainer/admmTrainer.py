@@ -2,7 +2,7 @@ import copy
 from enum import Enum, auto
 
 from .defaultTrainer import DefaultTrainer
-from torch.utils.data import DataLoader
+from .admm_utils.utils import create_magnitude_pruned_mask
 
 import torch
 import os
@@ -102,32 +102,6 @@ class LayerInfo:
         else:
             logger.warning(f"SET not possible instance is not configured as Weight Layer: {self}")
 
-    def make_copy(self):
-        '''
-        Use copy.copy to create a shallow copy of the instance
-        :return: copy object without references to the model layers
-        '''
-        return copy.copy(self)
-
-    # this method is shit. Thinking about the situation but even though shit
-    # def _setattr(model, name, module):
-    #     name_list = name.split(".")
-    #     for name in name_list[:-1]:
-    #         model = getattr(model, name)
-    #     setattr(model, name_list[-1], module)
-
-# class LayerInfoGrad:
-#     def __init__(self, name, module, param):
-#         self.module = module
-#         self.name = name
-#         self.type = type(module).__name__
-#         self.grad = param.grad
-#
-#     def _setattr(model, name, module):
-#         name_list = name.split(".")
-#         for name in name_list[:-1]:
-#             model = getattr(model, name)
-#         setattr(model, name_list[-1], module)
 
 class ADMMTrainer(DefaultTrainer):
     def __init__(self,
@@ -146,7 +120,14 @@ class ADMMTrainer(DefaultTrainer):
         self.admmArchitectureConfig = None
 
         # layers to be pruned
-        self.pruningLayers = []
+        self.list_W = []
+        # Dual Variable layers
+        self.list_U = []
+        # Auxiliary Variable layers
+        self.list_Z = []
+
+        # layer masks
+        self.list_masks = []
 
         # main iterations
         self.main_iterations = None
@@ -172,30 +153,30 @@ class ADMMTrainer(DefaultTrainer):
                     if name_module == val['op_names']:
                         for name_param, param in self.model.named_parameters():
                             if name_param == name_module + ".weight":
-                                self.pruningLayers.append(LayerInfo(name_module, module, param))
+                                self.list_W.append(LayerInfo(name_module, module, param))
                                 break
                         break
 
             else:
                 continue
-        #logger.critical(self.pruningLayers)
-        #logger.critical(self.pruningLayers[0].module.weight.data)
+        #logger.critical(self.list_W)
+        #logger.critical(self.list_W[0].module.weight.data)
 
-    # TODO: soll ich classen variable machen oder einfach so zurück geben?
-    # TODO: soll das in der Klasse hier sein oder eine methode außerhalb der Klasse?
-    def create_copies(self):
+    def initialize_dualvar_auxvar(self):
         """
         Create two lists containing shallow copies of instances from the original list.
-
         :param original_list: List of instances with a make_copy method.
         :return: Two lists, each containing copies of the original instances.
         """
-        # Create two lists using list comprehensions
-        list_copy1 = [copy.copy(instance) for instance in self.pruningLayers]
-        list_copy2 = [copy.copy(instance) for instance in self.pruningLayers]
+        # Create/Assign two lists using list comprehensions
+        self.list_U = [copy.copy(instance) for instance in self.list_W]
+        self.list_Z = [copy.copy(instance) for instance in self.list_W]
 
-        # Return both lists
-        return list_copy1, list_copy2
+        # Change Settings of each layer in the lists
+        [layer_W.set_admm_vars(ADMMVariable.W) for layer_W in self.list_W]
+        [layer_U.set_admm_vars(ADMMVariable.U) for layer_U in self.list_U]
+        [layer_Z.set_admm_vars(ADMMVariable.Z) for layer_Z in self.list_Z]
+
 
     # def testGradientModification(self):
     #     for name, param in self.model.named_parameters():
@@ -212,15 +193,29 @@ class ADMMTrainer(DefaultTrainer):
 
     # TODO: needs to be deleted at the end
     def testZCopy(self):
-        test_z = copy.deepcopy(self.pruningLayers)
         for module_name, module in self.model.named_modules():
             if module_name == "model.conv1":
-                logger.critical(self.pruningLayers[0].module.weight.data)
-                #self.pruningLayers[0].module.weight.data += 0.1
-                test_z[0].module.weight.data += 0.1
-                logger.critical(torch.unique(module.weight.data - self.pruningLayers[0].module.weight.data))
-                logger.critical(torch.unique(test_z[0].module.weight.data - self.pruningLayers[0].module.weight.data))
-                logger.critical(torch.unique(test_z[0].module.weight.data - module.weight.data))
+                weight_copy = copy.deepcopy(module.weight.data)
+                #logger.critical(self.list_W[0].W)
+                #self.list_W[0].module.weight.data += 0.1
+                self.list_W[0].W += 0.1
+                logger.critical(f"Model-Layer{torch.unique(module.weight.data - self.list_W[0].W)}")
+                logger.critical(f"Deepcopy-Layer{torch.unique(weight_copy - self.list_W[0].W)}")
+                logger.critical(f"Layer Shape: {self.list_W[0].W.shape}")
+                logger.critical(f"Difference Model-Layer: {(module.weight.data - self.list_W[0].W).sum()}")
+                logger.critical(f"Difference Deepcopy-Layer: {(weight_copy - self.list_W[0].W).sum()}")
+        for module_name, param in self.model.named_parameters():
+            if module_name == "model.conv1.weight":
+                #logger.critical(self.list_W[0].W)
+                grad_copy = copy.deepcopy(param.grad)
+                #self.list_W[0].module.weight.data += 0.1
+                self.list_W[0].dW += 0.1
+                logger.critical(f"Model-Layer{torch.unique(param.grad - self.list_W[0].dW)}")
+                logger.critical(f"Deepcopy-Layer{torch.unique(grad_copy - self.list_W[0].dW)}")
+                logger.critical(f"Layer Shape: {self.list_W[0].dW.shape}")
+                logger.critical(f"Difference Model-Layer: {(param.grad - self.list_W[0].dW).sum()}")
+                logger.critical(f"Difference Deepcopy-Layer: {(grad_copy - self.list_W[0].dW).sum()}")
+
 
     def layerArchitectureExtractor(self):
         # Check if the folder exists, create it if not
@@ -256,6 +251,9 @@ class ADMMTrainer(DefaultTrainer):
     def train(self, test=False):
         self.model.train()
         self.preTrainingChecks()
+
+        self.initialize_dualvar_auxvar()
+
         dataloader = self.createDataLoader(self.dataset)
         if test is True:
             self.prepareDataset(testset=True)
@@ -272,10 +270,33 @@ class ADMMTrainer(DefaultTrainer):
                 if batch_idx % 100 == 0:
                     print(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
-        for i in self.pruningLayers:
+        # TODO: all die Aufrufe löschen die waren nur zum Testen
+        # TODO: abspeichern des Blocks zum testen von den layer listen
+        mask = create_magnitude_pruned_mask(self.list_Z[0].Z,0.1)
+        self.list_Z[0].Z = self.list_Z[0].Z*mask
+        self.list_W[0].W = self.list_W[0].W*mask
+        logger.critical(f"Difference after prune W-Z:")
+        logger.critical(self.list_W[0].W - self.list_Z[0].Z)
+
+        for i in self.list_W:
             logger.critical(f"Instance: {i} -> W: {(i.W is not None)}, dW: {(i.dW is not None)}, U: {(i.U is not None)}, Z: {(i.Z is not None)}")
-            i.set_admm_vars(ADMMVariable.Z)
+
+        for i in self.list_U:
             logger.critical(f"Instance: {i} -> W: {(i.W is not None)}, dW: {(i.dW is not None)}, U: {(i.U is not None)}, Z: {(i.Z is not None)}")
+
+        for i in self.list_Z:
+            logger.critical(f"Instance: {i} -> W: {(i.W is not None)}, dW: {(i.dW is not None)}, U: {(i.U is not None)}, Z: {(i.Z is not None)}")
+
+        #self.testZCopy()
+        logger.critical(f"Difference W-Z: {(self.list_W[0].W-self.list_Z[0].Z).sum()}")
+        for module_name, module in self.model.named_modules():
+            if module_name == "model.conv1":
+                logger.critical(f"Difference Model-Z: {(module.weight.data-self.list_Z[0].Z).sum()}")
+
+
+
+
+
 
     # def train(self, test = False):
     #     self.preTrainingChecks()
