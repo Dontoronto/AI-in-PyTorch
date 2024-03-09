@@ -1,15 +1,17 @@
 import copy
-from enum import Enum, auto
 
 from .defaultTrainer import DefaultTrainer
-from .admm_utils.utils import create_magnitude_pruned_mask
+from .admm_utils.utils import (create_magnitude_pruned_mask, add_tensors_inplace, subtract_tensors_inplace,
+                               scale_and_add_tensors_inplace)
+from .admm_utils.layerInfo import LayerInfo, ADMMVariable
 
 import torch
 import os
 import json
 import torch.nn as nn
+from torch.nn.utils import clip_grad_norm_
 import logging
-import functools
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,90 +20,6 @@ logger = logging.getLogger(__name__)
 # TODO: Abhängigkeiten noch nicht fix
 # TODO: Analyzer evtl. übergeben mit Preconfigured settings oder
 # TODO: DefaultTrainer(..,Analyzer.defaultTrainingMode() -> "Configured Analyzer",..)
-
-
-class ADMMVariable(Enum):
-    '''
-    input for Layerclass to choose which variables should be initialized/ removed
-    '''
-    W = auto()
-    Z = auto()
-    U = auto()
-
-
-# TODO: when iteration needs update of variables U and Z we need
-# TODO: to create special functions for this be aware of references
-class LayerInfo:
-    '''
-    This class is a wrapper for a layer which should be modifyed with admm.
-    Wrapper is the same for every class. Depending on the enum value other variables will be named
-    For example W, U and Z (for ADMM)
-    '''
-    def __init__(self, name, module, param):
-        self.module = module
-        self.name = name
-        self.param = param
-        self.type = type(module).__name__
-
-        # TODO: entscheiden ob ich Gewicht speichern will/ wir hier gewicht extrahiert oder referenz
-        # TODO: soll ich flag machen für das Prüfen ob weight neu gesetzt wurde und deshalb aktuallisiert werden muss
-        # TODO: oder weglassen und jedes mal neu laden...
-        #self.W = None
-        #self.dW = None
-        self.U = None
-        self.Z = None
-        self.state = None
-
-    # TODO: implement initialization of all variables
-    # TODO: think about a system to easily automate the set process for a list of these classes
-    def set_admm_vars(self, ADMM_ENUM: Enum):
-        # Reset variables to None before initialization
-        #self.W = None
-        #self.dW = None
-        self.U = None
-        self.Z = None
-        self.state = ADMM_ENUM
-
-        if ADMM_ENUM == ADMMVariable.W:
-            logger.info(f"Layer was set as Weight Layer 'W' with Weight and Gradient")
-        elif ADMM_ENUM == ADMMVariable.U:
-            self.U = self.module.weight.data.clone().detach().zero_()
-            logger.info(f"Layer was set as Dual Variable Layer 'U' with same shape as weights")
-        elif ADMM_ENUM == ADMMVariable.Z:
-            self.Z = self.module.weight.data.clone().detach()
-            logger.info(f"Layer was set as Auxiliary Variable Layer 'Z' copy of Weights")
-
-    # W and dW properties
-    @property
-    def W(self):
-        if self.state == ADMMVariable.W:
-            return self.module.weight.data
-        else:
-            logger.warning(f"GET not possible instance is not configured as Weight Layer: {self}")
-            return None
-
-    @W.setter
-    def W(self, value):
-        if self.state == ADMMVariable.W:
-            self.module.weight.data = value
-        else:
-            logger.warning(f"SET not possible instance is not configured as Weight Layer: {self}")
-
-    @property
-    def dW(self):
-        if self.state == ADMMVariable.W:
-            return self.param.grad
-        else:
-            logger.warning(f"GET not possible instance is not configured as Weight Layer: {self}")
-            return None
-
-    @dW.setter
-    def dW(self, value):
-        if self.state == ADMMVariable.W:
-            self.param.grad = value
-        else:
-            logger.warning(f"SET not possible instance is not configured as Weight Layer: {self}")
-
 
 class ADMMTrainer(DefaultTrainer):
     def __init__(self,
@@ -118,6 +36,18 @@ class ADMMTrainer(DefaultTrainer):
 
         # Variables for ADMM Architecture Config
         self.admmArchitectureConfig = None
+
+        # penalty constant for admm
+        self.rho = None
+
+        # clip_gradient_threshold value
+        self.gradient_threshold = None
+
+        # Note: in caffe admm-nn they used batch_size to normalize model
+        self.batch_size_norm_coeff = None
+        # Note: regularizatoin l1 or l2
+        self.regularization_l2_norm_enabled = None
+        self.regularization_l_norm_decay = None
 
         # layers to be pruned
         self.list_W = []
@@ -139,10 +69,23 @@ class ADMMTrainer(DefaultTrainer):
         logger.info("ADMM Config was loaded into ADMMTrainer")
         self.admmConfig = kwargs
         # logger.critical(kwargs['trainer'])
-        if kwargs.get("trainer").get("main_iterations") is not None:
-            self.main_iterations = kwargs.get("trainer").get("main_iterations")
-        if kwargs.get("trainer").get("admm_iterations") is not None:
-            self.admm_iterations = kwargs.get("trainer").get("admm_iterations")
+        if kwargs.get("admm_trainer").get("main_iterations") is not None:
+            self.main_iterations = kwargs.get("admm_trainer").get("main_iterations")
+        if kwargs.get("admm_trainer").get("admm_iterations") is not None:
+            self.admm_iterations = kwargs.get("admm_trainer").get("admm_iterations")
+        if kwargs.get("admm_trainer").get("rho") is not None:
+            self.rho = kwargs.get("admm_trainer").get("admm_iterations")
+        if kwargs.get("admm_trainer").get("gradient_threshold") is not None:
+            self.gradient_threshold = kwargs.get("admm_trainer").get("gradient_threshold")
+
+        # Note: custom batch_size for normalizing
+        if kwargs.get("admm_trainer").get("batch_size") is not None:
+            self.batch_size_norm_coeff = 1/kwargs.get("admm_trainer").get("batch_size")
+        # Note: regularization with l1 or l2 norm
+        if kwargs.get("admm_trainer").get("regularization_l2_norm_enabled") is not None:
+            self.regularization_l2_norm_enabled = kwargs.get("admm_trainer").get("regularization_l2_norm_enabled")
+        if kwargs.get("admm_trainer").get("regularization_l_norm_decay") is not None:
+            self.regularization_l_norm_decay = kwargs.get("admm_trainer").get("regularization_l_norm_decay")
 
     def setADMMArchitectureConfig(self, kwargs):
         logger.info("ADMM Architecture Config was loaded into ADMMTrainer")
@@ -153,7 +96,7 @@ class ADMMTrainer(DefaultTrainer):
                     if name_module == val['op_names']:
                         for name_param, param in self.model.named_parameters():
                             if name_param == name_module + ".weight":
-                                self.list_W.append(LayerInfo(name_module, module, param))
+                                self.list_W.append(LayerInfo(name_module, module, param, val['sparsity']))
                                 break
                         break
 
@@ -161,35 +104,6 @@ class ADMMTrainer(DefaultTrainer):
                 continue
         #logger.critical(self.list_W)
         #logger.critical(self.list_W[0].module.weight.data)
-
-    def initialize_dualvar_auxvar(self):
-        """
-        Create two lists containing shallow copies of instances from the original list.
-        :param original_list: List of instances with a make_copy method.
-        :return: Two lists, each containing copies of the original instances.
-        """
-        # Create/Assign two lists using list comprehensions
-        self.list_U = [copy.copy(instance) for instance in self.list_W]
-        self.list_Z = [copy.copy(instance) for instance in self.list_W]
-
-        # Change Settings of each layer in the lists
-        [layer_W.set_admm_vars(ADMMVariable.W) for layer_W in self.list_W]
-        [layer_U.set_admm_vars(ADMMVariable.U) for layer_U in self.list_U]
-        [layer_Z.set_admm_vars(ADMMVariable.Z) for layer_Z in self.list_Z]
-
-
-    # def testGradientModification(self):
-    #     for name, param in self.model.named_parameters():
-    #         if name == "model.conv1.weight":
-    #             before = copy.deepcopy(param.data)
-    #             for module_name, module in self.model.named_modules():
-    #                 if module_name == "model.conv1":
-    #                     test_obj = LayerInfoGrad(name, module, param)
-    #                     test_obj.module.weight.data += 0.1
-    #                     logger.critical(torch.unique(before - test_obj.module.weight.data))
-    #                     logger.critical(test_obj.grad.shape)
-    #                     logger.critical(test_obj.module.weight.data.shape)
-    #                     return
 
     # TODO: needs to be deleted at the end
     def testZCopy(self):
@@ -245,6 +159,138 @@ class ADMMTrainer(DefaultTrainer):
         logger.info(f"Architecture extracted to folder: {folderName}")
         logger.info(f"Architecture file in {folderName} need to be extended with sparsity and moved to upper folder")
 
+    def initialize_dualvar_auxvar(self):
+        """
+        Create two lists containing shallow copies of instances from the original list.
+        :param original_list: List of instances with a make_copy method.
+        :return: Two lists, each containing copies of the original instances.
+        """
+        # Create/Assign two lists using list comprehensions
+        self.list_U = [copy.copy(instance) for instance in self.list_W]
+        self.list_Z = [copy.copy(instance) for instance in self.list_W]
+
+        # Change Settings of each layer in the lists
+        [layer_W.set_admm_vars(ADMMVariable.W) for layer_W in self.list_W]
+        [layer_U.set_admm_vars(ADMMVariable.U) for layer_U in self.list_U]
+        [layer_Z.set_admm_vars(ADMMVariable.Z) for layer_Z in self.list_Z]
+
+    def initialize_pruning_mask_layer_list(self):
+        '''
+        This method should be general. You only have to change the implementation to get the right mask.
+        Assings the class variable list_masks the pruning masks per layer on same index level.
+        '''
+        self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
+
+    def clip_gradients(self):
+        if self.gradient_threshold is not None:
+            '''
+            with json file you can set a threshold value you can use it on whole model
+            or change the method to just use it on the to prune -> needs modification
+            atm it is used on whole model
+            Note: you can use norm_type: float = 2.0 
+            to have you own l-norm inside
+            '''
+            clip_grad_norm_(self.model.parameters(), self.gradient_threshold)
+
+    # Note: this is a weird normalization function of admm-nn repo with batch_size
+    def normalize_gradients(self):
+        '''
+        Normalizes model gradients layerwise with batch size
+        :return:
+        '''
+        for param in self.model.parameters():
+            if param.grad is not None:
+                param.grad *= self.batch_size_norm_coeff
+
+    def regularize_gradients(self):
+        '''
+        this regularizes the model gradients on l1 or l2 norm
+        '''
+        if self.regularization_l2_norm_enabled:
+            for param in self.model.parameters():
+                if param.requires_grad:
+                    param.grad += self.regularization_l_norm_decay * param.data
+        else:
+            for param in self.model.parameters():
+                if param.requires_grad:
+                    param.grad += self.regularization_l_norm_decay * torch.sign(param.data)
+
+    def _add_layerW_layerU_tolayerZ(self):
+        '''
+        This method iterates over 3 Lists(layer classes) on same index level and adds the specific tensor vars
+        Projection follows the formula Z^k = W^k + U^k
+        :param target_list: List of layerobjects which receive the equation
+        :param listA:  list of layerobjects which are term of summation
+        :param listB:  list of layerobjects which are term of summation
+        '''
+        for layerZ, layerW, layerU in zip(self.list_Z, self.list_W, self.list_U):
+            add_tensors_inplace(layerZ.Z, layerW.W, layerU.U)
+
+    def _update_layerU_with_layerW_layerZ(self):
+        '''
+        This updates the U layer according to U^k = U^(k-1)+W^k-Z^k
+        !!! Keep in mind not to mixup argument sequence, second argument in these functions will be copyed into target
+        and then get added/subtracted by the third argument!!! (mixing up results in wrong values)
+        :return:
+        '''
+        for layerZ, layerW, layerU in zip(self.list_Z, self.list_W, self.list_U):
+            add_tensors_inplace(layerU.U, layerU.U, layerW.W)
+            subtract_tensors_inplace(layerU.U, layerU.U, layerZ.Z)
+
+    def _prune_layerZ_with_layerMask(self):
+        '''
+        Applies pre-existing pruning masks to the tensors in self.list_Z in-place.
+        '''
+        # Ensure that the list of masks matches the list of tensors in length
+        if len(self.list_masks) != len(self.list_Z):
+            raise ValueError("The length of pruned_masks_list must match the length of self.list_Z.")
+
+        for layerZ, mask in zip(self.list_Z, self.list_masks):
+            # Apply the mask in-place to prune the tensor
+            layerZ.Z.mul_(mask)
+
+    def _update_layerdW(self):
+        '''
+        This updates the dW layer according to dW^(k+1) = dW^k + rho*W^k + rho*U^k - rho*Z^k
+        !!! Keep in mind not to mixup argument sequence, second argument in these functions will be copyed into target
+        and then get added/subtracted by the third argument!!! (mixing up results in wrong values)
+        :return:
+        '''
+        for layerZ, layerW, layerU in zip(self.list_Z, self.list_W, self.list_U):
+            scale_and_add_tensors_inplace(layerW.dW, self.rho, layerW.W, layerW.dW) # dW^(k+1/3) = dW^k + rho*W^k
+            scale_and_add_tensors_inplace(layerW.dW, -self.rho, layerZ.Z, layerW.dW) # dW^(k+2/3) = dW^(k+1/3) -rho*Z^k
+            scale_and_add_tensors_inplace(layerW.dW, self.rho, layerU.U, layerW.dW) # dW^(k+1) = dW^(k+2/3) + rho*U
+
+    def project_aux_layers(self):
+        '''
+        This method should be general. Changes in projecting of auxiliary layers (Z) should be inserted here
+        '''
+        self._add_layerW_layerU_tolayerZ()
+
+    def prune_aux_layers(self):
+        """
+        This method should be general. It prunes the layerZ with according to the layerMask through simple
+        multiplication
+        """
+        self._prune_layerZ_with_layerMask()
+
+    def update_dual_layers(self):
+        '''
+        This method should be general. Changes in updating the Dual Layers (U) should ge inserted here
+        '''
+        self._update_layerU_with_layerW_layerZ()
+
+    def solve_admm(self):
+        '''
+        This method should be general. Changes in updating the Weight Layers (W) should ge inserted here
+        '''
+        self._update_layerdW()
+
+
+
+
+
+    # TODO: weiß nichtmehr genau aber einfach im Kopf behalten
     def admmFilter(self):
         pass
 
@@ -272,71 +318,46 @@ class ADMMTrainer(DefaultTrainer):
 
         # TODO: all die Aufrufe löschen die waren nur zum Testen
         # TODO: abspeichern des Blocks zum testen von den layer listen
-        mask = create_magnitude_pruned_mask(self.list_Z[0].Z,0.1)
-        self.list_Z[0].Z = self.list_Z[0].Z*mask
-        self.list_W[0].W = self.list_W[0].W*mask
-        logger.critical(f"Difference after prune W-Z:")
-        logger.critical(self.list_W[0].W - self.list_Z[0].Z)
+        self.initialize_pruning_mask_layer_list()
 
-        for i in self.list_W:
-            logger.critical(f"Instance: {i} -> W: {(i.W is not None)}, dW: {(i.dW is not None)}, U: {(i.U is not None)}, Z: {(i.Z is not None)}")
+        self.project_aux_layers()
+        testvarZ = self.list_Z[0].Z.detach().clone()
+        self.prune_aux_layers()
 
-        for i in self.list_U:
-            logger.critical(f"Instance: {i} -> W: {(i.W is not None)}, dW: {(i.dW is not None)}, U: {(i.U is not None)}, Z: {(i.Z is not None)}")
+        print(self.list_Z[0].Z-testvarZ)
 
-        for i in self.list_Z:
-            logger.critical(f"Instance: {i} -> W: {(i.W is not None)}, dW: {(i.dW is not None)}, U: {(i.U is not None)}, Z: {(i.Z is not None)}")
+        logger.critical(f"Length for dataloader: {len(dataloader)}")
 
-        #self.testZCopy()
-        logger.critical(f"Difference W-Z: {(self.list_W[0].W-self.list_Z[0].Z).sum()}")
-        for module_name, module in self.model.named_modules():
-            if module_name == "model.conv1":
-                logger.critical(f"Difference Model-Z: {(module.weight.data-self.list_Z[0].Z).sum()}")
+        self.update_dual_layers()
+
+        self.solve_admm()
 
 
+# TODO: Normalization like this with size of batchsize
+# iteration_size = len(data_loader) # or any specific iteration size you have in mind
+#
+# for inputs, targets in data_loader:
+#     optimizer.zero_grad() # Zero the gradients at the start of the batch
+#     outputs = model(inputs) # Forward pass
+#     loss = loss_function(outputs, targets) # Compute the loss
+#     loss.backward() # Backward pass to calculate gradients
+#
+#     # Normalize gradients
+#     for param in model.parameters():
+#         if param.grad is not None:
+#             param.grad /= iteration_size
 
 
 
 
-    # def train(self, test = False):
-    #     self.preTrainingChecks()
-    #     dataloader = self.createDataLoader(self.dataset)
-    #     self.model.train()
-    #
-    #     count = 0
-    #     for i in range(self.epoch):
-    #         for batch, (X, y) in enumerate(dataloader):
-    #
-    #             if count == self.main_iterations:
-    #                 return
-    #
-    #             # remove existing settings
-    #             self.optimizer.zero_grad()
-    #
-    #             # Compute prediction and loss
-    #             pred = self.model(X)
-    #             loss = self.loss(pred, y)
-    #
-    #             # Backpropagation
-    #             loss.backward()
-    #
-    #             # here should the logic of admm cycle be located
-    #             self.admmFilter()
-    #
-    #             # Apply optimization with gradients
-    #             self.optimizer.step()
-    #
-    #             if batch % 2 == 0:
-    #                 loss, current = loss.item(), batch * len(X)
-    #                 print(f"Epoch number: {i}")
-    #                 print(f"loss: {loss:>7f}  [{current:>5d}/{len(dataloader.dataset):>5d}]")
-    #
-    #             # if it hits main_iterations count it will end the admm training
-    #             count += 1
-    #
-    #
-    #     if test is True:
-    #         self.test()
-    #
-    #     pass
+
+
+
+
+
+
+
+
+
+
 

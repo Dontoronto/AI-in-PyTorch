@@ -1,11 +1,11 @@
 [
     {
-        "sparsity": 0.5,
+        "sparsity": 0.05,
         "op_types": "Conv2d",
         "op_names": "model.conv1"
     },
     {
-        "sparsity": 0.6,
+        "sparsity": null,
         "op_types": "Conv2d",
         "op_names": "model.conv2"
     },

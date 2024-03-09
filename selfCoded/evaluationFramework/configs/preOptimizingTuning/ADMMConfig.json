@@ -1,7 +1,12 @@
 {
-  "trainer": {
+  "admm_trainer": {
     "main_iterations": 160000,
-    "admm_iterations": 8000
+    "admm_iterations": 8000,
+    "rho": 1e-4,
+    "gradient_threshold": null,
+    "batch_size": 64,
+    "regularization_l2_norm_enabled": true,
+    "regularization_l_norm_decay": 1e-5
   },
   "dataloader": {
     "batch_size": 16,
