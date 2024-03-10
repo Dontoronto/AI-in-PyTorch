@@ -173,6 +173,7 @@ class ADMMTrainer(DefaultTrainer):
         [layer_W.set_admm_vars(ADMMVariable.W) for layer_W in self.list_W]
         [layer_U.set_admm_vars(ADMMVariable.U) for layer_U in self.list_U]
         [layer_Z.set_admm_vars(ADMMVariable.Z) for layer_Z in self.list_Z]
+        logger.info(f"Layer lists were created")
 
     def initialize_pruning_mask_layer_list(self):
         '''
@@ -180,6 +181,7 @@ class ADMMTrainer(DefaultTrainer):
         Assings the class variable list_masks the pruning masks per layer on same index level.
         '''
         self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
+        logger.info(f"Pruning mask was created")
 
     def clip_gradients(self):
         if self.gradient_threshold is not None:
@@ -191,6 +193,7 @@ class ADMMTrainer(DefaultTrainer):
             to have you own l-norm inside
             '''
             clip_grad_norm_(self.model.parameters(), self.gradient_threshold)
+            #logger.info("Gradients will be clipped")
 
     # Note: this is a weird normalization function of admm-nn repo with batch_size
     def normalize_gradients(self):
@@ -201,11 +204,13 @@ class ADMMTrainer(DefaultTrainer):
         for param in self.model.parameters():
             if param.grad is not None:
                 param.grad *= self.batch_size_norm_coeff
+        #logger.info(f"Gradients were Normalized with: {self.batch_size_norm_coeff}")
 
     def regularize_gradients(self):
         '''
         this regularizes the model gradients on l1 or l2 norm
         '''
+        #logger.info(f"Gradients will be normalized with l2-norm={self.regularization_l2_norm_enabled}")
         if self.regularization_l2_norm_enabled:
             for param in self.model.parameters():
                 if param.requires_grad:
@@ -237,6 +242,7 @@ class ADMMTrainer(DefaultTrainer):
             add_tensors_inplace(layerU.U, layerU.U, layerW.W)
             subtract_tensors_inplace(layerU.U, layerU.U, layerZ.Z)
 
+    # TODO: vllt schon allgemeine Methode wird ja immer so ablaufen?? vllt ändern
     def _prune_layerZ_with_layerMask(self):
         '''
         Applies pre-existing pruning masks to the tensors in self.list_Z in-place.
@@ -248,6 +254,20 @@ class ADMMTrainer(DefaultTrainer):
         for layerZ, mask in zip(self.list_Z, self.list_masks):
             # Apply the mask in-place to prune the tensor
             layerZ.Z.mul_(mask)
+
+    # TODO: vllt schon allgemeine Methode wird ja immer so ablaufen?? vllt ändern
+    def _prune_layerW_with_layerMask(self):
+        '''
+        Applies pre-existing pruning masks to the weights/gradients in self.list_W in-place.
+        '''
+        # Ensure that the list of masks matches the list of tensors in length
+        if len(self.list_masks) != len(self.list_Z):
+            raise ValueError("The length of pruned_masks_list must match the length of self.list_W.")
+
+        for layerW, mask in zip(self.list_W, self.list_masks):
+            # Apply the mask in-place to prune the tensor
+            layerW.W.mul_(mask)
+            layerW.dW.mul_(mask)
 
     def _update_layerdW(self):
         '''
@@ -266,32 +286,60 @@ class ADMMTrainer(DefaultTrainer):
         This method should be general. Changes in projecting of auxiliary layers (Z) should be inserted here
         '''
         self._add_layerW_layerU_tolayerZ()
+        #logger.info(f"Auxiliary Layers were projected by ADMM")
 
+    # TODO: vllt schon allgemeine Methode wird ja immer so ablaufen?? vllt ändern
     def prune_aux_layers(self):
         """
         This method should be general. It prunes the layerZ with according to the layerMask through simple
         multiplication
         """
         self._prune_layerZ_with_layerMask()
+        #logger.info(f"Auxiliary layers were pruned by ADMM")
+
+    # TODO: vllt schon allgemeine Methode wird ja immer so ablaufen?? vllt ändern
+    def prune_weight_layer(self):
+        """
+        This method should be general. It prunes the layerW with according to the layerMask through simple
+        multiplication
+        """
+        self._prune_layerW_with_layerMask()
+        #logger.info("Weight layer was pruned by ADMM")
 
     def update_dual_layers(self):
         '''
         This method should be general. Changes in updating the Dual Layers (U) should ge inserted here
         '''
         self._update_layerU_with_layerW_layerZ()
+        #logger.info("Dual Layers were updated by ADMM")
 
     def solve_admm(self):
         '''
         This method should be general. Changes in updating the Weight Layers (W) should ge inserted here
         '''
         self._update_layerdW()
+        #logger.info("Gradients were updated by ADMM")
 
 
 
 
 
     # TODO: weiß nichtmehr genau aber einfach im Kopf behalten
-    def admmFilter(self):
+    def admm(self, curr_iteration):
+        #logging.disable(logging.WARNING)
+        self.clip_gradients()
+        self.normalize_gradients()
+        self.regularize_gradients()
+        if curr_iteration % self.admm_iterations == 0:
+            logger.critical(curr_iteration)
+            if curr_iteration > 8100:
+                exit()
+            self.initialize_pruning_mask_layer_list()
+            self.project_aux_layers()
+            self.prune_aux_layers()
+            if curr_iteration != 0:
+                self.update_dual_layers()
+        self.solve_admm()
         pass
 
     def train(self, test=False):
@@ -301,36 +349,28 @@ class ADMMTrainer(DefaultTrainer):
         self.initialize_dualvar_auxvar()
 
         dataloader = self.createDataLoader(self.dataset)
+
+        counter = 0
         if test is True:
             self.prepareDataset(testset=True)
             test_loader = self.createDataLoader(self.testset)
             test_loader.shuffle = False
         for epo in range(self.epoch):
             for batch_idx, (data, target) in enumerate(dataloader):
+                if counter > self.main_iterations:
+                    break
                 self.optimizer.zero_grad()
                 output = self.model(data)
                 loss = self.loss(output, target)
                 loss.backward()
-                break
+                self.admm(counter)
                 self.optimizer.step()
+                counter +=1
                 if batch_idx % 100 == 0:
                     print(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
-        # TODO: all die Aufrufe löschen die waren nur zum Testen
-        # TODO: abspeichern des Blocks zum testen von den layer listen
-        self.initialize_pruning_mask_layer_list()
-
-        self.project_aux_layers()
-        testvarZ = self.list_Z[0].Z.detach().clone()
-        self.prune_aux_layers()
-
-        print(self.list_Z[0].Z-testvarZ)
-
-        logger.critical(f"Length for dataloader: {len(dataloader)}")
-
-        self.update_dual_layers()
-
-        self.solve_admm()
+            if test is True:
+                self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
 
 
 # TODO: Normalization like this with size of batchsize

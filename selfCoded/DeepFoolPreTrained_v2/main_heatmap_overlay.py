@@ -60,6 +60,8 @@ from torchvision.transforms.functional import to_pil_image
 #cam_extractor = SmoothGradCAMpp(model)
 
 with SmoothGradCAMpp(model, target_layer='layer4') as cam_extractor:
+    print(img.shape)
+    print(batch.shape)
     # Preprocess your data and feed it to the model
     out = model(batch.clone().detach()).squeeze(0).softmax(0)
 

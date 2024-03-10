@@ -8,6 +8,8 @@ from .defaultTrainer import DefaultTrainer
 from .admmTrainer import ADMMTrainer
 import torch
 import copy
+import inspect
+
 
 
 
@@ -29,6 +31,17 @@ class TrainerFactory:
         del tempConfig['pre_optimization_tuning_path']
         return tempConfig
 
+    @staticmethod
+    def filterOptimizerArguments(cls, all_kwargs):
+        # Get the names of the parameters of the class __init__ method, excluding 'self'
+        init_sig = inspect.signature(cls.__init__)
+        init_params = set(init_sig.parameters.keys()) - {'self'}
+
+        # Filter the kwargs to include only the keys that match the class __init__ method's parameters
+        filtered_kwargs = {k: v for k, v in all_kwargs.items() if k in init_params}
+
+        return filtered_kwargs
+
 
     @staticmethod
     def createTrainer(model, dataHandler, kwargs):
@@ -46,11 +59,11 @@ class TrainerFactory:
 
         # TODO: eigene funktion für asuwahl des Optimizers
         if kwargs.get('optimizer') == "Adam":
-            tempConfig = TrainerFactory.filterOptimizerConfigs(kwargs)
+            tempConfig = TrainerFactory.filterOptimizerArguments(torch.optim.Adam,kwargs)
             logger.info("Filtered OptimizerConfig: " + str(tempConfig))
             optimizer = torch.optim.Adam(model.parameters(), **tempConfig)
         elif kwargs.get('optimizer') == "SGD":
-            tempConfig = TrainerFactory.filterOptimizerConfigs(kwargs)
+            tempConfig = TrainerFactory.filterOptimizerArguments(torch.optim.SGD,kwargs)
             logger.info("Filtered OptimizerConfig: " + str(tempConfig))
             optimizer = torch.optim.SGD(model.parameters(), **tempConfig)
 
