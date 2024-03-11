@@ -48,10 +48,15 @@ def main():
     Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
     Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
     Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
-    #Trainer.train(test=True)
-    Analyzer = analyzer.Analyzer(Model, DataHandler)
-    Analyzer.setDataset(DataHandler.loadDataset(testset=True))
-    Analyzer.runtest()
+    Trainer.train(test=True)
+    torch.save(Model.state_dict(), 'pruned_v1.pth')
+    # Analyzer = analyzer.Analyzer(Model, DataHandler)
+    # Analyzer.setDataset(DataHandler.loadDataset(testset=True))
+    # Analyzer.runtest()
+
+    # Model.load_state_dict(torch.load("pruned_v1.pth"))
+    # Analyzer.setModel(Model)
+    # Analyzer.runtest()
 
     #Trainer.layerArchitectureExtractor()
 

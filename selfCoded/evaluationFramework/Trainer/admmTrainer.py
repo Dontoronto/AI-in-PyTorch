@@ -331,10 +331,8 @@ class ADMMTrainer(DefaultTrainer):
         self.normalize_gradients()
         self.regularize_gradients()
         if curr_iteration % self.admm_iterations == 0:
-            logger.critical(curr_iteration)
-            if curr_iteration > 8100:
-                exit()
-            self.initialize_pruning_mask_layer_list()
+            if curr_iteration == 0:
+                self.initialize_pruning_mask_layer_list()
             self.project_aux_layers()
             self.prune_aux_layers()
             if curr_iteration != 0:
@@ -358,7 +356,9 @@ class ADMMTrainer(DefaultTrainer):
         for epo in range(self.epoch):
             for batch_idx, (data, target) in enumerate(dataloader):
                 if counter > self.main_iterations:
-                    break
+                    logger.critical(f"main interation: {self.main_iterations}")
+                    logger.critical(f"admm interation: {self.admm_iterations}")
+                    return
                 self.optimizer.zero_grad()
                 output = self.model(data)
                 loss = self.loss(output, target)
@@ -367,6 +367,7 @@ class ADMMTrainer(DefaultTrainer):
                 self.optimizer.step()
                 counter +=1
                 if batch_idx % 100 == 0:
+                    logger.critical(f"Iteration Number: {counter}")
                     print(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
             if test is True:
