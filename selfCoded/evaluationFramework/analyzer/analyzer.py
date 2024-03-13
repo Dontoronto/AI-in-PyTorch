@@ -79,6 +79,20 @@ class Analyzer():
 
         self.pruningCounter(model=model)
 
+    def gradCam_all_layers(self, model, original_image, single_batch):
+        '''
+        :param model: this is the pytorch model
+        :param original_image: this is the image in PIL format
+        :param single_batch:  this is the model input as a single batch as tensor
+        :return:
+        '''
+        for name, module in model.named_modules():
+            if isinstance(module, torch.nn.Conv2d):
+
+                self.gradCamLayer(model=model, original_image=original_image,
+                                  single_batch=single_batch, target_layer=name)
+
+
     # TODO: target_layer noch ändern so dass man irgendwie per json mitgeben kann
     def gradCamLayer(self, model, original_image, single_batch, target_layer):
         '''
@@ -103,19 +117,8 @@ class Analyzer():
             # Resize the CAM and overlay it
             result = overlay_mask(to_pil_image(image), to_pil_image(activation_map[0].squeeze(0), mode='F'), alpha=0.5)
 
-        fig, ax = plt.subplots(1, 2, facecolor='dimgray')
-        if img.shape[0] == 1:
-            # Note: this is just for single channel images gray with values from 0 to 1
-            ax[0].imshow(img.cpu().detach().clone().numpy().transpose(1, 2, 0), cmap='gray', vmin=0, vmax=1)
-        else:
-            # Note: Not tested atm, have to check if image values are from 0 to 255 not 0 to 1 and maybe more
-            ax[0].imshow(img.cpu().detach().clone().numpy().transpose(1, 2, 0))
-        ax[0].axis('off')
-        ax[1].imshow(result)
-        ax[1].axis('off')
-        plt.tight_layout()
-        fig.suptitle(f'The Image and Gradient CAM for layer: {target_layer}')
-        plt.show()
+        plot_original_vs_observation(img_as_tensor=img, result=result,
+                                     text=f'The Image and Gradient CAM for layer: {target_layer}')
 
     # TODO: maybe it needs some adjustments, to exhausted after fighting with matplotlib atm
     def saliency_map(self, model, original_image, single_batch):
@@ -148,19 +151,7 @@ class Analyzer():
         saliency = saliency.reshape(width, height)
 
         # Visualize the image and the saliency map
-        fig, ax = plt.subplots(1, 2, facecolor='dimgray')
-        if img.shape[0] == 1:
-            # Note: this is just for single channel images gray with values from 0 to 1
-            ax[0].imshow(img.cpu().detach().numpy().transpose(1, 2, 0), cmap='gray', vmin=0, vmax=1)
-        else:
-            # Note: Not tested atm, have to check if image values are from 0 to 255 not 0 to 1 and maybe more
-            ax[0].imshow(img.cpu().detach().numpy().transpose(1, 2, 0))
-        ax[0].axis('off')
-        ax[1].imshow(saliency.cpu(), cmap='gray')
-        ax[1].axis('off')
-        plt.tight_layout()
-        fig.suptitle('The Image and Its Saliency Map')
-        plt.show()
+        plot_original_vs_observation(img_as_tensor=img, result=saliency, text='The Image and Its Saliency Map')
         model.eval()
 
     # TODO: schauen wie man das noch schöner für mehrere Models darstellen kann
@@ -189,5 +180,26 @@ class Analyzer():
         ):
             self.test(model=self.model, test_loader=test_loader, loss_func=loss_func)
 
+    def grad_all(self, test_index):
+        sample, label = self.dataset[test_index]
+        batch = sample.unsqueeze(0)
+        img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
+        self.gradCam_all_layers(self.model, original_image=img, single_batch=batch)
 
+# TODO: evtl. eigen file wo nur plots über matplotlib sind
+@staticmethod
+def plot_original_vs_observation(img_as_tensor, result, text):
+    fig, ax = plt.subplots(1, 2, facecolor='dimgray')
+    if img_as_tensor.shape[0] == 1:
+        # Note: this is just for single channel images gray with values from 0 to 1
+        ax[0].imshow(img_as_tensor.cpu().detach().clone().numpy().transpose(1, 2, 0), cmap='gray', vmin=0, vmax=1)
+    else:
+        # Note: Not tested atm, have to check if image values are from 0 to 255 not 0 to 1 and maybe more
+        ax[0].imshow(img_as_tensor.cpu().detach().clone().numpy().transpose(1, 2, 0))
+    ax[0].axis('off')
+    ax[1].imshow(result, cmap='gray')
+    ax[1].axis('off')
+    plt.tight_layout()
+    fig.suptitle(text)
+    plt.show()
 #%%

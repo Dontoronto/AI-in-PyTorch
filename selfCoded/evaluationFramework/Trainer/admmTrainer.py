@@ -400,7 +400,7 @@ class ADMMTrainer(DefaultTrainer):
                     if test is True:
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
 
-                torch.save(self.model, self.model_name + "_admm_" + phase)
+                torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
 
             else:
                 self.initialize_dualvar_auxvar()
@@ -427,7 +427,7 @@ class ADMMTrainer(DefaultTrainer):
                     if test is True:
                         self.test(test_loader, snapshot_enabled=False, current_epoch=epo)
                 # saving model
-                torch.save(self.model,self.model_name + "_admm_" + phase)
+                torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
 
 # TODO: Normalization like this with size of batchsize
 # iteration_size = len(data_loader) # or any specific iteration size you have in mind
