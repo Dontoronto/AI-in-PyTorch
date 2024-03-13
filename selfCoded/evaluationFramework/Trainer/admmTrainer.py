@@ -49,6 +49,12 @@ class ADMMTrainer(DefaultTrainer):
         self.regularization_l2_norm_enabled = None
         self.regularization_l_norm_decay = None
 
+        # phases of iterating
+        self.phase_list = []
+
+        # flag for saving model afterwards
+        self.save = False
+
         # layers to be pruned
         self.list_W = []
         # Dual Variable layers
@@ -86,6 +92,18 @@ class ADMMTrainer(DefaultTrainer):
             self.regularization_l2_norm_enabled = kwargs.get("admm_trainer").get("regularization_l2_norm_enabled")
         if kwargs.get("admm_trainer").get("regularization_l_norm_decay") is not None:
             self.regularization_l_norm_decay = kwargs.get("admm_trainer").get("regularization_l_norm_decay")
+
+        # Note: phases for training
+        if kwargs.get("admm_trainer").get("phase_list") is not None:
+            self.phase_list = kwargs.get("admm_trainer").get("phase_list")
+            if isinstance(self.phase_list, list):
+                logger.info(f"Phase list from ADMMConfig.json is of type list")
+            else:
+                logger.warning(f"Phase list from ADMMConfig.json is not of type list. Example: ['admm','retrain']")
+
+        # Note: for saving the model afterwards
+        if kwargs.get("admm_trainer").get("save") is not None:
+            self.save = kwargs.get("admm_trainer").get("save")
 
     def setADMMArchitectureConfig(self, kwargs):
         logger.info("ADMM Architecture Config was loaded into ADMMTrainer")
@@ -356,36 +374,60 @@ class ADMMTrainer(DefaultTrainer):
         self.model.train()
         self.preTrainingChecks()
 
-        self.initialize_dualvar_auxvar()
+        # self.initialize_dualvar_auxvar()
 
         dataloader = self.createDataLoader(self.dataset)
-
-        counter = 0
-        if test is True:
-            self.prepareDataset(testset=True)
-            test_loader = self.createDataLoader(self.testset)
-            test_loader.shuffle = False
-        for epo in range(self.epoch):
-            for batch_idx, (data, target) in enumerate(dataloader):
-                if counter > self.main_iterations:
-                    logger.critical(f"main interation: {self.main_iterations}")
-                    logger.critical(f"admm interation: {self.admm_iterations}")
-                    return
-                self.optimizer.zero_grad()
-                output = self.model(data)
-                loss = self.loss(output, target)
-                loss.backward()
-                # self.admm(counter)
-                self.retrain(counter)
-                self.optimizer.step()
-                counter +=1
-                if batch_idx % 100 == 0:
-                    logger.critical(f"Iteration Number: {counter}")
-                    print(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
-
+        for phase in self.phase_list:
+            counter = 0
             if test is True:
-                self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
+                self.prepareDataset(testset=True)
+                test_loader = self.createDataLoader(self.testset)
+                test_loader.shuffle = False
+            if phase == "train":
+                for epo in range(self.epoch):
+                    for batch_idx, (data, target) in enumerate(dataloader):
 
+                        self.optimizer.zero_grad()
+                        output = self.model(data)
+                        loss = self.loss(output, target)
+                        loss.backward()
+                        self.optimizer.step()
+
+                        if batch_idx % 100 == 0:
+                            logger.critical(f"Iteration Number: {counter}")
+                            print(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+
+                    if test is True:
+                        self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
+
+                torch.save(self.model, self.model_name + "_admm_" + phase)
+
+            else:
+                self.initialize_dualvar_auxvar()
+                while self.main_iterations > counter:
+                    for batch_idx, (data, target) in enumerate(dataloader):
+
+                        self.optimizer.zero_grad()
+                        output = self.model(data)
+                        loss = self.loss(output, target)
+                        loss.backward()
+
+                        if phase == "admm":
+                            self.admm(counter)
+
+                        if phase == "retrain":
+                            self.retrain(counter)
+
+                        self.optimizer.step()
+                        counter +=1
+                        if batch_idx % 100 == 0:
+                            logger.critical(f"Iteration Number: {counter}")
+                            print(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+
+                    if test is True:
+                        self.test(test_loader, snapshot_enabled=False, current_epoch=epo)
+                # saving model
+                torch.save(self.model,self.model_name + "_admm_" + phase)
 
 # TODO: Normalization like this with size of batchsize
 # iteration_size = len(data_loader) # or any specific iteration size you have in mind

@@ -1,0 +1,27 @@
+[
+    {
+        "sparsity": 0.7,
+        "op_types": "Conv2d",
+        "op_names": "model.conv1"
+    },
+    {
+        "sparsity": 0.2,
+        "op_types": "Conv2d",
+        "op_names": "model.conv2"
+    },
+    {
+        "sparsity": 0.1,
+        "op_types": "Linear",
+        "op_names": "model.fc1"
+    },
+    {
+        "sparsity": 0.1,
+        "op_types": "Linear",
+        "op_names": "model.fc2"
+    },
+    {
+        "sparsity": null,
+        "op_types": "Linear",
+        "op_names": "model.fc3"
+    }
+]

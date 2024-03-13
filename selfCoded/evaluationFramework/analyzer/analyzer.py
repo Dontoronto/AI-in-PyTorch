@@ -5,7 +5,7 @@ import cv2
 logger = logging.getLogger(__name__)
 
 from torch.utils.data import DataLoader
-from torch.optim import Optimizer
+from torch.nn.modules.loss import _Loss
 import torchvision.transforms as T
 import numpy as np
 
@@ -32,13 +32,6 @@ class Analyzer():
         self.datahandler = datahandler
         self.dataloaderConfig = None
         self.dataset = None
-
-
-    def setDataLoaderSettings(self, kwargs: dict):
-        '''
-        sets custom Dataloader configuration
-        '''
-        self.dataloaderConfig = kwargs
 
     def setModel(self, model):
         self.model = model
@@ -78,15 +71,16 @@ class Analyzer():
         test_loss /= len(test_loader.dataset)
         logger.info(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
 
-    def evaluate(self, model, img, single_batch):
-        self.gradCamLayer(model=model, original_image=img, single_batch=single_batch)
+    def evaluate(self, model, img, single_batch, target_layer):
+        self.gradCamLayer(model=model, original_image=img,
+                          single_batch=single_batch, target_layer=target_layer)
 
         self.saliency_map(model=model, original_image=img, single_batch=single_batch)
 
         self.pruningCounter(model=model)
 
     # TODO: target_layer noch ändern so dass man irgendwie per json mitgeben kann
-    def gradCamLayer(self, model, original_image, single_batch, target_layer='model.conv1'):
+    def gradCamLayer(self, model, original_image, single_batch, target_layer):
         '''
         :param model: model to test
         :param original_image: PIL Image type
@@ -108,14 +102,6 @@ class Analyzer():
 
             # Resize the CAM and overlay it
             result = overlay_mask(to_pil_image(image), to_pil_image(activation_map[0].squeeze(0), mode='F'), alpha=0.5)
-            # Display it
-            # plt.imshow(result)
-            # plt.axis('off')
-            # plt.tight_layout()
-            # plt.show()
-            # logger.critical(result.size)
-            # logger.critical(result.getdata())
-            # logger.critical(result.info)
 
         fig, ax = plt.subplots(1, 2, facecolor='dimgray')
         if img.shape[0] == 1:
@@ -179,24 +165,27 @@ class Analyzer():
 
     # TODO: schauen wie man das noch schöner für mehrere Models darstellen kann
     def run_single_model_test(self, test_index, test_end_index=None,
-                              test_loader=None, loss_func=None):
+                              test_loader=None, loss_func=None,
+                              target_layer='model.conv1'):
 
         if test_end_index is None:
             sample, label = self.dataset[test_index]
             batch = sample.unsqueeze(0)
             img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
-            self.evaluate(model=self.model, img=img, single_batch=batch)
+            self.evaluate(model=self.model, img=img, single_batch=batch,
+                          target_layer=target_layer)
 
         else:
             for index in range(test_index, test_end_index + 1):
                 sample, label = self.dataset[index]
                 batch = sample.unsqueeze(0)
                 img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
-                self.evaluate(model=self.model, img=img, single_batch=batch)
+                self.evaluate(model=self.model, img=img, single_batch=batch,
+                              target_layer=target_layer)
 
         if (
                 isinstance(test_loader, DataLoader) and
-                isinstance(loss_func, Optimizer)
+                isinstance(loss_func, _Loss)
         ):
             self.test(model=self.model, test_loader=test_loader, loss_func=loss_func)
 
