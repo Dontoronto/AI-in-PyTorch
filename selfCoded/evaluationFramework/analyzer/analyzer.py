@@ -5,6 +5,7 @@ import cv2
 logger = logging.getLogger(__name__)
 
 from torch.utils.data import DataLoader
+from torch.optim import Optimizer
 import torchvision.transforms as T
 import numpy as np
 
@@ -27,6 +28,7 @@ class Analyzer():
         :param dataloaderConfig: arguments for DataLoader Class saved as dict
         '''
         self.model = model
+        self.model_list = None
         self.datahandler = datahandler
         self.dataloaderConfig = None
         self.dataset = None
@@ -44,35 +46,62 @@ class Analyzer():
     def setDataset(self, dataset):
         self.dataset = dataset
 
+    def setModelList(self, model_list):
+        self.model_list = model_list
+
     def loadImage(self, path):
         return self.datahandler.loadImage(path)
 
-    def createDataLoader(self, dataset):
-        if self.dataloaderConfig is not None:
-            logger.info("Created Dataloader with settings: " + str(self.dataloaderConfig))
-            return DataLoader(dataset, **self.dataloaderConfig)
-        else:
-            logger.warning("No Configs for Dataloader available, creating Dataloader with default arguments")
-            return DataLoader(dataset)
+    def pruningCounter(self, model):
+        # zeros_count = (tensor == 0).sum().item()
+        for name, parameter in model.named_parameters():
+            if parameter.requires_grad:
+                # Count zeros and total weights
+                zeros_count = torch.eq(parameter, 0).sum().item()
+                total_weights = parameter.numel()
+                zero_weights_percentage = (zeros_count / total_weights) * 100
 
-    def gradCamLayer(self, original_image, batch, target_layer='model.conv1'):
+                # Print layer information
+                logger.info(f"Layer: {name}, Zero weights: {total_weights}/{zeros_count} ({zero_weights_percentage:.2f}%)")
+
+    def test(self, model, test_loader, loss_func):
+        model.eval()
+        test_loss = 0
+        correct = 0
+        test_loader = test_loader
+        with torch.no_grad():
+            for data, target in test_loader:
+                output = self.model(data)
+                test_loss += loss_func(output, target).item()
+                pred = output.argmax(dim=1, keepdim=True)
+                correct += pred.eq(target.view_as(pred)).sum().item()
+        test_loss /= len(test_loader.dataset)
+        logger.info(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
+
+    def evaluate(self, model, img, single_batch):
+        self.gradCamLayer(model=model, original_image=img, single_batch=single_batch)
+
+        self.saliency_map(model=model, original_image=img, single_batch=single_batch)
+
+        self.pruningCounter(model=model)
+
+    # TODO: target_layer noch ändern so dass man irgendwie per json mitgeben kann
+    def gradCamLayer(self, model, original_image, single_batch, target_layer='model.conv1'):
         '''
-
-        :param img: PIL Image type
-        :param batch:  Tensor type batched shape (1,channel,width,height)
+        :param model: model to test
+        :param original_image: PIL Image type
+        :param single_batch: Tensor type batched shape (1,channel,width,height)
         :param target_layer: "string of layer name
-        :return:
         '''
 
         image = original_image.copy()
         image = image.convert(mode='RGB')
         image = T.Compose([T.ToTensor()])(image)
-        logger.critical(torch.unique(image))
         img = T.Compose([T.ToTensor()])(original_image.copy())
-        with SmoothGradCAMpp(self.model, target_layer=target_layer) as cam_extractor:
+        with SmoothGradCAMpp(model, target_layer=target_layer) as cam_extractor:
             # Preprocess your data and feed it to the model
-            self.model.eval()
-            out = self.model(batch).squeeze(0).softmax(0)
+            model.eval()
+            out = model(single_batch).squeeze(0).softmax(0)
 
             # Retrieve the CAM by passing the class index and the model output
             activation_map = cam_extractor(out.squeeze(0).argmax().item(), out)
@@ -103,15 +132,22 @@ class Analyzer():
         plt.show()
 
     # TODO: maybe it needs some adjustments, to exhausted after fighting with matplotlib atm
-    def saliency_map(self, original_image, batched_preprocessed_input):
+    def saliency_map(self, model, original_image, single_batch):
+        '''
+        :param model: model to test
+        :param original_image: PIL image type
+        :param single_batch: Tensor type batched shape (1,channel,width,height)
+        :return:
+        '''
+        model.eval()
         width, height = original_image.size
         img = T.Compose([T.ToTensor()])(original_image)
 
         # Set the requires_grad_ to the image for retrieving gradients
-        batched_preprocessed_input.requires_grad_()
+        single_batch.requires_grad_()
 
         # Retrieve output from the image
-        output = self.model(batched_preprocessed_input)
+        output = model(single_batch)
 
         # Catch the output
         output_idx = output.argmax()
@@ -122,7 +158,7 @@ class Analyzer():
 
         # Retireve the saliency map and also pick the maximum value from channels on each pixel.
         # In this case, we look at dim=1. Recall the shape (batch_size, channel, width, height)
-        saliency, _ = torch.max(batched_preprocessed_input.grad.data.abs(), dim=1)
+        saliency, _ = torch.max(single_batch.grad.data.abs(), dim=1)
         saliency = saliency.reshape(width, height)
 
         # Visualize the image and the saliency map
@@ -139,34 +175,30 @@ class Analyzer():
         plt.tight_layout()
         fig.suptitle('The Image and Its Saliency Map')
         plt.show()
+        model.eval()
 
-    def runtest(self):
-        image, label = self.dataset[0]
-        batch = image.unsqueeze(0)
+    # TODO: schauen wie man das noch schöner für mehrere Models darstellen kann
+    def run_single_model_test(self, test_index, test_end_index=None,
+                              test_loader=None, loss_func=None):
 
-        img = self.datahandler.preprocessBackwardsNonBatched(image)
+        if test_end_index is None:
+            sample, label = self.dataset[test_index]
+            batch = sample.unsqueeze(0)
+            img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
+            self.evaluate(model=self.model, img=img, single_batch=batch)
 
-        #img.show()
-        #new = img.convert(mode='RGB')
-        #new.show()
-        # image = image.unsqueeze(0)
-        #
-        # pre = T.Compose([T.ToTensor()])
-        # new_t = pre(img)#.unsqueeze(0)
+        else:
+            for index in range(test_index, test_end_index + 1):
+                sample, label = self.dataset[index]
+                batch = sample.unsqueeze(0)
+                img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
+                self.evaluate(model=self.model, img=img, single_batch=batch)
 
-        #print(new_t)
-
-        #out = self.model(batch)
-        #image = self.datahandler.preprocessBackwardsBatched(sample)
-        #logger.critical(image.shape)
-        #logger.critical(sample.shape)
-
-
-        self.gradCamLayer(img, batch)
-        self.saliency_map(original_image=img, batched_preprocessed_input=batch)
-
-
-        #logger.critical(out)
+        if (
+                isinstance(test_loader, DataLoader) and
+                isinstance(loss_func, Optimizer)
+        ):
+            self.test(model=self.model, test_loader=test_loader, loss_func=loss_func)
 
 
 #%%

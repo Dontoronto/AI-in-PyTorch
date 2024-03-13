@@ -219,36 +219,25 @@ class DefaultTrainer(Trainer):
         print(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
         if snapshot_enabled is True:
             self.createSnapshot(test_loss, current_epoch)
+
+    def getTestLoader(self):
+        self.preTrainingChecks()
+        self.prepareDataset(testset=True)
+        test_loader = self.createDataLoader(self.testset)
+        test_loader.shuffle = False
+        return test_loader
+
+    def getLossFunction(self):
+        return self.loss
+
     def createSnapshot(self, val_loss, epoch):
-        if epoch > self.recovery_epoch:
-            # Prüfen, ob es eine Verbesserung gibt
-            if val_loss < self.best_test_loss:
-                self.best_test_loss = val_loss
-                self.best_epoch = epoch
-                self.epoch_since_improvement = 0
-                # Speichern des besten Checkpoints
-                logger.info(f"New best Model will be safed to: {self.snapshot_model_path}")
-                torch.save({
-                    'epoch': epoch + 1,
-                    'model_state_dict': self.model.state_dict(),
-                    'optimizer_state_dict': self.optimizer.state_dict(),
-                    'loss': val_loss,
-                }, self.snapshot_model_path)
-                if self.snapshot_model_path_raw is not None:
-                    logger.info(f"New raw best Model will be safed to: {self.snapshot_model_path_raw}")
-                    torch.save(self.model.state_dict(),self.snapshot_model_path_raw)
-            else:
-                # Wenn sich das Modell in die falsche Richtung entwickelt
-                if os.path.exists(self.snapshot_model_path):
-                    self.epoch_since_improvement += 1
-                    if self.epoch_since_improvement >= self.recovery_epoch:
-                        logger.info(f'Keine Verbesserung seit {self.recovery_epoch} Epochen, lade besten Checkpoint von Epoche {self.best_epoch+1}')
-                        # Laden des besten Checkpoints
-                        checkpoint = torch.load(self.snapshot_model_path)
-                        self.model.load_state_dict(checkpoint['model_state_dict'])
-                        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-                        self.epoch_since_improvement = 0  # Reset der Patience nach dem Zurückladen
-                else:
+            if epoch > self.recovery_epoch:
+                # Prüfen, ob es eine Verbesserung gibt
+                if val_loss < self.best_test_loss:
+                    self.best_test_loss = val_loss
+                    self.best_epoch = epoch
+                    self.epoch_since_improvement = 0
+                    # Speichern des besten Checkpoints
                     logger.info(f"New best Model will be safed to: {self.snapshot_model_path}")
                     torch.save({
                         'epoch': epoch + 1,
@@ -259,6 +248,28 @@ class DefaultTrainer(Trainer):
                     if self.snapshot_model_path_raw is not None:
                         logger.info(f"New raw best Model will be safed to: {self.snapshot_model_path_raw}")
                         torch.save(self.model.state_dict(),self.snapshot_model_path_raw)
+                else:
+                    # Wenn sich das Modell in die falsche Richtung entwickelt
+                    if os.path.exists(self.snapshot_model_path):
+                        self.epoch_since_improvement += 1
+                        if self.epoch_since_improvement >= self.recovery_epoch:
+                            logger.info(f'Keine Verbesserung seit {self.recovery_epoch} Epochen, lade besten Checkpoint von Epoche {self.best_epoch+1}')
+                            # Laden des besten Checkpoints
+                            checkpoint = torch.load(self.snapshot_model_path)
+                            self.model.load_state_dict(checkpoint['model_state_dict'])
+                            self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+                            self.epoch_since_improvement = 0  # Reset der Patience nach dem Zurückladen
+                    else:
+                        logger.info(f"New best Model will be safed to: {self.snapshot_model_path}")
+                        torch.save({
+                            'epoch': epoch + 1,
+                            'model_state_dict': self.model.state_dict(),
+                            'optimizer_state_dict': self.optimizer.state_dict(),
+                            'loss': val_loss,
+                        }, self.snapshot_model_path)
+                        if self.snapshot_model_path_raw is not None:
+                            logger.info(f"New raw best Model will be safed to: {self.snapshot_model_path_raw}")
+                            torch.save(self.model.state_dict(),self.snapshot_model_path_raw)
 
     # NOTE: this method is for saving a model state with a log-message
     def export_model(self, model_path):

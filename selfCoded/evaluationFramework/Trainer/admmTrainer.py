@@ -331,8 +331,9 @@ class ADMMTrainer(DefaultTrainer):
         self.normalize_gradients()
         self.regularize_gradients()
         if curr_iteration % self.admm_iterations == 0:
-            if curr_iteration == 0:
-                self.initialize_pruning_mask_layer_list()
+            # if statement entfernen für dynamische maske
+            #if curr_iteration == 0:
+            self.initialize_pruning_mask_layer_list()
             self.project_aux_layers()
             self.prune_aux_layers()
             if curr_iteration != 0:
@@ -340,6 +341,17 @@ class ADMMTrainer(DefaultTrainer):
         self.solve_admm()
         pass
 
+    def retrain(self, curr_iteration):
+        self.clip_gradients()
+        self.normalize_gradients()
+        self.regularize_gradients()
+        if curr_iteration == 0:
+            self.initialize_pruning_mask_layer_list()
+        self.prune_weight_layer()
+
+
+    # TODO: methode umschreiben so dass epoch nichtmehr gebraucht wird für admm
+    # TODO: symbiose von ADMM und retraining
     def train(self, test=False):
         self.model.train()
         self.preTrainingChecks()
@@ -363,7 +375,8 @@ class ADMMTrainer(DefaultTrainer):
                 output = self.model(data)
                 loss = self.loss(output, target)
                 loss.backward()
-                self.admm(counter)
+                # self.admm(counter)
+                self.retrain(counter)
                 self.optimizer.step()
                 counter +=1
                 if batch_idx % 100 == 0:
