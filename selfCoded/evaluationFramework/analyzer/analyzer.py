@@ -5,9 +5,7 @@ logger = logging.getLogger(__name__)
 from torch.utils.data import DataLoader
 from torch.nn.modules.loss import _Loss
 
-import matplotlib.pyplot as plt
 import torch
-#cam_extractor = SmoothGradCAMpp(model)
 
 from .activationMaps.saliencyMap import saliency_map
 from .featureMaps.gradCam import gradCamLayer
@@ -78,7 +76,8 @@ class Analyzer():
         img_tensor, saliency = saliency_map(model=model, original_image=img, single_batch=single_batch)
         plot_original_vs_observation(img_as_tensor=img_tensor, result=saliency,
                                      text="The Image and Its Saliency Map")
-
+        # TODO: funktion schreiben welche die Modell Liste vergleicht. Funktion soll Dict zurückgeben.
+        # TODO: diese können wie die Modellliste gesammelt und dargestellt werden
         pruningCounter(model=model)
 
     def gradCam_all_layers(self, model, original_image, single_batch):

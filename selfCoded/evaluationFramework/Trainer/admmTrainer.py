@@ -3,12 +3,10 @@ import copy
 from .defaultTrainer import DefaultTrainer
 from .admm_utils.utils import (create_magnitude_pruned_mask, add_tensors_inplace, subtract_tensors_inplace,
                                scale_and_add_tensors_inplace)
-from .admm_utils.layerInfo import LayerInfo, ADMMVariable
+from .admm_utils.layerInfo import ADMMVariable
+from .mapper.admm_mapper import ADMMConfigMapper, ADMMArchitectureConfigMapper
 
 import torch
-import os
-import json
-import torch.nn as nn
 from torch.nn.utils import clip_grad_norm_
 import logging
 
@@ -72,56 +70,11 @@ class ADMMTrainer(DefaultTrainer):
         self.admm_iterations = None
 
     def setADMMConfig(self, kwargs):
-        logger.info("ADMM Config was loaded into ADMMTrainer")
-        self.admmConfig = kwargs
-        # logger.critical(kwargs['trainer'])
-        if kwargs.get("admm_trainer").get("main_iterations") is not None:
-            self.main_iterations = kwargs.get("admm_trainer").get("main_iterations")
-        if kwargs.get("admm_trainer").get("admm_iterations") is not None:
-            self.admm_iterations = kwargs.get("admm_trainer").get("admm_iterations")
-        if kwargs.get("admm_trainer").get("rho") is not None:
-            self.rho = kwargs.get("admm_trainer").get("admm_iterations")
-        if kwargs.get("admm_trainer").get("gradient_threshold") is not None:
-            self.gradient_threshold = kwargs.get("admm_trainer").get("gradient_threshold")
-
-        # Note: custom batch_size for normalizing
-        if kwargs.get("admm_trainer").get("batch_size") is not None:
-            self.batch_size_norm_coeff = 1/kwargs.get("admm_trainer").get("batch_size")
-        # Note: regularization with l1 or l2 norm
-        if kwargs.get("admm_trainer").get("regularization_l2_norm_enabled") is not None:
-            self.regularization_l2_norm_enabled = kwargs.get("admm_trainer").get("regularization_l2_norm_enabled")
-        if kwargs.get("admm_trainer").get("regularization_l_norm_decay") is not None:
-            self.regularization_l_norm_decay = kwargs.get("admm_trainer").get("regularization_l_norm_decay")
-
-        # Note: phases for training
-        if kwargs.get("admm_trainer").get("phase_list") is not None:
-            self.phase_list = kwargs.get("admm_trainer").get("phase_list")
-            if isinstance(self.phase_list, list):
-                logger.info(f"Phase list from ADMMConfig.json is of type list")
-            else:
-                logger.warning(f"Phase list from ADMMConfig.json is not of type list. Example: ['admm','retrain']")
-
-        # Note: for saving the model afterwards
-        if kwargs.get("admm_trainer").get("save") is not None:
-            self.save = kwargs.get("admm_trainer").get("save")
+        ADMMConfigMapper(self, kwargs)
 
     def setADMMArchitectureConfig(self, kwargs):
-        logger.info("ADMM Architecture Config was loaded into ADMMTrainer")
-        self.admmArchitectureConfig = kwargs
-        for val in self.admmArchitectureConfig:
-            if val['sparsity'] != None:
-                for name_module, module in self.model.named_modules():
-                    if name_module == val['op_names']:
-                        for name_param, param in self.model.named_parameters():
-                            if name_param == name_module + ".weight":
-                                self.list_W.append(LayerInfo(name_module, module, param, val['sparsity']))
-                                break
-                        break
+        ADMMArchitectureConfigMapper(self, kwargs)
 
-            else:
-                continue
-        #logger.critical(self.list_W)
-        #logger.critical(self.list_W[0].module.weight.data)
 
     # TODO: needs to be deleted at the end
     def testZCopy(self):
@@ -147,35 +100,6 @@ class ADMMTrainer(DefaultTrainer):
                 logger.critical(f"Layer Shape: {self.list_W[0].dW.shape}")
                 logger.critical(f"Difference Model-Layer: {(param.grad - self.list_W[0].dW).sum()}")
                 logger.critical(f"Difference Deepcopy-Layer: {(grad_copy - self.list_W[0].dW).sum()}")
-
-
-    def layerArchitectureExtractor(self):
-        # Check if the folder exists, create it if not
-        folderName = "configs/preOptimizingTuning/model_architecture"
-        if not os.path.exists(folderName):
-            os.makedirs(folderName)
-        config_list = []
-        for name, module in self.model.named_modules():
-            if isinstance(module, nn.Conv2d):
-                config_list.append({
-                    'sparsity': None,
-                    'op_types': 'Conv2d',
-                    'op_names': name
-                    #'configuration': str(module)
-                })
-                logger.info(f"Layer Name: {name} was extracted.")
-            elif isinstance(module, nn.Linear):
-                config_list.append({
-                    'sparsity': None,
-                    'op_types': 'Linear',
-                    'op_names': name
-                    #'configuration': str(module)
-                })
-                logger.info(f"Layer Name: {name} was extracted.")
-        with open(folderName + "/ADMMModelArchitecture.json", 'w') as file:
-            json.dump(config_list, file, indent=4)
-        logger.info(f"Architecture extracted to folder: {folderName}")
-        logger.info(f"Architecture file in {folderName} need to be extended with sparsity and moved to upper folder")
 
     def initialize_dualvar_auxvar(self):
         """
@@ -338,10 +262,6 @@ class ADMMTrainer(DefaultTrainer):
         self._update_layerdW()
         #logger.info("Gradients were updated by ADMM")
 
-
-
-
-
     # TODO: weiß nichtmehr genau aber einfach im Kopf behalten
     def admm(self, curr_iteration):
         #logging.disable(logging.WARNING)
@@ -378,6 +298,7 @@ class ADMMTrainer(DefaultTrainer):
 
         dataloader = self.createDataLoader(self.dataset)
         for phase in self.phase_list:
+            save_path = self.model_name + "_admm_" + phase + ".pth"
             counter = 0
             if test is True:
                 self.prepareDataset(testset=True)
@@ -394,13 +315,13 @@ class ADMMTrainer(DefaultTrainer):
                         self.optimizer.step()
 
                         if batch_idx % 100 == 0:
-                            logger.critical(f"Iteration Number: {counter}")
-                            print(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+                            logger.info(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
 
-                torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
+                self.export_model(model_path=save_path)
+                #torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
 
             else:
                 self.initialize_dualvar_auxvar()
@@ -421,13 +342,13 @@ class ADMMTrainer(DefaultTrainer):
                         self.optimizer.step()
                         counter +=1
                         if batch_idx % 100 == 0:
-                            logger.critical(f"Iteration Number: {counter}")
-                            print(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+                            logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
-                        self.test(test_loader, snapshot_enabled=False, current_epoch=epo)
+                        self.test(test_loader, snapshot_enabled=False)
                 # saving model
-                torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
+                #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
+                self.export_model(model_path=save_path)
 
 # TODO: Normalization like this with size of batchsize
 # iteration_size = len(data_loader) # or any specific iteration size you have in mind

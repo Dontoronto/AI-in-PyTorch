@@ -6,7 +6,6 @@ from PIL import Image
 
 from SharedServices.utils import singleton
 
-
 import logging
 logger = logging.getLogger(__name__)
 

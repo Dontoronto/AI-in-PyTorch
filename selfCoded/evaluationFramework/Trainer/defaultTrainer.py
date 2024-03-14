@@ -20,9 +20,7 @@ class DefaultTrainer(Trainer):
                  optimizer,
                  epoch=1
                  ):
-        super().__init__(model)
-        self.optimizer = optimizer
-        self.loss = loss
+        super().__init__(model, loss, optimizer)
         self.DataHandler = dataHandler
         self.epoch = epoch
         self.dataset = None
@@ -216,7 +214,7 @@ class DefaultTrainer(Trainer):
                 pred = output.argmax(dim=1, keepdim=True)
                 correct += pred.eq(target.view_as(pred)).sum().item()
         test_loss /= len(test_loader.dataset)
-        print(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
+        logger.info(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
         if snapshot_enabled is True:
             self.createSnapshot(test_loss, current_epoch)
 
@@ -226,9 +224,6 @@ class DefaultTrainer(Trainer):
         test_loader = self.createDataLoader(self.testset)
         test_loader.shuffle = False
         return test_loader
-
-    def getLossFunction(self):
-        return self.loss
 
     def createSnapshot(self, val_loss, epoch):
             if epoch > self.recovery_epoch:
@@ -270,21 +265,6 @@ class DefaultTrainer(Trainer):
                         if self.snapshot_model_path_raw is not None:
                             logger.info(f"New raw best Model will be safed to: {self.snapshot_model_path_raw}")
                             torch.save(self.model.state_dict(),self.snapshot_model_path_raw)
-
-    # NOTE: this method is for saving a model state with a log-message
-    def export_model(self, model_path):
-        torch.save(self.model.state_dict(), model_path)
-        logger.info('Model state_dict saved to %s', model_path)
-
-        # , onnx_path=None
-        # if onnx_path is not None:
-        #     assert input_shape is not None, 'input_shape must be specified to export onnx model'
-        #     # input info needed
-        #     if device is None:
-        #         device = torch.device('cpu')
-        #     input_data = torch.Tensor(*input_shape)
-        #     torch.onnx.export(self._model_to_prune, input_data.to(device), onnx_path)
-        #     _logger.info('Model in onnx with input shape %s saved to %s', input_data.shape, onnx_path)
 
     # TODO: this method needs to be extended to meet the criteria of general trainer
     # def train(self, test = False):
