@@ -1,21 +1,20 @@
 import logging
 
-import cv2
-
 logger = logging.getLogger(__name__)
 
 from torch.utils.data import DataLoader
 from torch.nn.modules.loss import _Loss
-import torchvision.transforms as T
-import numpy as np
 
-
-from torchcam.methods import SmoothGradCAMpp
 import matplotlib.pyplot as plt
-from torchcam.utils import overlay_mask
-from torchvision.transforms.functional import to_pil_image
 import torch
 #cam_extractor = SmoothGradCAMpp(model)
+
+from .activationMaps.saliencyMap import saliency_map
+from .featureMaps.gradCam import gradCamLayer
+
+from .measurement.sparseMeasurement import pruningCounter
+
+from .plotFuncs.plots import plot_original_vs_observation
 
 
 # Note: saliency-map: https://arxiv.org/pdf/1312.6034.pdf
@@ -45,17 +44,16 @@ class Analyzer():
     def loadImage(self, path):
         return self.datahandler.loadImage(path)
 
-    def pruningCounter(self, model):
-        # zeros_count = (tensor == 0).sum().item()
-        for name, parameter in model.named_parameters():
-            if parameter.requires_grad:
-                # Count zeros and total weights
-                zeros_count = torch.eq(parameter, 0).sum().item()
-                total_weights = parameter.numel()
-                zero_weights_percentage = (zeros_count / total_weights) * 100
-
-                # Print layer information
-                logger.info(f"Layer: {name}, Zero weights: {total_weights}/{zeros_count} ({zero_weights_percentage:.2f}%)")
+    def dataset_extractor(self, index):
+        '''
+        :param index: index of dataset which needs to be extracted
+        :return tuple(batch, sample, label): batched of sample tensor shape (1,x,x,x)
+                                             sample file as tensor shape (x,x,x)
+                                             label of sample
+        '''
+        sample, label = self.dataset[index]
+        batch = sample.unsqueeze(0)
+        return batch, sample, label
 
     def test(self, model, test_loader, loss_func):
         model.eval()
@@ -72,12 +70,16 @@ class Analyzer():
         logger.info(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
 
     def evaluate(self, model, img, single_batch, target_layer):
-        self.gradCamLayer(model=model, original_image=img,
+        img_tensor, grad_cam = gradCamLayer(model=model, original_image=img,
                           single_batch=single_batch, target_layer=target_layer)
+        plot_original_vs_observation(img_as_tensor=img_tensor, result=grad_cam,
+                                     text=f'The Image and Gradient CAM for layer: {target_layer}')
 
-        self.saliency_map(model=model, original_image=img, single_batch=single_batch)
+        img_tensor, saliency = saliency_map(model=model, original_image=img, single_batch=single_batch)
+        plot_original_vs_observation(img_as_tensor=img_tensor, result=saliency,
+                                     text="The Image and Its Saliency Map")
 
-        self.pruningCounter(model=model)
+        pruningCounter(model=model)
 
     def gradCam_all_layers(self, model, original_image, single_batch):
         '''
@@ -89,70 +91,10 @@ class Analyzer():
         for name, module in model.named_modules():
             if isinstance(module, torch.nn.Conv2d):
 
-                self.gradCamLayer(model=model, original_image=original_image,
+                img_tensor, grad_cam = gradCamLayer(model=model, original_image=original_image,
                                   single_batch=single_batch, target_layer=name)
-
-
-    # TODO: target_layer noch ändern so dass man irgendwie per json mitgeben kann
-    def gradCamLayer(self, model, original_image, single_batch, target_layer):
-        '''
-        :param model: model to test
-        :param original_image: PIL Image type
-        :param single_batch: Tensor type batched shape (1,channel,width,height)
-        :param target_layer: "string of layer name
-        '''
-
-        image = original_image.copy()
-        image = image.convert(mode='RGB')
-        image = T.Compose([T.ToTensor()])(image)
-        img = T.Compose([T.ToTensor()])(original_image.copy())
-        with SmoothGradCAMpp(model, target_layer=target_layer) as cam_extractor:
-            # Preprocess your data and feed it to the model
-            model.eval()
-            out = model(single_batch).squeeze(0).softmax(0)
-
-            # Retrieve the CAM by passing the class index and the model output
-            activation_map = cam_extractor(out.squeeze(0).argmax().item(), out)
-
-            # Resize the CAM and overlay it
-            result = overlay_mask(to_pil_image(image), to_pil_image(activation_map[0].squeeze(0), mode='F'), alpha=0.5)
-
-        plot_original_vs_observation(img_as_tensor=img, result=result,
-                                     text=f'The Image and Gradient CAM for layer: {target_layer}')
-
-    # TODO: maybe it needs some adjustments, to exhausted after fighting with matplotlib atm
-    def saliency_map(self, model, original_image, single_batch):
-        '''
-        :param model: model to test
-        :param original_image: PIL image type
-        :param single_batch: Tensor type batched shape (1,channel,width,height)
-        :return:
-        '''
-        model.eval()
-        width, height = original_image.size
-        img = T.Compose([T.ToTensor()])(original_image)
-
-        # Set the requires_grad_ to the image for retrieving gradients
-        single_batch.requires_grad_()
-
-        # Retrieve output from the image
-        output = model(single_batch)
-
-        # Catch the output
-        output_idx = output.argmax()
-        output_max = output[0, output_idx]
-
-        # Do backpropagation to get the derivative of the output based on the image
-        output_max.backward()
-
-        # Retireve the saliency map and also pick the maximum value from channels on each pixel.
-        # In this case, we look at dim=1. Recall the shape (batch_size, channel, width, height)
-        saliency, _ = torch.max(single_batch.grad.data.abs(), dim=1)
-        saliency = saliency.reshape(width, height)
-
-        # Visualize the image and the saliency map
-        plot_original_vs_observation(img_as_tensor=img, result=saliency, text='The Image and Its Saliency Map')
-        model.eval()
+                plot_original_vs_observation(img_as_tensor=img_tensor, result=grad_cam,
+                                             text=f'The Image and Gradient CAM for layer: {name}')
 
     # TODO: schauen wie man das noch schöner für mehrere Models darstellen kann
     def run_single_model_test(self, test_index, test_end_index=None,
@@ -160,16 +102,14 @@ class Analyzer():
                               target_layer='model.conv1'):
 
         if test_end_index is None:
-            sample, label = self.dataset[test_index]
-            batch = sample.unsqueeze(0)
+            batch, sample, label = self.dataset_extractor(test_index)
             img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
             self.evaluate(model=self.model, img=img, single_batch=batch,
                           target_layer=target_layer)
 
         else:
             for index in range(test_index, test_end_index + 1):
-                sample, label = self.dataset[index]
-                batch = sample.unsqueeze(0)
+                batch, sample, label = self.dataset_extractor(index)
                 img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
                 self.evaluate(model=self.model, img=img, single_batch=batch,
                               target_layer=target_layer)
@@ -181,25 +121,7 @@ class Analyzer():
             self.test(model=self.model, test_loader=test_loader, loss_func=loss_func)
 
     def grad_all(self, test_index):
-        sample, label = self.dataset[test_index]
-        batch = sample.unsqueeze(0)
+        batch, sample, label = self.dataset_extractor(test_index)
         img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
         self.gradCam_all_layers(self.model, original_image=img, single_batch=batch)
 
-# TODO: evtl. eigen file wo nur plots über matplotlib sind
-@staticmethod
-def plot_original_vs_observation(img_as_tensor, result, text):
-    fig, ax = plt.subplots(1, 2, facecolor='dimgray')
-    if img_as_tensor.shape[0] == 1:
-        # Note: this is just for single channel images gray with values from 0 to 1
-        ax[0].imshow(img_as_tensor.cpu().detach().clone().numpy().transpose(1, 2, 0), cmap='gray', vmin=0, vmax=1)
-    else:
-        # Note: Not tested atm, have to check if image values are from 0 to 255 not 0 to 1 and maybe more
-        ax[0].imshow(img_as_tensor.cpu().detach().clone().numpy().transpose(1, 2, 0))
-    ax[0].axis('off')
-    ax[1].imshow(result, cmap='gray')
-    ax[1].axis('off')
-    plt.tight_layout()
-    fig.suptitle(text)
-    plt.show()
-#%%
