@@ -32,7 +32,7 @@ def main():
     # LeNet Test
     _model = LeNet()
     Model = modelWrapper.ModelWrapper(_model)
-    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
     # Model.load_state_dict(torch.load("models/LeNet/raw_LeNet_v3.pth"))
     # Model.load_state_dict(torch.load("experiment/LeNet/v2/retrained_dynamic_mask_v2.pth"))
     # Model.load_state_dict(torch.load("retrained_mask_update_every_epoch.pth"))

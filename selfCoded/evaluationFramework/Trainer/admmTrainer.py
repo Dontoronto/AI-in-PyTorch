@@ -262,6 +262,25 @@ class ADMMTrainer(DefaultTrainer):
         self._update_layerdW()
         #logger.info("Gradients were updated by ADMM")
 
+    def abbruch_kriteriumW(self):
+        frobenius_distance = 0
+
+        for layerZ, layerW in zip(self.list_Z, self.list_W):
+            differenceW = layerW.W - layerZ.Z
+            frobenius_distance += torch.norm(differenceW, p='fro')
+
+        logger.critical(f"Value for Abbruchkriterium is: {frobenius_distance}")
+
+    def abbruch_kriteriumZ(self, old):
+        frobenius_distance = 0
+
+        for layerZ, old_single in zip(self.list_Z, old):
+            differenceW = layerZ.Z - old_single.Z
+            frobenius_distance += torch.norm(differenceW, p='fro')
+
+        logger.critical(f"Value for Abbruchkriterium is: {frobenius_distance}")
+
+
     # TODO: weiß nichtmehr genau aber einfach im Kopf behalten
     def admm(self, curr_iteration):
         #logging.disable(logging.WARNING)
@@ -272,8 +291,12 @@ class ADMMTrainer(DefaultTrainer):
             # if statement entfernen für dynamische maske
             #if curr_iteration == 0:
             self.initialize_pruning_mask_layer_list()
+            # TODO: abbruch testen
+            z_layers = copy.deepcopy(self.list_Z)
             self.project_aux_layers()
             self.prune_aux_layers()
+            self.abbruch_kriteriumZ(z_layers)
+            self.abbruch_kriteriumW()
             if curr_iteration != 0:
                 self.update_dual_layers()
         self.solve_admm()
@@ -312,6 +335,7 @@ class ADMMTrainer(DefaultTrainer):
                         output = self.model(data)
                         loss = self.loss(output, target)
                         loss.backward()
+
                         self.optimizer.step()
 
                         if batch_idx % 100 == 0:
@@ -340,6 +364,7 @@ class ADMMTrainer(DefaultTrainer):
                             self.retrain(counter)
 
                         self.optimizer.step()
+
                         counter +=1
                         if batch_idx % 100 == 0:
                             logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')

@@ -1,6 +1,6 @@
 {
   "admm_trainer": {
-    "phase_list": ["train","admm","retrain"],
+    "phase_list": ["admm","retrain"],
     "save": false,
     "model_name": "first try",
     "main_iterations": 160000,
