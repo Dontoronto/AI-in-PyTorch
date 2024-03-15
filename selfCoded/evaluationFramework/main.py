@@ -61,13 +61,17 @@ def main():
 
     Analyzer.setDataset(DataHandler.loadDataset(testset=True))
 
-    Analyzer.setModel(Model)
+    Analyzer.add_model(Model)
+    # Analyzer.setModel(Model)
     Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
     #Analyzer.grad_all(0)
 
     Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
-    Analyzer.setModel(Model)
-    Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
+    # Analyzer.setModel(Model)
+    Analyzer.add_model(Model)
+
+    Analyzer.compare_models(10, 12)
+    # Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
     # #
     # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
     # Analyzer.setModel(Model)

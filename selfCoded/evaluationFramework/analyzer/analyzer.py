@@ -1,4 +1,7 @@
+import copy
 import logging
+
+from matplotlib import pyplot as plt
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +16,7 @@ from .featureMaps.gradCam import gradCamLayer
 from .measurement.sparseMeasurement import pruningCounter
 from .measurement.topPredictions import show_top_predictions
 
-from .plotFuncs.plots import plot_original_vs_observation
+from .plotFuncs.plots import plot_original_vs_observation, plot_model_comparison
 
 
 # Note: saliency-map: https://arxiv.org/pdf/1312.6034.pdf
@@ -26,7 +29,7 @@ class Analyzer():
         :param dataloaderConfig: arguments for DataLoader Class saved as dict
         '''
         self.model = model
-        self.model_list = None
+        self.model_list = []
         self.datahandler = datahandler
         self.dataloaderConfig = None
         self.dataset = None
@@ -40,8 +43,41 @@ class Analyzer():
     def setModelList(self, model_list):
         self.model_list = model_list
 
+    def add_model(self, model):
+        self.model_list.append(model)
+
     def loadImage(self, path):
         return self.datahandler.loadImage(path)
+
+    # TODO: anpassen damit gradCam auch noch so funktioniert
+    def compare_models(self, test_index, test_end_index=None):
+
+        input_images = []
+        model_outputs = []
+
+        # if there is only one image to process
+        if test_end_index is None:
+            batch, sample, label = self.dataset_extractor(test_index)
+            img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
+            temp = []
+            for model in self.model_list:
+                img_tensor, saliency = saliency_map(model=model,original_image=img,single_batch=batch)
+                temp.append(saliency)
+            model_outputs.append(temp)
+            input_images.append(img_tensor)
+        # loop if there are several images to be processed
+        else:
+            for index in range(test_index, test_end_index + 1):
+                batch, sample, label = self.dataset_extractor(index)
+                img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
+                temp = []
+                for model in self.model_list:
+                    img_tensor, saliency = saliency_map(model=model,original_image=img,single_batch=batch)
+                    temp.append(saliency)
+                model_outputs.append(temp)
+                input_images.append(img_tensor)
+
+        plot_model_comparison(input_tensor_images=input_images, model_results=model_outputs)
 
     def dataset_extractor(self, index):
         '''
