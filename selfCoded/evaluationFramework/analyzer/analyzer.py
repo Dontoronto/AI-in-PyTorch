@@ -11,6 +11,7 @@ from .activationMaps.saliencyMap import saliency_map
 from .featureMaps.gradCam import gradCamLayer
 
 from .measurement.sparseMeasurement import pruningCounter
+from .measurement.topPredictions import show_top_predictions
 
 from .plotFuncs.plots import plot_original_vs_observation
 
@@ -76,6 +77,9 @@ class Analyzer():
         img_tensor, saliency = saliency_map(model=model, original_image=img, single_batch=single_batch)
         plot_original_vs_observation(img_as_tensor=img_tensor, result=saliency,
                                      text="The Image and Its Saliency Map")
+
+        show_top_predictions(model=model, single_batch=single_batch, top_values=3)
+
         # TODO: funktion schreiben welche die Modell Liste vergleicht. Funktion soll Dict zurückgeben.
         # TODO: diese können wie die Modellliste gesammelt und dargestellt werden
         pruningCounter(model=model)

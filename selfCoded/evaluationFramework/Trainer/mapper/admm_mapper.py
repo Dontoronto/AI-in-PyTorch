@@ -30,6 +30,10 @@ class ADMMConfigMapper:
         self.trainer.admm_iterations = admm_config.get('admm_iterations', self.trainer.admm_iterations)
         logger.info(f"admm_iterations set to {self.trainer.admm_iterations} of type {type(self.trainer.admm_iterations)}")
 
+        # For mask creation mode in admm static mask for one time creation, dynamic for every admm iteration
+        self.trainer.dynamic_masking = admm_config.get('dynamic_masking', self.trainer.dynamic_masking)
+        logger.info(f"dynamic masking set to {self.trainer.dynamic_masking} of type {type(self.trainer.dynamic_masking)}")
+
         self.trainer.rho = admm_config.get('rho', self.trainer.rho)
         logger.info(f"rho set to {self.trainer.rho} of type {type(self.trainer.rho)}")
 

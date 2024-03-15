@@ -66,8 +66,14 @@ class ADMMTrainer(DefaultTrainer):
         # main iterations
         self.main_iterations = None
 
+        # mask creation mode, dynamic is True, static is False
+        self.dynamic_masking = True
+
         # admm itertations for updates of u and z
         self.admm_iterations = None
+
+        self.epsilon_W = 100
+        self.epsilon_Z = 100
 
     def setADMMConfig(self, kwargs):
         ADMMConfigMapper(self, kwargs)
@@ -156,7 +162,7 @@ class ADMMTrainer(DefaultTrainer):
         if self.regularization_l2_norm_enabled:
             for param in self.model.parameters():
                 if param.requires_grad:
-                    param.grad += self.regularization_l_norm_decay * param.data
+                    param.grad += 2 * self.regularization_l_norm_decay * param.data
         else:
             for param in self.model.parameters():
                 if param.requires_grad:
@@ -260,6 +266,7 @@ class ADMMTrainer(DefaultTrainer):
         This method should be general. Changes in updating the Weight Layers (W) should ge inserted here
         '''
         self._update_layerdW()
+        #self._prune_layerW_with_layerMask()
         #logger.info("Gradients were updated by ADMM")
 
     def abbruch_kriteriumW(self):
@@ -269,7 +276,9 @@ class ADMMTrainer(DefaultTrainer):
             differenceW = layerW.W - layerZ.Z
             frobenius_distance += torch.norm(differenceW, p='fro')
 
-        logger.critical(f"Value for Abbruchkriterium is: {frobenius_distance}")
+        logger.critical(f"Value for AbbruchkriteriumW is: {frobenius_distance}")
+        self.epsilon_W = frobenius_distance if frobenius_distance < self.epsilon_W else self.epsilon_W
+        logger.critical(f"Min Wert of W^(k+1)-Z^(k+1) = {self.epsilon_W}")
 
     def abbruch_kriteriumZ(self, old):
         frobenius_distance = 0
@@ -278,7 +287,9 @@ class ADMMTrainer(DefaultTrainer):
             differenceW = layerZ.Z - old_single.Z
             frobenius_distance += torch.norm(differenceW, p='fro')
 
-        logger.critical(f"Value for Abbruchkriterium is: {frobenius_distance}")
+        logger.critical(f"Value for AbbruchkriteriumZ is: {frobenius_distance}")
+        self.epsilon_Z = frobenius_distance if frobenius_distance < self.epsilon_Z else self.epsilon_Z
+        logger.critical(f"Min Wert of Z^(k+1)-Z^k = {self.epsilon_Z}")
 
 
     # TODO: weiß nichtmehr genau aber einfach im Kopf behalten
@@ -288,9 +299,11 @@ class ADMMTrainer(DefaultTrainer):
         self.normalize_gradients()
         self.regularize_gradients()
         if curr_iteration % self.admm_iterations == 0:
-            # if statement entfernen für dynamische maske
-            #if curr_iteration == 0:
-            self.initialize_pruning_mask_layer_list()
+            # if statement für dynamische oder statische maske
+            if self.dynamic_masking is True:
+                self.initialize_pruning_mask_layer_list()
+            elif curr_iteration == 0:
+                self.initialize_pruning_mask_layer_list()
             # TODO: abbruch testen
             z_layers = copy.deepcopy(self.list_Z)
             self.project_aux_layers()
@@ -309,6 +322,7 @@ class ADMMTrainer(DefaultTrainer):
         if curr_iteration == 0:
             self.initialize_pruning_mask_layer_list()
         self.prune_weight_layer()
+
 
 
     # TODO: methode umschreiben so dass epoch nichtmehr gebraucht wird für admm
@@ -338,18 +352,19 @@ class ADMMTrainer(DefaultTrainer):
 
                         self.optimizer.step()
 
-                        if batch_idx % 100 == 0:
+                        if batch_idx % 1000 == 0:
                             logger.info(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
 
-                self.export_model(model_path=save_path)
-                #torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
+                #self.export_model(model_path=save_path)
+                torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
 
             else:
                 self.initialize_dualvar_auxvar()
-                while self.main_iterations > counter:
+                epo = 0
+                while self.main_iterations > counter and epo < self.epoch:
                     for batch_idx, (data, target) in enumerate(dataloader):
 
                         self.optimizer.zero_grad()
@@ -365,11 +380,16 @@ class ADMMTrainer(DefaultTrainer):
 
                         self.optimizer.step()
 
-                        counter +=1
-                        if batch_idx % 100 == 0:
-                            logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+                        counter += 1
+                        if batch_idx % 1000 == 0:
+                            if phase == "retrain":
+                                logger.info(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+                            else:
+                                logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
+                        if phase == "retrain":
+                            epo +=1
                         self.test(test_loader, snapshot_enabled=False)
                 # saving model
                 #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")

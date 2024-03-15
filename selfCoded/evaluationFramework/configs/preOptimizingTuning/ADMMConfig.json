@@ -2,14 +2,14 @@
   "admm_trainer": {
     "phase_list": ["admm","retrain"],
     "save": false,
-    "model_name": "first try",
-    "main_iterations": 160000,
-    "admm_iterations": 8000,
+    "main_iterations": 320000,
+    "admm_iterations": 2000,
+    "dynamic_masking": true,
     "rho": 1e-4,
-    "gradient_threshold": 36,
+    "gradient_threshold": 6,
     "batch_size": 32,
     "regularization_l2_norm_enabled": true,
-    "regularization_l_norm_decay": 1e-5
+    "regularization_l_norm_decay": 5e-6
   },
   "dataloader": {
     "batch_size": 32,
