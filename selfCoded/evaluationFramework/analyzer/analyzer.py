@@ -10,13 +10,15 @@ from torch.nn.modules.loss import _Loss
 
 import torch
 
-from .activationMaps.saliencyMap import saliency_map
-from .featureMaps.gradCam import gradCamLayer
+from .activationMaps.saliencyMap import SaliencyMap
+from .featureMaps.gradCam import GradCAM
 
 from .measurement.sparseMeasurement import pruningCounter
 from .measurement.topPredictions import show_top_predictions
 
 from .plotFuncs.plots import plot_original_vs_observation, plot_model_comparison
+
+from .evaluationMapsStrategy import EvaluationMapsStrategy
 
 
 # Note: saliency-map: https://arxiv.org/pdf/1312.6034.pdf
@@ -44,14 +46,18 @@ class Analyzer():
         self.model_list = model_list
 
     def add_model(self, model):
-        self.model_list.append(model)
+        self.model_list.append(copy.deepcopy(model))
 
     def loadImage(self, path):
         return self.datahandler.loadImage(path)
 
-    # TODO: anpassen damit gradCam auch noch so funktioniert
-    def compare_models(self, test_index, test_end_index=None):
-
+    # TODO: anpassen damit gradCam auch noch so funktioniert, aktuell nur saliency map
+    # TODO: allgemeine Methode überlegen so dass man easy entscheiden kann was geplottet werden soll
+    def compare_models(self,test_index, test_end_index=None, eval_map_strategy: EvaluationMapsStrategy = None,
+                       **kwargs):
+        if eval_map_strategy is None:
+            logger.warning("No evaluation Maps Strategy provided as Argument for func call")
+            return
         input_images = []
         model_outputs = []
 
@@ -60,8 +66,10 @@ class Analyzer():
             batch, sample, label = self.dataset_extractor(test_index)
             img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
             temp = []
+            img_tensor = None
             for model in self.model_list:
-                img_tensor, saliency = saliency_map(model=model,original_image=img,single_batch=batch)
+                img_tensor, saliency = eval_map_strategy.analyse(model=model,original_image=img,single_batch=batch,
+                                                                 **kwargs)
                 temp.append(saliency)
             model_outputs.append(temp)
             input_images.append(img_tensor)
@@ -71,13 +79,19 @@ class Analyzer():
                 batch, sample, label = self.dataset_extractor(index)
                 img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
                 temp = []
+                img_tensor=None
                 for model in self.model_list:
-                    img_tensor, saliency = saliency_map(model=model,original_image=img,single_batch=batch)
+                    img_tensor, saliency = eval_map_strategy.analyse(model=model,original_image=img,
+                                                                     single_batch=batch,
+                                                                     **kwargs)
                     temp.append(saliency)
                 model_outputs.append(temp)
                 input_images.append(img_tensor)
 
         plot_model_comparison(input_tensor_images=input_images, model_results=model_outputs)
+
+    def runCompareTest(self, test_index,test_end_index=None, **kwargs):
+        self.compare_models(test_index, test_end_index=test_end_index, eval_map_strategy=GradCAM(), **kwargs)
 
     def dataset_extractor(self, index):
         '''
@@ -105,12 +119,12 @@ class Analyzer():
         logger.info(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
 
     def evaluate(self, model, img, single_batch, target_layer):
-        img_tensor, grad_cam = gradCamLayer(model=model, original_image=img,
+        img_tensor, grad_cam = GradCAM().analyse(model=model, original_image=img,
                           single_batch=single_batch, target_layer=target_layer)
         plot_original_vs_observation(img_as_tensor=img_tensor, result=grad_cam,
                                      text=f'The Image and Gradient CAM for layer: {target_layer}')
 
-        img_tensor, saliency = saliency_map(model=model, original_image=img, single_batch=single_batch)
+        img_tensor, saliency = SaliencyMap().analyse(model=model, original_image=img, single_batch=single_batch)
         plot_original_vs_observation(img_as_tensor=img_tensor, result=saliency,
                                      text="The Image and Its Saliency Map")
 
@@ -130,7 +144,7 @@ class Analyzer():
         for name, module in model.named_modules():
             if isinstance(module, torch.nn.Conv2d):
 
-                img_tensor, grad_cam = gradCamLayer(model=model, original_image=original_image,
+                img_tensor, grad_cam = GradCAM().analyse(model=model, original_image=original_image,
                                   single_batch=single_batch, target_layer=name)
                 plot_original_vs_observation(img_as_tensor=img_tensor, result=grad_cam,
                                              text=f'The Image and Gradient CAM for layer: {name}')

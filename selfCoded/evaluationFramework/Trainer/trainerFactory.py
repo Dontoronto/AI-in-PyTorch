@@ -18,7 +18,7 @@ class TrainerFactory:
     """
     This class if for creating a proper Trainer Object
     """
-
+    #TODO: maybe not necessary anymore
     @staticmethod
     def filterOptimizerConfigs(kwargs):
         """

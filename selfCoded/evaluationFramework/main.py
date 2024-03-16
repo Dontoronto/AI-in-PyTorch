@@ -32,11 +32,12 @@ def main():
     # LeNet Test
     _model = LeNet()
     Model = modelWrapper.ModelWrapper(_model)
-    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
 
     # Model.load_state_dict(torch.load("models/LeNet/raw_LeNet_v3.pth"))
     # Model.load_state_dict(torch.load("experiment/LeNet/v2/retrained_dynamic_mask_v2.pth"))
-    Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    # Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_admm.pth"))
 
 
     Configurator = configurator.Configurator()
@@ -63,14 +64,16 @@ def main():
 
     Analyzer.add_model(Model)
     # Analyzer.setModel(Model)
-    Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
+    #Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
     #Analyzer.grad_all(0)
+
 
     Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
     # Analyzer.setModel(Model)
     Analyzer.add_model(Model)
 
-    Analyzer.compare_models(10, 12)
+    #Analyzer.compare_models(10, 12)
+    Analyzer.runCompareTest(10, test_end_index=16, target_layer='model.conv1')
     # Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
     # #
     # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
