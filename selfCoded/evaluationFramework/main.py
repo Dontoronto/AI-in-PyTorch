@@ -72,7 +72,7 @@ def main():
     # Analyzer.setModel(Model)
     Analyzer.add_model(Model)
 
-    #Analyzer.compare_models(10, 12)
+    #Analyzer.compare_models(10, 11)
     Analyzer.runCompareTest(10, test_end_index=16, target_layer='model.conv1')
     # Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
     # #

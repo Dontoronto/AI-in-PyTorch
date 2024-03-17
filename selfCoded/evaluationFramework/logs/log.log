@@ -1,47 +1,47 @@
-2024-03-16 21:04:40,665 - modelWrapper - INFO - ModelWrapper was initialized
-2024-03-16 21:04:40,668 - dataHandler - INFO - Datahandler initialized
-2024-03-16 21:04:40,669 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
-2024-03-16 21:04:40,669 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
-2024-03-16 21:04:40,670 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-03-16 21:04:40,670 - configurator - INFO - Preprocessing dtype is set so: float
-2024-03-16 21:04:40,671 - configurator - INFO - Preprocessing Normalization is activated
-2024-03-16 21:04:40,672 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-03-16 21:04:40,672 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-03-16 21:04:40,673 - configurator - INFO - Compose(
+2024-03-17 20:12:05,523 - modelWrapper - INFO - ModelWrapper was initialized
+2024-03-17 20:12:05,525 - dataHandler - INFO - Datahandler initialized
+2024-03-17 20:12:05,525 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
+2024-03-17 20:12:05,525 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
+2024-03-17 20:12:05,526 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-03-17 20:12:05,526 - configurator - INFO - Preprocessing dtype is set so: float
+2024-03-17 20:12:05,526 - configurator - INFO - Preprocessing Normalization is activated
+2024-03-17 20:12:05,526 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
+2024-03-17 20:12:05,527 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
+2024-03-17 20:12:05,527 - configurator - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,674 - dataHandler - INFO - Preprocessing Steps will be:
-2024-03-16 21:04:40,675 - dataHandler - INFO - Compose(
+2024-03-17 20:12:05,527 - dataHandler - INFO - Preprocessing Steps will be:
+2024-03-17 20:12:05,527 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,675 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-03-16 21:04:40,676 - configurator - INFO - Preprocessing dtype is set so: float
-2024-03-16 21:04:40,677 - configurator - INFO - Preprocessing Normalization is activated
-2024-03-16 21:04:40,678 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-03-16 21:04:40,678 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-03-16 21:04:40,679 - configurator - INFO - Compose(
+2024-03-17 20:12:05,528 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-03-17 20:12:05,528 - configurator - INFO - Preprocessing dtype is set so: float
+2024-03-17 20:12:05,528 - configurator - INFO - Preprocessing Normalization is activated
+2024-03-17 20:12:05,528 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
+2024-03-17 20:12:05,529 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
+2024-03-17 20:12:05,529 - configurator - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,679 - dataHandler - INFO - Preprocessing Steps will be:
-2024-03-16 21:04:40,680 - dataHandler - INFO - Compose(
+2024-03-17 20:12:05,529 - dataHandler - INFO - Preprocessing Steps will be:
+2024-03-17 20:12:05,529 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,681 - configParser - INFO - Trainer Configs from TrainerConfig.json:
-2024-03-16 21:04:40,681 - configParser - INFO - {'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 25, 'lr': 0.001, 'momentum': 0.9, 'pre_optimization_tuning_path': True}
-2024-03-16 21:04:40,682 - configurator - INFO - TrainerConfig settings was loaded via ConfigParser
-2024-03-16 21:04:40,682 - Trainer.trainerFactory - INFO - Filtered OptimizerConfig: {'lr': 0.001}
-2024-03-16 21:04:40,826 - Trainer.trainerFactory - INFO - Creating ADMMTrainer.
-2024-03-16 21:04:40,827 - Trainer.defaultTrainer - INFO - Trainer was configured
-2024-03-16 21:04:40,827 - Trainer.defaultTrainer - INFO - Epochs: 25
-2024-03-16 21:04:40,828 - Trainer.defaultTrainer - INFO - Optimizer: Adam (
+2024-03-17 20:12:05,530 - configParser - INFO - Trainer Configs from TrainerConfig.json:
+2024-03-17 20:12:05,530 - configParser - INFO - {'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 25, 'lr': 0.001, 'momentum': 0.9, 'pre_optimization_tuning_path': True}
+2024-03-17 20:12:05,530 - configurator - INFO - TrainerConfig settings was loaded via ConfigParser
+2024-03-17 20:12:05,530 - Trainer.trainerFactory - INFO - Filtered OptimizerConfig: {'lr': 0.001}
+2024-03-17 20:12:05,648 - Trainer.trainerFactory - INFO - Creating ADMMTrainer.
+2024-03-17 20:12:05,649 - Trainer.defaultTrainer - INFO - Trainer was configured
+2024-03-17 20:12:05,649 - Trainer.defaultTrainer - INFO - Epochs: 25
+2024-03-17 20:12:05,650 - Trainer.defaultTrainer - INFO - Optimizer: Adam (
 Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
@@ -54,87 +54,87 @@ Parameter Group 0
     maximize: False
     weight_decay: 0
 )
-2024-03-16 21:04:40,828 - Trainer.defaultTrainer - INFO - Lossfunction: CrossEntropyLoss()
-2024-03-16 21:04:40,829 - Trainer.defaultTrainer - INFO - DataHandler: <dataHandler.DataHandler object at 0x13df68350>
-2024-03-16 21:04:40,829 - configParser - INFO - Dataloader Configs from TrainerConfig.json:
-2024-03-16 21:04:40,830 - configParser - INFO - {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
-2024-03-16 21:04:40,830 - configurator - INFO - Dataloader settings was loaded via ConfigParser
-2024-03-16 21:04:40,830 - configParser - INFO - Snapshot Configs from TrainerConfig.json:
-2024-03-16 21:04:40,831 - configParser - INFO - {'name': 'LeNet_epsiolon_test', 'snapshot_enabled': False, 'snapshot_model_path': 'models/LeNet/', 'snapshot_model_path_raw': 'models/LeNet/', 'recovery_epoch': 3}
-2024-03-16 21:04:40,831 - configurator - INFO - Snapshot settings was loaded via ConfigParser
-2024-03-16 21:04:40,832 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : False
-2024-03-16 21:04:40,832 - Trainer.defaultTrainer - INFO - Model file prefix was set to : LeNet_epsiolon_test
-2024-03-16 21:04:40,832 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
-2024-03-16 21:04:40,833 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
-2024-03-16 21:04:40,833 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : 3
-2024-03-16 21:04:40,834 - configParser - INFO - Loaded admm_model_architecture from ConfigRegistry.json
-2024-03-16 21:04:40,834 - configParser - INFO - Loaded admm_model_architecture has path: configs/preOptimizingTuning/ADMMModelArchitecture.json
-2024-03-16 21:04:40,835 - configParser - INFO - Loaded admm_model_architecture
-2024-03-16 21:04:40,835 - configurator - INFO - Loaded admm_model_architecture from Registry
-2024-03-16 21:04:40,836 - Trainer.mapper.admm_mapper - INFO - ADMM Architecture Config was loaded into ADMMTrainer
-2024-03-16 21:04:40,836 - configParser - INFO - Loaded admm_settings from ConfigRegistry.json
-2024-03-16 21:04:40,837 - configParser - INFO - Loaded admm_settings has path: configs/preOptimizingTuning/ADMMConfig.json
-2024-03-16 21:04:40,837 - configParser - INFO - Loaded admm_settings
-2024-03-16 21:04:40,838 - configurator - INFO - Loaded admm_settings from Registry
-2024-03-16 21:04:40,839 - Trainer.mapper.admm_mapper - INFO - ADMM Config was loaded into ADMMTrainer
-2024-03-16 21:04:40,839 - Trainer.mapper.admm_mapper - INFO - main_iterations set to 320000 of type <class 'int'>
-2024-03-16 21:04:40,840 - Trainer.mapper.admm_mapper - INFO - admm_iterations set to 2000 of type <class 'int'>
-2024-03-16 21:04:40,840 - Trainer.mapper.admm_mapper - INFO - dynamic masking set to True of type <class 'bool'>
-2024-03-16 21:04:40,841 - Trainer.mapper.admm_mapper - INFO - rho set to 0.0001 of type <class 'float'>
-2024-03-16 21:04:40,841 - Trainer.mapper.admm_mapper - INFO - gradient_threshold set to 6 of type <class 'int'>
-2024-03-16 21:04:40,842 - Trainer.mapper.admm_mapper - INFO - batch_size_norm_coeff set to 0.03125 of type <class 'float'>
-2024-03-16 21:04:40,842 - Trainer.mapper.admm_mapper - INFO - regularization_l2_norm_enabled set to True of type <class 'bool'>
-2024-03-16 21:04:40,843 - Trainer.mapper.admm_mapper - INFO - regularization_l_norm_decay set to 5e-06 of type <class 'float'>
-2024-03-16 21:04:40,844 - Trainer.mapper.admm_mapper - INFO - Phase list set to ['admm', 'retrain'] of type <class 'list'>
-2024-03-16 21:04:40,844 - Trainer.mapper.admm_mapper - INFO - save set to False of type <class 'bool'>
-2024-03-16 21:04:40,844 - configParser - INFO - Dataset Configs from DataHandlerConfig.json:
-2024-03-16 21:04:40,845 - configParser - INFO - {'datasetName': 'mnist', 'storageType': 'default', 'root': '/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/dataset/mnist/', 'query': ['Volumes', 'PortableSSD', 'Projekte', 'datasets', 'celeba_dataset', 'IMG', 'img_align_celeba'], 'download': True, 'transform': True, 'target_transform': None}
-2024-03-16 21:04:40,845 - configurator - INFO - DatasetConfig was loaded via ConfigParser
-2024-03-16 21:04:40,845 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
-2024-03-16 21:04:40,883 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-03-16 21:04:40,884 - dataHandler - INFO - Compose(
+2024-03-17 20:12:05,650 - Trainer.defaultTrainer - INFO - Lossfunction: CrossEntropyLoss()
+2024-03-17 20:12:05,650 - Trainer.defaultTrainer - INFO - DataHandler: <dataHandler.DataHandler object at 0x164b5b510>
+2024-03-17 20:12:05,650 - configParser - INFO - Dataloader Configs from TrainerConfig.json:
+2024-03-17 20:12:05,651 - configParser - INFO - {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
+2024-03-17 20:12:05,651 - configurator - INFO - Dataloader settings was loaded via ConfigParser
+2024-03-17 20:12:05,651 - configParser - INFO - Snapshot Configs from TrainerConfig.json:
+2024-03-17 20:12:05,651 - configParser - INFO - {'name': 'LeNet_epsiolon_test', 'snapshot_enabled': False, 'snapshot_model_path': 'models/LeNet/', 'snapshot_model_path_raw': 'models/LeNet/', 'recovery_epoch': 3}
+2024-03-17 20:12:05,652 - configurator - INFO - Snapshot settings was loaded via ConfigParser
+2024-03-17 20:12:05,652 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : False
+2024-03-17 20:12:05,652 - Trainer.defaultTrainer - INFO - Model file prefix was set to : LeNet_epsiolon_test
+2024-03-17 20:12:05,652 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
+2024-03-17 20:12:05,652 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
+2024-03-17 20:12:05,653 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : 3
+2024-03-17 20:12:05,653 - configParser - INFO - Loaded admm_model_architecture from ConfigRegistry.json
+2024-03-17 20:12:05,653 - configParser - INFO - Loaded admm_model_architecture has path: configs/preOptimizingTuning/ADMMModelArchitecture.json
+2024-03-17 20:12:05,654 - configParser - INFO - Loaded admm_model_architecture
+2024-03-17 20:12:05,654 - configurator - INFO - Loaded admm_model_architecture from Registry
+2024-03-17 20:12:05,654 - Trainer.mapper.admm_mapper - INFO - ADMM Architecture Config was loaded into ADMMTrainer
+2024-03-17 20:12:05,654 - configParser - INFO - Loaded admm_settings from ConfigRegistry.json
+2024-03-17 20:12:05,655 - configParser - INFO - Loaded admm_settings has path: configs/preOptimizingTuning/ADMMConfig.json
+2024-03-17 20:12:05,655 - configParser - INFO - Loaded admm_settings
+2024-03-17 20:12:05,655 - configurator - INFO - Loaded admm_settings from Registry
+2024-03-17 20:12:05,655 - Trainer.mapper.admm_mapper - INFO - ADMM Config was loaded into ADMMTrainer
+2024-03-17 20:12:05,656 - Trainer.mapper.admm_mapper - INFO - main_iterations set to 320000 of type <class 'int'>
+2024-03-17 20:12:05,656 - Trainer.mapper.admm_mapper - INFO - admm_iterations set to 2000 of type <class 'int'>
+2024-03-17 20:12:05,656 - Trainer.mapper.admm_mapper - INFO - dynamic masking set to True of type <class 'bool'>
+2024-03-17 20:12:05,656 - Trainer.mapper.admm_mapper - INFO - rho set to 0.0001 of type <class 'float'>
+2024-03-17 20:12:05,656 - Trainer.mapper.admm_mapper - INFO - gradient_threshold set to 6 of type <class 'int'>
+2024-03-17 20:12:05,657 - Trainer.mapper.admm_mapper - INFO - batch_size_norm_coeff set to 0.03125 of type <class 'float'>
+2024-03-17 20:12:05,657 - Trainer.mapper.admm_mapper - INFO - regularization_l2_norm_enabled set to True of type <class 'bool'>
+2024-03-17 20:12:05,657 - Trainer.mapper.admm_mapper - INFO - regularization_l_norm_decay set to 5e-06 of type <class 'float'>
+2024-03-17 20:12:05,657 - Trainer.mapper.admm_mapper - INFO - Phase list set to ['admm', 'retrain'] of type <class 'list'>
+2024-03-17 20:12:05,658 - Trainer.mapper.admm_mapper - INFO - save set to False of type <class 'bool'>
+2024-03-17 20:12:05,658 - configParser - INFO - Dataset Configs from DataHandlerConfig.json:
+2024-03-17 20:12:05,658 - configParser - INFO - {'datasetName': 'mnist', 'storageType': 'default', 'root': '/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/dataset/mnist/', 'query': ['Volumes', 'PortableSSD', 'Projekte', 'datasets', 'celeba_dataset', 'IMG', 'img_align_celeba'], 'download': True, 'transform': True, 'target_transform': None}
+2024-03-17 20:12:05,658 - configurator - INFO - DatasetConfig was loaded via ConfigParser
+2024-03-17 20:12:05,659 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
+2024-03-17 20:12:05,674 - dataHandler - INFO - Transformer of Dataset was changed to:
+2024-03-17 20:12:05,674 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,885 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-03-16 21:04:40,885 - dataHandler - INFO - Compose(
+2024-03-17 20:12:05,674 - dataHandler - INFO - Transformer of Dataset was changed to:
+2024-03-17 20:12:05,675 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,886 - dataHandler - INFO - Transformer loaded into Dataset
-2024-03-16 21:04:40,886 - Trainer.defaultTrainer - INFO - Dataset was loaded in Trainer class
-2024-03-16 21:04:40,888 - Trainer.defaultTrainer - INFO - Labels of Dataset are in the correct form to be processed with CrossEntropyLoss()
-2024-03-16 21:04:40,889 - configurator - INFO - DatasetConfig was loaded via ConfigParser
-2024-03-16 21:04:40,890 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
-2024-03-16 21:04:40,899 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-03-16 21:04:40,900 - dataHandler - INFO - Compose(
+2024-03-17 20:12:05,675 - dataHandler - INFO - Transformer loaded into Dataset
+2024-03-17 20:12:05,675 - Trainer.defaultTrainer - INFO - Dataset was loaded in Trainer class
+2024-03-17 20:12:05,676 - Trainer.defaultTrainer - INFO - Labels of Dataset are in the correct form to be processed with CrossEntropyLoss()
+2024-03-17 20:12:05,676 - configurator - INFO - DatasetConfig was loaded via ConfigParser
+2024-03-17 20:12:05,676 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
+2024-03-17 20:12:05,679 - dataHandler - INFO - Transformer of Dataset was changed to:
+2024-03-17 20:12:05,680 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,900 - dataHandler - INFO - Transformer of Testset was changed to:
-2024-03-16 21:04:40,901 - dataHandler - INFO - Compose(
+2024-03-17 20:12:05,680 - dataHandler - INFO - Transformer of Testset was changed to:
+2024-03-17 20:12:05,680 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,902 - dataHandler - INFO - Transformer loaded into Testset
-2024-03-16 21:04:40,902 - Trainer.defaultTrainer - INFO - Testet was loaded in Trainer class
-2024-03-16 21:04:40,903 - Trainer.defaultTrainer - INFO - Created Dataloader with settings: {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
-2024-03-16 21:04:40,904 - configurator - INFO - DatasetConfig was loaded via ConfigParser
-2024-03-16 21:04:40,904 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
-2024-03-16 21:04:40,908 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-03-16 21:04:40,909 - dataHandler - INFO - Compose(
+2024-03-17 20:12:05,681 - dataHandler - INFO - Transformer loaded into Testset
+2024-03-17 20:12:05,681 - Trainer.defaultTrainer - INFO - Testet was loaded in Trainer class
+2024-03-17 20:12:05,681 - Trainer.defaultTrainer - INFO - Created Dataloader with settings: {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
+2024-03-17 20:12:05,681 - configurator - INFO - DatasetConfig was loaded via ConfigParser
+2024-03-17 20:12:05,682 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
+2024-03-17 20:12:05,685 - dataHandler - INFO - Transformer of Dataset was changed to:
+2024-03-17 20:12:05,686 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,910 - dataHandler - INFO - Transformer of Testset was changed to:
-2024-03-16 21:04:40,910 - dataHandler - INFO - Compose(
+2024-03-17 20:12:05,686 - dataHandler - INFO - Transformer of Testset was changed to:
+2024-03-17 20:12:05,686 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-16 21:04:40,911 - dataHandler - INFO - Transformer loaded into Testset
+2024-03-17 20:12:05,686 - dataHandler - INFO - Transformer loaded into Testset

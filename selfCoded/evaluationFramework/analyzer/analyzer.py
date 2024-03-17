@@ -105,9 +105,19 @@ class Analyzer():
         return batch, sample, label
 
     def test(self, model, test_loader, loss_func):
+        '''
+        test the model with testset and returns tuple of (correct classified samples, number of samples at all and
+        percentage of right classified samples
+        :param model: model to test
+        :param test_loader: dataloader of test dataset
+        :param loss_func: loss function to use
+        :return: dictionary of correct classified samples, number of samples at all and percentage of right
+                classified samples
+        '''
         model.eval()
         test_loss = 0
         correct = 0
+        dataset_length = len(test_loader.dataset)
         test_loader = test_loader
         with torch.no_grad():
             for data, target in test_loader:
@@ -115,8 +125,17 @@ class Analyzer():
                 test_loss += loss_func(output, target).item()
                 pred = output.argmax(dim=1, keepdim=True)
                 correct += pred.eq(target.view_as(pred)).sum().item()
-        test_loss /= len(test_loader.dataset)
-        logger.info(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
+        test_loss /= dataset_length
+
+        percentage = 100. * correct / dataset_length
+
+        logger.info(f'\nTest set: Average loss: {test_loss:.4f},'
+                    f' Accuracy: {correct}/{dataset_length}'
+                    f' ({percentage:.0f}%)')
+
+        return {'correct_classified': correct,
+                'dataset_length': dataset_length,
+                'percentage_correct_classified': percentage}
 
     def evaluate(self, model, img, single_batch, target_layer):
         img_tensor, grad_cam = GradCAM().analyse(model=model, original_image=img,
@@ -133,6 +152,7 @@ class Analyzer():
         # TODO: funktion schreiben welche die Modell Liste vergleicht. Funktion soll Dict zurückgeben.
         # TODO: diese können wie die Modellliste gesammelt und dargestellt werden
         pruningCounter(model=model)
+
 
     def gradCam_all_layers(self, model, original_image, single_batch):
         '''
@@ -171,7 +191,9 @@ class Analyzer():
                 isinstance(test_loader, DataLoader) and
                 isinstance(loss_func, _Loss)
         ):
-            self.test(model=self.model, test_loader=test_loader, loss_func=loss_func)
+            test = self.test(model=self.model, test_loader=test_loader, loss_func=loss_func)
+            logger.critical(f'here is the data about the test evaluation:')
+            logger.critical(test)
 
     def grad_all(self, test_index):
         batch, sample, label = self.dataset_extractor(test_index)
