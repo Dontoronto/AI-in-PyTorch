@@ -62,6 +62,13 @@ class ADMMConfigMapper:
         self.trainer.save = admm_config.get('save', self.trainer.save)
         logger.info(f"save set to {self.trainer.save} of type {type(self.trainer.save)}")
 
+        # For termination criterion
+        self.trainer.epsilon_W = admm_config.get('epsilon_W', self.trainer.epsilon_W)
+        logger.info(f"epsilon_W set to {self.trainer.epsilon_W} of type {type(self.trainer.epsilon_W)}")
+        self.trainer.epsilon_Z = admm_config.get('epsilon_Z', self.trainer.epsilon_Z)
+        logger.info(f"epsilon_Z set to {self.trainer.epsilon_Z} of type {type(self.trainer.epsilon_Z)}")
+
+
 
 class ADMMArchitectureConfigMapper:
 

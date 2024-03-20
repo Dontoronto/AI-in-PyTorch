@@ -53,46 +53,37 @@ def main():
     Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
     Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
     Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
-    #Trainer.train(test=True)
-    # torch.save(Model.state_dict(), 'retrained_dynamic_mask_v3.pth')
+    Trainer.train(test=True)
 
-    test_loader = Trainer.getTestLoader()
-    loss_func = Trainer.getLossFunction()
-    Analyzer = analyzer.Analyzer(Model, DataHandler)
+    # Note: this is just for visualization
+    # test_loader = Trainer.getTestLoader()
+    # loss_func = Trainer.getLossFunction()
+    # Analyzer = analyzer.Analyzer(Model, DataHandler)
+    #
+    # Analyzer.setDataset(DataHandler.loadDataset(testset=True))
+    #
+    # Analyzer.add_model(Model)
+    # # Analyzer.setModel(Model)
+    # #Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
+    # #Analyzer.grad_all(0)
+    #
+    # Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_admm.pth"))
+    # # Analyzer.setModel(Model)
+    # Analyzer.add_model(Model)
+    #
+    #
+    # Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
+    # # Analyzer.setModel(Model)
+    # Analyzer.add_model(Model)
+    #
+    # #Analyzer.compare_models(10, 11)
+    # Analyzer.runCompareTest(10, test_end_index=12, target_layer='model.conv1',
+    #                         loss_func=loss_func, test_loader=test_loader)
 
-    Analyzer.setDataset(DataHandler.loadDataset(testset=True))
-
-    Analyzer.add_model(Model)
-    # Analyzer.setModel(Model)
-    #Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
-    #Analyzer.grad_all(0)
-
-    Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_admm.pth"))
-    # Analyzer.setModel(Model)
-    Analyzer.add_model(Model)
-
-
-    Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
-    # Analyzer.setModel(Model)
-    Analyzer.add_model(Model)
-
-    #Analyzer.compare_models(10, 11)
-    Analyzer.runCompareTest(10, test_end_index=12, target_layer='model.conv1',
-                            loss_func=loss_func, test_loader=test_loader)
-    #Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
-    # #
-    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
-    # Analyzer.setModel(Model)
-    # Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
 
     # TODO: überlegen wie man schön und geordnet Models hochladen kann und sie testen kann
     # TODO: Ordner wird benötigt oder irgendwas damit man strukturiert die Models speichert
 
-    #Trainer.layerArchitectureExtractor()
-
-    # ['layer1.0.conv1.weight']
-
-    #torch.save(Model.state_dict(), 'model_weights.pth')
 
 
 

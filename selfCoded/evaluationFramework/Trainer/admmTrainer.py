@@ -72,14 +72,25 @@ class ADMMTrainer(DefaultTrainer):
         # admm itertations for updates of u and z
         self.admm_iterations = None
 
-        self.epsilon_W = 100
-        self.epsilon_Z = 100
+        self.epsilon_W = None
+        self.epsilon_Z = None
+        # stores old layerlist Z for termination criterion
+        self.old_layer_list_z = None
+        self.history_epsilon_W = []
+        self.history_epsilon_Z = []
+        self.early_termination_flag = False
 
     def setADMMConfig(self, kwargs):
         ADMMConfigMapper(self, kwargs)
 
     def setADMMArchitectureConfig(self, kwargs):
         ADMMArchitectureConfigMapper(self, kwargs)
+
+    def getHistoryEpsilonW(self):
+        return self.history_epsilon_W
+
+    def getHistoryEpsilonZ(self):
+        return self.history_epsilon_Z
 
 
     # TODO: needs to be deleted at the end
@@ -269,27 +280,40 @@ class ADMMTrainer(DefaultTrainer):
         #self._prune_layerW_with_layerMask()
         #logger.info("Gradients were updated by ADMM")
 
-    def abbruch_kriteriumW(self):
+    def update_termination_criterion(self):
+        frob_criterion_W = self._termination_criterion_layer_W()
+        frob_criterion_Z = self._termination_criterion_layer_Z()
+        self.history_epsilon_W.append(frob_criterion_W)
+        self.history_epsilon_Z.append(frob_criterion_Z)
+        if frob_criterion_W < self.epsilon_W and frob_criterion_Z < self.epsilon_Z:
+            logger.info("Early termination flag was set.")
+            self.early_termination_flag = True
+
+    def store_old_AuxVariable(self):
+        self.old_layer_list_z = copy.deepcopy(self.list_Z)
+
+    # TODO: terminate ADMM in a good manner
+    def _termination_criterion_layer_W(self):
         frobenius_distance = 0
 
         for layerZ, layerW in zip(self.list_Z, self.list_W):
             differenceW = layerW.W - layerZ.Z
             frobenius_distance += torch.norm(differenceW, p='fro')
 
-        logger.critical(f"Value for AbbruchkriteriumW is: {frobenius_distance}")
-        self.epsilon_W = frobenius_distance if frobenius_distance < self.epsilon_W else self.epsilon_W
-        logger.critical(f"Min Wert of W^(k+1)-Z^(k+1) = {self.epsilon_W}")
+        logger.info(f"Condition for termination criterion W^(k+1)-Z^(k+1)={frobenius_distance}/{self.epsilon_W}")
+        return frobenius_distance
 
-    def abbruch_kriteriumZ(self, old):
+    # TODO: terminate ADMM in a good manner
+    def _termination_criterion_layer_Z(self):
         frobenius_distance = 0
 
-        for layerZ, old_single in zip(self.list_Z, old):
-            differenceW = layerZ.Z - old_single.Z
+        for layerZ, old_layerZ in zip(self.list_Z, self.old_layer_list_z):
+            differenceW = layerZ.Z - old_layerZ.Z
             frobenius_distance += torch.norm(differenceW, p='fro')
 
-        logger.critical(f"Value for AbbruchkriteriumZ is: {frobenius_distance}")
-        self.epsilon_Z = frobenius_distance if frobenius_distance < self.epsilon_Z else self.epsilon_Z
-        logger.critical(f"Min Wert of Z^(k+1)-Z^k = {self.epsilon_Z}")
+        logger.info(f"Condition for termination criterion Z^(k+1)-Z^k= {frobenius_distance}/{self.epsilon_Z}")
+        return frobenius_distance
+
 
 
     # TODO: weiß nichtmehr genau aber einfach im Kopf behalten
@@ -305,11 +329,10 @@ class ADMMTrainer(DefaultTrainer):
             elif curr_iteration == 0:
                 self.initialize_pruning_mask_layer_list()
             # TODO: abbruch testen
-            z_layers = copy.deepcopy(self.list_Z)
+            self.store_old_AuxVariable()
             self.project_aux_layers()
             self.prune_aux_layers()
-            self.abbruch_kriteriumZ(z_layers)
-            self.abbruch_kriteriumW()
+            self.update_termination_criterion()
             if curr_iteration != 0:
                 self.update_dual_layers()
         self.solve_admm()
@@ -336,7 +359,6 @@ class ADMMTrainer(DefaultTrainer):
         dataloader = self.createDataLoader(self.dataset)
         for phase in self.phase_list:
             save_path = self.model_name + "_admm_" + phase + ".pth"
-            counter = 0
             if test is True:
                 self.prepareDataset(testset=True)
                 test_loader = self.createDataLoader(self.testset)
@@ -352,7 +374,7 @@ class ADMMTrainer(DefaultTrainer):
 
                         self.optimizer.step()
 
-                        if batch_idx % 1000 == 0:
+                        if batch_idx % 100 == 0:
                             logger.info(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
@@ -364,6 +386,7 @@ class ADMMTrainer(DefaultTrainer):
             else:
                 self.initialize_dualvar_auxvar()
                 epo = 0
+                counter = 0
                 while self.main_iterations > counter and epo < self.epoch:
                     for batch_idx, (data, target) in enumerate(dataloader):
 
@@ -374,6 +397,10 @@ class ADMMTrainer(DefaultTrainer):
 
                         if phase == "admm":
                             self.admm(counter)
+                            if self.early_termination_flag is True:
+                                logger.info(f"Early Termination Flag was set, ADMM reached epsilon threshold")
+                                counter += self.main_iterations
+                                break
 
                         if phase == "retrain":
                             self.retrain(counter)
@@ -381,11 +408,11 @@ class ADMMTrainer(DefaultTrainer):
                         self.optimizer.step()
 
                         counter += 1
-                        if batch_idx % 1000 == 0:
-                            if phase == "retrain":
-                                logger.info(f'Train Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
-                            else:
-                                logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+
+                    if phase == "retrain":
+                        logger.info(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+                    else:
+                        logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
                         if phase == "retrain":
