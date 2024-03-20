@@ -5,7 +5,7 @@ from matplotlib.gridspec import GridSpec
 
 @staticmethod
 def plot_original_vs_observation(img_as_tensor, result, text):
-    fig, ax = plt.subplots(1, 2, figsize=(15, 5*2), facecolor='dimgray')
+    fig, ax = plt.subplots(1, 2, figsize=(7.5, 5), facecolor='dimgray')
     adapt_axes(ax[0], img_as_tensor=img_as_tensor)
     # if img_as_tensor.shape[0] == 1:
     #     # Note: this is just for single channel images gray with values from 0 to 1
@@ -14,16 +14,16 @@ def plot_original_vs_observation(img_as_tensor, result, text):
     #     # Note: Not tested atm, have to check if image values are from 0 to 255 not 0 to 1 and maybe more
     #     ax[0].imshow(img_as_tensor.cpu().detach().clone().numpy().transpose(1, 2, 0))
     ax[0].axis('off')
+    ax[0].set_title("Original Image")
     ax[1].imshow(result, cmap='gray')
     ax[1].axis('off')
+    ax[1].set_title(text)
     plt.tight_layout()
-    Header = 'Annual Report of XXX Factory'
-    fig.suptitle(text)
-    plt.annotate(Header, (.22,.98), weight='regular', fontsize=20, alpha=.6 )
+    #fig.suptitle(text)
     plt.show()
 
 @staticmethod
-def plot_model_comparison(input_tensor_images: list, model_results : list):
+def plot_model_comparison(input_tensor_images: list, model_results : list, model_name_list: list):
     '''
     this method is for plotting a model comparison (you can use activation maps or feature maps and
     visualize how the different models behave (currently just one visualizing per model)
@@ -40,19 +40,26 @@ def plot_model_comparison(input_tensor_images: list, model_results : list):
         if len(input_tensor_images) == 1:
             # Plot the input image
             adapt_axes(axes[i], img_as_tensor=input_tensor_images[i])
+            axes[i].set_title("Original Image")
             axes[i].axis('off')  # Hide axes
 
             # Plot each model's output
             for j in range(len(model_results[i])):
+                if i == 0:
+                    axes[j+1].set_title(model_name_list[j])
                 axes[j+1].imshow(model_results[i][j], cmap='gray')
                 axes[j+1].axis('off')  # Hide axes
         else:
             # Plot the input image
             adapt_axes(axes[i, 0], img_as_tensor=input_tensor_images[i])
+            if i == 0:
+                axes[i, 0].set_title("Original Image")
             axes[i, 0].axis('off')  # Hide axes
 
             # Plot each model's output
             for j in range(len(model_results[i])):
+                if i == 0:
+                    axes[i, j+1].set_title(model_name_list[j])
                 axes[i, j+1].imshow(model_results[i][j], cmap='gray')
                 axes[i, j+1].axis('off')  # Hide axes
 
@@ -64,7 +71,7 @@ def plot_model_comparison_with_table(input_tensor_images, model_results, table_d
     ncols = max(len(results) for results in model_results) + 1  # Columns: input + max(model results).
 
     # Create a figure
-    fig = plt.figure(figsize=(ncols * 4, nrows * 3 + ncols))  # +1 for the table space.
+    fig = plt.figure(figsize=(ncols * 4, nrows * 3 + ncols), facecolor='dimgray')  # +1 for the table space.
 
     # Create a GridSpec with nrows for images and 1 for the table
     gs = GridSpec(nrows + 1, ncols, figure=fig, height_ratios=[1]*nrows + [0.2])  # Adjust table height ratio here.
@@ -73,6 +80,10 @@ def plot_model_comparison_with_table(input_tensor_images, model_results, table_d
     for i in range(nrows):
         for j in range(ncols):
             ax = fig.add_subplot(gs[i, j])
+            if i == 0 and j == 0:
+                ax.set_title("Original Image")
+            elif i == 0 and j > 0:
+                ax.set_title(col_labels[j-1])
             if j == 0:  # Input image
                 adapt_axes(ax, input_tensor_images[i])
             elif j-1 < len(model_results[i]):  # Model results

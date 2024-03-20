@@ -72,6 +72,7 @@ class ADMMTrainer(DefaultTrainer):
         # admm itertations for updates of u and z
         self.admm_iterations = None
 
+        # TODO: safe epsilone history for post evaluating
         self.epsilon_W = None
         self.epsilon_Z = None
         # stores old layerlist Z for termination criterion

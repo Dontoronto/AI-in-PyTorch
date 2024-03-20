@@ -35,6 +35,7 @@ class Analyzer():
         '''
         self.model = model
         self.model_list = []
+        self.model_name_list = []
         self.datahandler = datahandler
         self.dataloaderConfig = None
         self.dataset = None
@@ -48,8 +49,9 @@ class Analyzer():
     def setModelList(self, model_list):
         self.model_list = model_list
 
-    def add_model(self, model):
+    def add_model(self, model, name):
         self.model_list.append(copy.deepcopy(model))
+        self.model_name_list.append(name)
 
     def loadImage(self, path):
         return self.datahandler.loadImage(path)
@@ -109,7 +111,8 @@ class Analyzer():
                 input_images.append(img_tensor)
                 topk_predictions.append(temp_pred)
 
-        plot_model_comparison(input_tensor_images=input_images, model_results=model_outputs)
+        plot_model_comparison(input_tensor_images=input_images, model_results=model_outputs,
+                              model_name_list=self.model_name_list)
 
         # TODO: comparison allgemeiner und schöner machen, generischer
         zeros_table = list()
@@ -120,14 +123,14 @@ class Analyzer():
             layer_rows = layer_name
             zeros_table.append([str(zero_percentage) for zero_percentage in layer_zero_percentage])
 
-        model_col = ['model 1', 'model 2', 'model 3']
+        #model_col = ['model 1', 'model 2', 'model 3']
         logger.critical("row labels amount")
         logger.critical(layer_name)
 
-        plot_model_comparison_with_table(input_images, model_outputs, zeros_table, layer_rows, model_col)
+        plot_model_comparison_with_table(input_images, model_outputs, zeros_table, layer_rows, self.model_name_list)
 
         model_comparison_table(table_data=topk_predictions,
-                               row_labels=['Image 1', 'Image 2', 'Image 3'], col_labels=model_col)
+                               row_labels=['Image 1', 'Image 2', 'Image 3'], col_labels=self.model_name_list)
 
         test_list_perc = []
         test_list_abs = []
@@ -138,10 +141,11 @@ class Analyzer():
 
         test_list = [test_list_perc, test_list_abs]
 
-        model_comparison_table(table_data=test_list, row_labels=['accuracy %', 'accuracy'], col_labels=model_col)
+        model_comparison_table(table_data=test_list, row_labels=['accuracy %', 'accuracy'],
+                               col_labels=self.model_name_list)
 
     def runCompareTest(self, test_index,test_end_index=None, **kwargs):
-        self.compare_models(test_index, test_end_index=test_end_index, eval_map_strategy=GradCAM(), **kwargs)
+        self.compare_models(test_index, test_end_index=test_end_index, eval_map_strategy=SaliencyMap(), **kwargs)
 
     def dataset_extractor(self, index):
         '''
@@ -227,7 +231,7 @@ class Analyzer():
                 img_tensor, grad_cam = GradCAM().analyse(model=model, original_image=original_image,
                                   single_batch=single_batch, target_layer=name)
                 plot_original_vs_observation(img_as_tensor=img_tensor, result=grad_cam,
-                                             text=f'The Image and Gradient CAM for layer: {name}')
+                                             text=f'Gradient CAM for layer: {name}')
 
     # TODO: schauen wie man das noch schöner für mehrere Models darstellen kann
     def run_single_model_test(self, test_index, test_end_index=None,
