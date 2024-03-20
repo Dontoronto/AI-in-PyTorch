@@ -8,7 +8,7 @@ import torch
 def pruningCounter(model):
 
     # holds all pruning data of every layer
-    pruning_list = dict()
+    pruning_dict = dict()
 
     for name, module in model.named_modules():
 
@@ -28,11 +28,11 @@ def pruningCounter(model):
             temp['zeros'] = zeros_count
             temp['total_weights'] = total_weights
             temp['zero_weights_percentage'] = zero_weights_percentage
-            pruning_list[name] = temp
+            pruning_dict[name] = temp
             #temp = None
 
             # Print module information along with zero weight analysis
             logger.info(f"Module: {name}, Zero weights: {zeros_count}/{total_weights} "
                         f"({zero_weights_percentage:.2f}%)")
 
-    return pruning_list
+    return pruning_dict

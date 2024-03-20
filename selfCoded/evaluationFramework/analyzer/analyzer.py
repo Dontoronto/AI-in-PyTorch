@@ -14,11 +14,14 @@ from .activationMaps.saliencyMap import SaliencyMap
 from .featureMaps.gradCam import GradCAM
 
 from .measurement.sparseMeasurement import pruningCounter
-from .measurement.topPredictions import show_top_predictions
+from .measurement.topPredictions import show_top_predictions, getSum_top_predictions
 
-from .plotFuncs.plots import plot_original_vs_observation, plot_model_comparison
+from .plotFuncs.plots import (plot_original_vs_observation, plot_model_comparison,
+                              plot_model_comparison_with_table, model_comparison_table)
 
 from .evaluationMapsStrategy import EvaluationMapsStrategy
+
+from .utils import weight_export
 
 
 # Note: saliency-map: https://arxiv.org/pdf/1312.6034.pdf
@@ -51,6 +54,16 @@ class Analyzer():
     def loadImage(self, path):
         return self.datahandler.loadImage(path)
 
+    def exportLayerWeights(self, layer_name, path='test_tensor.pt', model=None):
+        if model is None:
+            exporting_model = self.model
+        else:
+            exporting_model = model
+
+        logger.info(f"Exporting {layer_name} weights of model to {path}")
+        weight_export(exporting_model, layer_name, path)
+
+
     # TODO: anpassen damit gradCam auch noch so funktioniert, aktuell nur saliency map
     # TODO: allgemeine Methode überlegen so dass man easy entscheiden kann was geplottet werden soll
     def compare_models(self,test_index, test_end_index=None, eval_map_strategy: EvaluationMapsStrategy = None,
@@ -61,18 +74,23 @@ class Analyzer():
         input_images = []
         model_outputs = []
 
+        topk_predictions = []
+
         # if there is only one image to process
         if test_end_index is None:
             batch, sample, label = self.dataset_extractor(test_index)
             img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
             temp = []
             img_tensor = None
+            temp_pred = []
             for model in self.model_list:
                 img_tensor, saliency = eval_map_strategy.analyse(model=model,original_image=img,single_batch=batch,
                                                                  **kwargs)
+                temp_pred.append(getSum_top_predictions(model,batch,3))
                 temp.append(saliency)
             model_outputs.append(temp)
             input_images.append(img_tensor)
+            topk_predictions.append(temp_pred)
         # loop if there are several images to be processed
         else:
             for index in range(test_index, test_end_index + 1):
@@ -80,15 +98,47 @@ class Analyzer():
                 img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
                 temp = []
                 img_tensor=None
+                temp_pred = []
                 for model in self.model_list:
                     img_tensor, saliency = eval_map_strategy.analyse(model=model,original_image=img,
                                                                      single_batch=batch,
                                                                      **kwargs)
+                    temp_pred.append(getSum_top_predictions(model,batch,3))
                     temp.append(saliency)
                 model_outputs.append(temp)
                 input_images.append(img_tensor)
+                topk_predictions.append(temp_pred)
 
         plot_model_comparison(input_tensor_images=input_images, model_results=model_outputs)
+
+        # TODO: comparison allgemeiner und schöner machen, generischer
+        zeros_table = list()
+        layer_rows = None
+        for model in self.model_list:
+            pruning_dict = pruningCounter(model)
+            layer_name, layer_zero_percentage = self.pruning_data_split(pruning_dict)
+            layer_rows = layer_name
+            zeros_table.append([str(zero_percentage) for zero_percentage in layer_zero_percentage])
+
+        model_col = ['model 1', 'model 2', 'model 3']
+        logger.critical("row labels amount")
+        logger.critical(layer_name)
+
+        plot_model_comparison_with_table(input_images, model_outputs, zeros_table, layer_rows, model_col)
+
+        model_comparison_table(table_data=topk_predictions,
+                               row_labels=['Image 1', 'Image 2', 'Image 3'], col_labels=model_col)
+
+        test_list_perc = []
+        test_list_abs = []
+        for model in self.model_list:
+            test_eval = self.test(model, **kwargs)
+            test_list_perc.append(test_eval['percentage_correct_classified'])
+            test_list_abs.append(test_eval['correct_classified'])
+
+        test_list = [test_list_perc, test_list_abs]
+
+        model_comparison_table(table_data=test_list, row_labels=['accuracy %', 'accuracy'], col_labels=model_col)
 
     def runCompareTest(self, test_index,test_end_index=None, **kwargs):
         self.compare_models(test_index, test_end_index=test_end_index, eval_map_strategy=GradCAM(), **kwargs)
@@ -104,7 +154,7 @@ class Analyzer():
         batch = sample.unsqueeze(0)
         return batch, sample, label
 
-    def test(self, model, test_loader, loss_func):
+    def test(self, model, test_loader, loss_func, **kwargs):
         '''
         test the model with testset and returns tuple of (correct classified samples, number of samples at all and
         percentage of right classified samples
@@ -153,6 +203,16 @@ class Analyzer():
         # TODO: diese können wie die Modellliste gesammelt und dargestellt werden
         pruningCounter(model=model)
 
+    def pruning_data_split(self, pruning_dict):
+        layer_names = list()
+        layer_pruning_rates = list()
+
+        for key, value in pruning_dict.items():
+            layer_names.append(key)
+            layer_pruning_rates.append(value['zero_weights_percentage'])
+
+        return layer_names, layer_pruning_rates
+
 
     def gradCam_all_layers(self, model, original_image, single_batch):
         '''
@@ -200,3 +260,5 @@ class Analyzer():
         img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
         self.gradCam_all_layers(self.model, original_image=img, single_batch=batch)
 
+
+#%%

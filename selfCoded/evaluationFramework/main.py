@@ -67,14 +67,19 @@ def main():
     #Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
     #Analyzer.grad_all(0)
 
+    Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_admm.pth"))
+    # Analyzer.setModel(Model)
+    Analyzer.add_model(Model)
+
 
     Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
     # Analyzer.setModel(Model)
     Analyzer.add_model(Model)
 
     #Analyzer.compare_models(10, 11)
-    Analyzer.runCompareTest(10, test_end_index=16, target_layer='model.conv1')
-    # Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
+    Analyzer.runCompareTest(10, test_end_index=12, target_layer='model.conv1',
+                            loss_func=loss_func, test_loader=test_loader)
+    #Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
     # #
     # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
     # Analyzer.setModel(Model)
@@ -93,6 +98,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+#%%
 
 #%%
 

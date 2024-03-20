@@ -226,7 +226,7 @@ def plot_model_comparison(input_tensor_images, model_results, table_data, row_la
     ncols = max(len(results) for results in model_results) + 1  # Columns: input + max(model results).
 
     # Create a figure
-    fig = plt.figure(figsize=(ncols * 4, nrows * 3 + 1))  # +1 for the table space.
+    fig = plt.figure(figsize=(ncols * 4, nrows * 3 + ncols))  # +1 for the table space.
 
     # Create a GridSpec with nrows for images and 1 for the table
     gs = GridSpec(nrows + 1, ncols, figure=fig, height_ratios=[1]*nrows + [0.2])  # Adjust table height ratio here.
@@ -242,14 +242,15 @@ def plot_model_comparison(input_tensor_images, model_results, table_data, row_la
             ax.axis('off')
 
     # Add a table at the last row
-    table_ax = fig.add_subplot(gs[nrows, :])  # Span the table across all columns in the last row.
+    table_ax = fig.add_subplot(gs[nrows, 1:])  # Span the table across all columns in the last row.
     table_ax.axis('off')  # Hide the axes for the table.
     table = table_ax.table(cellText=table_data, rowLabels=row_labels, colLabels=col_labels,
                            loc='center', cellLoc='center', edges='horizontal')
     #table.set_text_props({'fontweight': 'bold'})
     table.auto_set_font_size(False)
-    table.set_fontsize(10)
-    table.scale(1, 1.5)  # Adjust table scale if necessary.
+    # table.auto_set_font_size(ncols*4)
+    table.set_fontsize(ncols*4)
+    table.scale(1, 4)  # Adjust table scale if necessary.
 
     #plt.subplots_adjust(hspace=0.4, wspace=0.4)  # Adjust space between plots if needed.
     plt.tight_layout()
@@ -259,7 +260,7 @@ def plot_model_comparison(input_tensor_images, model_results, table_data, row_la
 input_tensor_images = [torch.rand(1, 8, 8) for _ in range(2)]
 
 # Create mock model results (darker and lighter versions of the input images)
-model_results = [[img_tensor * 0.5, img_tensor * 5] for img_tensor in input_tensor_images]
+model_results = [[img_tensor * 0.5, img_tensor * 5, img_tensor * 5] for img_tensor in input_tensor_images]
 
 # Prepare mock table data
 table_data = np.round(np.random.rand(4, 3), 2)  # Random data for 4 metrics across 2 models
