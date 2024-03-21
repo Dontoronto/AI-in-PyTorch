@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+
+import torch.onnx
 from torch import save
 
 import logging
@@ -35,9 +37,13 @@ class Trainer(ABC):
         return self.loss
 
     # NOTE: this method is for saving a model state with a log-message
-    def export_model(self, model_path):
-        save(self.model.state_dict(), model_path)
-        logger.info('Model state_dict saved to %s', model_path)
+    def export_model(self, model_path, onnx=False):
+        if onnx is False:
+            save(self.model.state_dict(), model_path + '.pth')
+            logger.info(f'Model state_dict saved to {model_path}')
+        else:
+            torch.onnx.dynamo_export(self.model,torch.randn(1,1,28,28)).save(model_path + '.onnx')
+            logger.info(f'Onnx-Model saved to {model_path}')
         # , onnx_path=None
         # if onnx_path is not None:
         #     assert input_shape is not None, 'input_shape must be specified to export onnx model'

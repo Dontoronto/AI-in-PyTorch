@@ -28,6 +28,7 @@ def main():
     # _model = resnet101(weights=_weights)
     # Model = modelWrapper.ModelWrapper(_model)
     # Model.eval()
+    warnings.filterwarnings(action='once')
 
     # LeNet Test
     _model = LeNet()
@@ -53,7 +54,13 @@ def main():
     Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
     Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
     Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
-    #Trainer.train(test=True)
+    # Trainer.train(test=False)
+    # histW = Trainer.getHistoryEpsilonW()
+    # histZ = Trainer.getHistoryEpsilonZ()
+    # thrshW = Trainer.epsilon_W
+    # thrshZ = Trainer.epsilon_Z
+    # Analyzer = analyzer.Analyzer(Model, DataHandler)
+    # Analyzer.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
 
     # Note: this is just for visualization
     test_loader = Trainer.getTestLoader()
@@ -91,9 +98,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-#%%
-
-#%%
 
 #%%

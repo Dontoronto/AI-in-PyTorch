@@ -17,7 +17,8 @@ from .measurement.sparseMeasurement import pruningCounter
 from .measurement.topPredictions import show_top_predictions, getSum_top_predictions
 
 from .plotFuncs.plots import (plot_original_vs_observation, plot_model_comparison,
-                              plot_model_comparison_with_table, model_comparison_table)
+                              plot_model_comparison_with_table, model_comparison_table,
+                              plot_float_lists_with_thresholds)
 
 from .evaluationMapsStrategy import EvaluationMapsStrategy
 
@@ -75,63 +76,46 @@ class Analyzer():
             return
         input_images = []
         model_outputs = []
-
         topk_predictions = []
 
         # if there is only one image to process
         if test_end_index is None:
             batch, sample, label = self.dataset_extractor(test_index)
             img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
-            temp = []
-            img_tensor = None
-            temp_pred = []
-            for model in self.model_list:
-                img_tensor, saliency = eval_map_strategy.analyse(model=model,original_image=img,single_batch=batch,
-                                                                 **kwargs)
-                temp_pred.append(getSum_top_predictions(model,batch,3))
-                temp.append(saliency)
-            model_outputs.append(temp)
+
+            result_values, img_tensor, topk_values = self.evaluation_map(img,batch,eval_map_strategy,**kwargs)
+
+            model_outputs.append(result_values)
             input_images.append(img_tensor)
-            topk_predictions.append(temp_pred)
+            topk_predictions.append(topk_values)
         # loop if there are several images to be processed
         else:
             for index in range(test_index, test_end_index + 1):
                 batch, sample, label = self.dataset_extractor(index)
                 img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
-                temp = []
-                img_tensor=None
-                temp_pred = []
-                for model in self.model_list:
-                    img_tensor, saliency = eval_map_strategy.analyse(model=model,original_image=img,
-                                                                     single_batch=batch,
-                                                                     **kwargs)
-                    temp_pred.append(getSum_top_predictions(model,batch,3))
-                    temp.append(saliency)
-                model_outputs.append(temp)
+
+                result_values, img_tensor, topk_values = self.evaluation_map(img,batch,eval_map_strategy,**kwargs)
+
+                model_outputs.append(result_values)
                 input_images.append(img_tensor)
-                topk_predictions.append(temp_pred)
+                topk_predictions.append(topk_values)
 
         plot_model_comparison(input_tensor_images=input_images, model_results=model_outputs,
                               model_name_list=self.model_name_list)
 
-        # TODO: comparison allgemeiner und schöner machen, generischer
-        zeros_table = list()
-        layer_rows = None
-        for model in self.model_list:
-            pruning_dict = pruningCounter(model)
-            layer_name, layer_zero_percentage = self.pruning_data_split(pruning_dict)
-            layer_rows = layer_name
-            zeros_table.append([str(zero_percentage) for zero_percentage in layer_zero_percentage])
-
-        #model_col = ['model 1', 'model 2', 'model 3']
-        logger.critical("row labels amount")
-        logger.critical(layer_name)
+        layer_rows, zeros_table = self.eval_zero_layers_table_format()
 
         plot_model_comparison_with_table(input_images, model_outputs, zeros_table, layer_rows, self.model_name_list)
 
         model_comparison_table(table_data=topk_predictions,
                                row_labels=['Image 1', 'Image 2', 'Image 3'], col_labels=self.model_name_list)
 
+        test_list = self.accuracy_table_format(**kwargs)
+
+        model_comparison_table(table_data=test_list, row_labels=['accuracy %', 'accuracy'],
+                               col_labels=self.model_name_list)
+
+    def accuracy_table_format(self, **kwargs):
         test_list_perc = []
         test_list_abs = []
         for model in self.model_list:
@@ -139,10 +123,40 @@ class Analyzer():
             test_list_perc.append(test_eval['percentage_correct_classified'])
             test_list_abs.append(test_eval['correct_classified'])
 
-        test_list = [test_list_perc, test_list_abs]
+        return [test_list_perc, test_list_abs]
 
-        model_comparison_table(table_data=test_list, row_labels=['accuracy %', 'accuracy'],
-                               col_labels=self.model_name_list)
+    def eval_zero_layers_table_format(self):
+        zeros_table = list()
+        layer_rows = None
+        for model in self.model_list:
+            pruning_dict = pruningCounter(model)
+            layer_name, layer_zero_percentage = self._pruning_data_split(pruning_dict)
+            layer_rows = layer_name
+            zeros_table.append([str(zero_percentage) for zero_percentage in layer_zero_percentage])
+
+        return layer_rows, zeros_table
+
+    def _pruning_data_split(self, pruning_dict):
+        layer_names = list()
+        layer_pruning_rates = list()
+
+        for key, value in pruning_dict.items():
+            layer_names.append(key)
+            layer_pruning_rates.append(value['zero_weights_percentage'])
+
+        return layer_names, layer_pruning_rates
+
+    def evaluation_map(self, img, batch, eval_map_strategy: EvaluationMapsStrategy, **kwargs):
+        results = []
+        img_tensor = None
+        topk_predictions = []
+        for model in self.model_list:
+            img_tensor, outputMap = eval_map_strategy.analyse(model=model,original_image=img,single_batch=batch,
+                                                             **kwargs)
+            topk_predictions.append(getSum_top_predictions(model,batch,3))
+            results.append(outputMap)
+        return results, img_tensor, topk_predictions
+
 
     def runCompareTest(self, test_index,test_end_index=None, **kwargs):
         self.compare_models(test_index, test_end_index=test_end_index, eval_map_strategy=SaliencyMap(), **kwargs)
@@ -207,16 +221,6 @@ class Analyzer():
         # TODO: diese können wie die Modellliste gesammelt und dargestellt werden
         pruningCounter(model=model)
 
-    def pruning_data_split(self, pruning_dict):
-        layer_names = list()
-        layer_pruning_rates = list()
-
-        for key, value in pruning_dict.items():
-            layer_names.append(key)
-            layer_pruning_rates.append(value['zero_weights_percentage'])
-
-        return layer_names, layer_pruning_rates
-
 
     def gradCam_all_layers(self, model, original_image, single_batch):
         '''
@@ -263,6 +267,17 @@ class Analyzer():
         batch, sample, label = self.dataset_extractor(test_index)
         img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
         self.gradCam_all_layers(self.model, original_image=img, single_batch=batch)
+
+    def eval_epsilon_distances(self, epsilon_listW, epsilon_listZ,
+                               epsilon_threshold_W, epsilon_threshold_Z):
+        epsilon_symbol = '\u03B5'
+        plot_float_lists_with_thresholds(epsilon_listW, epsilon_listZ,
+                                         f'{epsilon_symbol}-Distance W',
+                                         f'{epsilon_symbol}-Distance Z',
+                                         epsilon_threshold_W, epsilon_threshold_Z,
+                                         f'{epsilon_symbol}-Threshold W',
+                                         f'{epsilon_symbol}-Threshold Z',
+                                         f'{epsilon_symbol}-Distances over ADMM-Iterations')
 
 
 #%%

@@ -302,7 +302,7 @@ class ADMMTrainer(DefaultTrainer):
             frobenius_distance += torch.norm(differenceW, p='fro')
 
         logger.info(f"Condition for termination criterion W^(k+1)-Z^(k+1)={frobenius_distance}/{self.epsilon_W}")
-        return frobenius_distance
+        return float(frobenius_distance)
 
     # TODO: terminate ADMM in a good manner
     def _termination_criterion_layer_Z(self):
@@ -313,7 +313,7 @@ class ADMMTrainer(DefaultTrainer):
             frobenius_distance += torch.norm(differenceW, p='fro')
 
         logger.info(f"Condition for termination criterion Z^(k+1)-Z^k= {frobenius_distance}/{self.epsilon_Z}")
-        return frobenius_distance
+        return float(frobenius_distance)
 
 
 
@@ -358,12 +358,13 @@ class ADMMTrainer(DefaultTrainer):
         # self.initialize_dualvar_auxvar()
 
         dataloader = self.createDataLoader(self.dataset)
+        test_loader = None
+        if test is True:
+            self.prepareDataset(testset=True)
+            test_loader = self.createDataLoader(self.testset)
+            test_loader.shuffle = False
         for phase in self.phase_list:
-            save_path = self.model_name + "_admm_" + phase + ".pth"
-            if test is True:
-                self.prepareDataset(testset=True)
-                test_loader = self.createDataLoader(self.testset)
-                test_loader.shuffle = False
+            save_path = self.model_name + "_admm_" + phase
             if phase == "train":
                 for epo in range(self.epoch):
                     for batch_idx, (data, target) in enumerate(dataloader):
@@ -382,7 +383,9 @@ class ADMMTrainer(DefaultTrainer):
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
 
                 #self.export_model(model_path=save_path)
-                torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
+                if self.save is True:
+                    self.export_model(model_path=save_path)
+                    #torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
 
             else:
                 self.initialize_dualvar_auxvar()
@@ -421,21 +424,8 @@ class ADMMTrainer(DefaultTrainer):
                         self.test(test_loader, snapshot_enabled=False)
                 # saving model
                 #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
-                self.export_model(model_path=save_path)
-
-# TODO: Normalization like this with size of batchsize
-# iteration_size = len(data_loader) # or any specific iteration size you have in mind
-#
-# for inputs, targets in data_loader:
-#     optimizer.zero_grad() # Zero the gradients at the start of the batch
-#     outputs = model(inputs) # Forward pass
-#     loss = loss_function(outputs, targets) # Compute the loss
-#     loss.backward() # Backward pass to calculate gradients
-#
-#     # Normalize gradients
-#     for param in model.parameters():
-#         if param.grad is not None:
-#             param.grad /= iteration_size
+                if self.save is True:
+                    self.export_model(model_path=save_path, onnx=True)
 
 
 
