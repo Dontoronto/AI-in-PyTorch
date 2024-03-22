@@ -351,7 +351,7 @@ class ADMMTrainer(DefaultTrainer):
 
     # TODO: methode umschreiben so dass epoch nichtmehr gebraucht wird für admm
     # TODO: symbiose von ADMM und retraining
-    def train(self, test=False):
+    def train(self, test=False, onnx_enabled=False):
         self.model.train()
         self.preTrainingChecks()
 
@@ -384,7 +384,7 @@ class ADMMTrainer(DefaultTrainer):
 
                 #self.export_model(model_path=save_path)
                 if self.save is True:
-                    self.export_model(model_path=save_path)
+                    self.export_model(model_path=save_path, onnx=onnx_enabled)
                     #torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
 
             else:
@@ -425,7 +425,7 @@ class ADMMTrainer(DefaultTrainer):
                 # saving model
                 #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
                 if self.save is True:
-                    self.export_model(model_path=save_path, onnx=True)
+                    self.export_model(model_path=save_path, onnx=onnx_enabled)
 
 
 

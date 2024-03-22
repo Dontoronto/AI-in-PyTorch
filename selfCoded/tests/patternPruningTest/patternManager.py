@@ -23,6 +23,10 @@ class PatternManager:
     # list saves indexes of patterns from pattern_library which are selectable
     available_patterns_indices = []
 
+    # TODO: avg impact calculation
+    abs_impact_patterns = []
+    avg_impact_patterns = []
+
     def __init__(self):
         '''
         Example shapes of weights torch.Size([6, 1, 3, 3]) or torch.Size([16, 6, 3, 3])
@@ -80,6 +84,10 @@ class PatternManager:
         pattern (str): The pattern to assign to the tensor.
         """
         self.tensor_assignments = []
+        # TODO: not creating every time list of same length avg_impact...
+        self.abs_impact_patterns = [0] * len(self.pattern_library)
+        self.avg_impact_patterns = [0] * len(self.pattern_library)
+        self.pattern_counts = [0] * len(self.pattern_library)
         for layer in tensor_list:
             temp_layer = []
             for tensor in layer:
@@ -88,7 +96,11 @@ class PatternManager:
                 temp_layer.append(layer_tensor)
             self.tensor_assignments.append(temp_layer)
 
+        # tracks counts of all patterns
         self._count_pattern_assignments()
+
+        # tracks the impact of all patterns
+        self._calc_avg_pattern_impact()
 
     def _choose_best_pattern(self, tensor):
         min = 1000
@@ -99,19 +111,37 @@ class PatternManager:
                 min = frob_distance
                 min_index = i
 
+        self._track_pattern_impact(tensor, min_index)
+
         return min_index
 
+    # TODO: reducing impact aggregating
+    def _track_pattern_impact(self, tensor, index):
+        frob_distance = torch.norm(tensor * self.pattern_library[index], p='fro')
+        self.abs_impact_patterns[index] += float(frob_distance)
+
+
+    # TODO: optimierung pattern_counts soll einmal erstellt werden und nur neu belegt werden
     def _count_pattern_assignments(self):
         '''
         aggregates the number of assigned patterns per pattern
         :return: list of counted pattern distribution
         '''
-        self.pattern_counts = [0] * len(self.pattern_library)
 
         for i in range(len(self.pattern_counts)):
             self.pattern_counts[i] = count_occurrences_iterative(self.tensor_assignments, i)
 
         return self.pattern_counts
+
+    def _calc_avg_pattern_impact(self):
+
+        for i in range(len(self.pattern_library)):
+            if self.pattern_counts[i] == 0:
+                self.avg_impact_patterns[i] = 0
+            else:
+                temp_avg = self.abs_impact_patterns[i]/self.pattern_counts[i]
+                self.avg_impact_patterns[i] = float(temp_avg)
+
 
     def reduce_available_patterns(self, min_amount_indices):
         '''
@@ -119,8 +149,11 @@ class PatternManager:
         This can be influence algo behavior. Many options possible
         :returns indexes which are removed from available patterns list
         '''
-        return libraryReduction.fixed_reduction_rate(self.available_patterns_indices,
-                                                     self.pattern_counts, min_amount_indices)
+        # return libraryReduction.fixed_reduction_rate(self.available_patterns_indices,
+        #                                              self.pattern_counts, min_amount_indices)
+        return libraryReduction.impact_based_reduction_rate(self.available_patterns_indices,
+                                                            self.pattern_counts, self.abs_impact_patterns,
+                                                            min_amount_indices)
 
     def get_single_pattern_mask(self, layer_index):
         # Gibt eine Liste zurück, die für jeden Index in tensor_assignments das entsprechende Muster enthält

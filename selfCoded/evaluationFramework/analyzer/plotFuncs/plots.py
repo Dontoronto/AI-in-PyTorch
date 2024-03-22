@@ -3,7 +3,6 @@ import numpy as np
 from matplotlib.gridspec import GridSpec
 
 
-@staticmethod
 def plot_original_vs_observation(img_as_tensor, result, text):
     fig, ax = plt.subplots(1, 2, figsize=(7.5, 5), facecolor='dimgray')
     adapt_axes(ax[0], img_as_tensor=img_as_tensor)
@@ -22,7 +21,7 @@ def plot_original_vs_observation(img_as_tensor, result, text):
     #fig.suptitle(text)
     plt.show()
 
-@staticmethod
+
 def plot_model_comparison(input_tensor_images: list, model_results : list, model_name_list: list):
     '''
     this method is for plotting a model comparison (you can use activation maps or feature maps and
@@ -66,6 +65,7 @@ def plot_model_comparison(input_tensor_images: list, model_results : list, model
     plt.tight_layout()
     plt.show()
 
+
 def plot_model_comparison_with_table(input_tensor_images, model_results, table_data, row_labels, col_labels):
     nrows = len(input_tensor_images)  # The number of rows based on the input images.
     ncols = max(len(results) for results in model_results) + 1  # Columns: input + max(model results).
@@ -107,7 +107,7 @@ def plot_model_comparison_with_table(input_tensor_images, model_results, table_d
     plt.tight_layout()
     plt.show()
 
-@staticmethod
+
 def model_comparison_table(table_data, row_labels, col_labels):
     nrows = len(table_data)
     ncols = len(col_labels)
@@ -150,6 +150,20 @@ def plot_float_lists_with_thresholds(list1, list2, legend1, legend2, threshold1,
     plt.plot(iterations, list1, color='green', label=legend1)
     plt.plot(iterations, list2, color='red', label=legend2)
 
+    # Markieren der niedrigsten Werte für list1 und list2
+    min_val_index1 = list1.index(min(list1))
+    min_val_index2 = list2.index(min(list2))
+    plt.scatter([min_val_index1 + 1], [list1[min_val_index1]], color='yellow', zorder=5)
+    plt.scatter([min_val_index2 + 1], [list2[min_val_index2]], color='yellow', zorder=5)
+
+    # Annotieren der niedrigsten Punkte mit Box
+    plt.annotate(f"{list1[min_val_index1]}", (min_val_index1 + 1, list1[min_val_index1]),
+                 textcoords="offset points", xytext=(-10,-15), ha='center',
+                 bbox=dict(boxstyle="round,pad=0.3", facecolor='yellow', edgecolor='black', alpha=0.5))
+    plt.annotate(f"{list2[min_val_index2]}", (min_val_index2 + 1, list2[min_val_index2]),
+                 textcoords="offset points", xytext=(-10,-15), ha='center',
+                 bbox=dict(boxstyle="round,pad=0.3", facecolor='yellow', edgecolor='black', alpha=0.5))
+
     # Plot threshold lines
     plt.axhline(y=threshold1, color='green', linestyle='--', label=threshold_legend1)
     plt.axhline(y=threshold2, color='red', linestyle='--', label=threshold_legend2)
@@ -165,7 +179,7 @@ def plot_float_lists_with_thresholds(list1, list2, legend1, legend2, threshold1,
     # Show the plot
     plt.show()
 
-@staticmethod
+
 def adapt_axes(axes, img_as_tensor):
     '''
     helping function to identify if model has 1 or 3 channels. if it has only one channel it is a

@@ -259,9 +259,7 @@ class Analyzer():
                 isinstance(test_loader, DataLoader) and
                 isinstance(loss_func, _Loss)
         ):
-            test = self.test(model=self.model, test_loader=test_loader, loss_func=loss_func)
-            logger.critical(f'here is the data about the test evaluation:')
-            logger.critical(test)
+            self.test(model=self.model, test_loader=test_loader, loss_func=loss_func)
 
     def grad_all(self, test_index):
         batch, sample, label = self.dataset_extractor(test_index)

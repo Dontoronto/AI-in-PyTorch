@@ -25,6 +25,32 @@ def fixed_reduction_rate(available_pattern_indices, pattern_distribution, min_am
 
         return lowest_index
 
+def impact_based_reduction_rate(available_pattern_indices, pattern_distribution,
+                                impact_distribution, min_amount_indices):
+
+    len_available = len(available_pattern_indices)
+    len_library = len(pattern_distribution)
+
+    if len_available > min_amount_indices:
+
+        distribution_ratio = len_available/len_library
+        impact_ratio = 1 - distribution_ratio
+
+        impact_based_list = [distribution_ratio*pattern_distribution[i] +
+                             impact_ratio*impact_distribution[i] for i in range(len_library)]
+
+        sliced_list = itemgetter(*available_pattern_indices)(impact_based_list)
+
+        lowest_index = index_of_lowest_value(sliced_list)
+
+        #print(f"Iteration: {len_library-len_available} - lowest index: {lowest_index} - value: {sliced_list[lowest_index]}")
+
+        available_pattern_indices.pop(lowest_index)
+
+        #print(pattern_distribution[count_check])
+
+        return lowest_index
+
 def index_of_lowest_value(lst):
     '''
     this function gives back the index of the smallest value in list.
