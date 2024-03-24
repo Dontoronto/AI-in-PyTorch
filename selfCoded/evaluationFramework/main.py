@@ -18,6 +18,8 @@ setup_logging()
 import logging
 logger = logging.getLogger(__name__)
 
+from Trainer.admm_utils.tensorBuffer import TensorBuffer
+
 # NOTE: currently we are testing with LeNet-model
 from models.lenet import LeNet
 
@@ -54,13 +56,17 @@ def main():
     Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
     Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
     Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
-    Trainer.train(test=False, onnx_enabled=False)
+    Trainer.train(test=False, onnx_enabled=False, tensor_buffering=True)
     histW = Trainer.getHistoryEpsilonW()
     histZ = Trainer.getHistoryEpsilonZ()
     thrshW = Trainer.epsilon_W
     thrshZ = Trainer.epsilon_Z
     Analyzer = analyzer.Analyzer(Model, DataHandler)
     Analyzer.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
+
+    TensorBuffer.create_two_matrix_gif('experiment/data/frames_w',
+                                       'experiment/data/frames_z',
+                                       'experiment/data/handlerGIF.gif')
 
     # Note: this is just for visualization
     # test_loader = Trainer.getTestLoader()
@@ -98,5 +104,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+#%%
 
 #%%

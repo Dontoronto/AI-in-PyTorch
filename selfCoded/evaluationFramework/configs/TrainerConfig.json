@@ -3,7 +3,7 @@
     "optimizer": "Adam",
     "loss": "CrossEntropyLoss",
     "epoch":  25,
-    "lr": 0.001,
+    "lr": 0.0005,
     "momentum": 0.9,
     "pre_optimization_tuning_path": true
   },

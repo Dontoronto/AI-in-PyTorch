@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import glob
 import imageio.v2 as imageio
-import logging
-logger = logging.getLogger(__name__)
 
 # TODO: erst testen, dann erst implementieren und schauen wie sich das mit dem Trainer vereinbaren lässt
 # TODO: extend it to be able to stare all ADMM relevant tensors. Just one per Variable dW W U Z Mask
@@ -37,7 +35,6 @@ class TensorBuffer:
                 if self.file_path_zero_matrices is not None:
                     self.png_file_path_deleter(self.file_path_zero_matrices)
             else:
-                logger.info(f"Deleted: {file_path}")
                 os.remove(file_path)
 
     def add_item(self, tensors):
@@ -51,17 +48,6 @@ class TensorBuffer:
             if len(self.buffer) >= self.capacity:
                 self._save_tensors_weight_zero()
                 self.buffer = self.buffer[self.capacity:]
-
-    def terminate(self):
-        if len(self.buffer) != 0:
-            self.capacity = len(self.buffer)
-            if len(self.buffer[0]) == 1:
-                self._save_tensors()
-                self.buffer = []
-            else:
-                self._save_tensors_weight_zero()
-                self.buffer = []
-
 
     def _save_tensors(self):
         if self.convert_to_png is False:
@@ -103,7 +89,7 @@ class TensorBuffer:
         # Loop through the list of PNG files and remove each file
         for file in png_files:
             os.remove(file)
-            logger.info(f"Deleted: {file}")
+            print(f"Deleted: {file}")
 
     @staticmethod
     def load_pickle_tensors(file_path):
@@ -161,10 +147,6 @@ class TensorBuffer:
 
     @staticmethod
     def create_single_matrix_gif(directory_path, gif_path):
-        logger.info(f"first directory path was set to: {directory_path}")
-        logger.info(f"gif path was set to: {gif_path}")
-
-        logger.info(f"Started creating single matrix gif file of png files")
         filenames = sorted(glob.glob(os.path.join(directory_path, '*')))
 
         with imageio.get_writer(gif_path, mode='I', duration=0.5) as writer:
@@ -172,16 +154,8 @@ class TensorBuffer:
                 image = imageio.imread(filename)
                 writer.append_data(image)
 
-        logger.info(f"Gif created at path: {gif_path}")
-
     @staticmethod
     def create_two_matrix_gif(first_path, second_path, gif_path):
-
-        logger.info(f"first directory path was set to: {first_path}")
-        logger.info(f"second directory path was set to: {second_path}")
-        logger.info(f"gif path was set to: {gif_path}")
-
-        logger.info(f"Started creating two matrix gif file of png files")
 
         # Paths to the directories containing the PNG files
         directory_path_1 = first_path
@@ -203,6 +177,3 @@ class TensorBuffer:
                 combined_image = np.hstack((image1, image2))
 
                 writer.append_data(combined_image)
-
-        logger.info(f"Gif created at path: {gif_path}")
-

@@ -9,6 +9,7 @@ import utils
 import libraryReduction
 
 # TODO: noch logger schreiben damit die gröbsten Schritte geloggt werden können
+# TODO: testen und bei fehler nochmal mit Testskripten abgleichen
 class PatternManager:
 
     # list saves available patterns
@@ -191,7 +192,6 @@ class PatternManager:
             temp.append(self.pattern_library[index])
 
         return temp
-
 
 
 def count_occurrences_iterative(nested_list, value):

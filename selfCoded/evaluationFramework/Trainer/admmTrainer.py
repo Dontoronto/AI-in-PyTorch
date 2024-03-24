@@ -5,9 +5,12 @@ from .admm_utils.utils import (create_magnitude_pruned_mask, add_tensors_inplace
                                scale_and_add_tensors_inplace)
 from .admm_utils.layerInfo import ADMMVariable
 from .mapper.admm_mapper import ADMMConfigMapper, ADMMArchitectureConfigMapper
+from .admm_utils.multiProcessHandler import MultiProcessHandler
+from .admm_utils.tensorBuffer import TensorBuffer
 
 import torch
 from torch.nn.utils import clip_grad_norm_
+from multiprocessing import Process, Queue
 import logging
 
 logger = logging.getLogger(__name__)
@@ -315,6 +318,38 @@ class ADMMTrainer(DefaultTrainer):
         logger.info(f"Condition for termination criterion Z^(k+1)-Z^k= {frobenius_distance}/{self.epsilon_Z}")
         return float(frobenius_distance)
 
+    @staticmethod
+    def _kernel_tensor_extraction(tensors, batch_index, channel_index):
+        """
+        Returns a specific (3,3) tensor based on provided indices.
+
+        Parameters:
+        - tensors: tensors with shapes like (1,6,3,3) or (16,6,3,3).
+        - list_index: Index in the list to select the tensor.
+        - batch_index: Index for the batch dimension within the selected tensor.
+        - channel_index: Index for the channel dimension within the selected tensor.
+
+        Returns:
+        - The specified (3,3) tensor.
+        """
+        # Validate input indices
+        if batch_index < 0 or channel_index < 0:
+            raise IndexError(f"batch_index or channel_index is out of bounds {tensors.shape}.")
+
+        selected_tensor = tensors[batch_index, channel_index].clone().detach().numpy()
+
+        return selected_tensor
+
+    def w_z_kernel_weight_extraction(self, list_index, batch_index, channel_index):
+        if list_index < 0 or list_index >= len(self.list_W):
+            raise IndexError("list_index is out of bounds.")
+
+        w_weight = self._kernel_tensor_extraction(self.list_W[list_index].W, batch_index, channel_index)
+        z_weight = self._kernel_tensor_extraction(self.list_Z[list_index].Z, batch_index, channel_index)
+
+        return [w_weight, z_weight]
+
+
 
 
     # TODO: weiß nichtmehr genau aber einfach im Kopf behalten
@@ -351,9 +386,10 @@ class ADMMTrainer(DefaultTrainer):
 
     # TODO: methode umschreiben so dass epoch nichtmehr gebraucht wird für admm
     # TODO: symbiose von ADMM und retraining
-    def train(self, test=False, onnx_enabled=False):
+    def train(self, test=False, onnx_enabled=False, tensor_buffering = False):
         self.model.train()
         self.preTrainingChecks()
+        handler = MultiProcessHandler()
 
         # self.initialize_dualvar_auxvar()
 
@@ -391,6 +427,30 @@ class ADMMTrainer(DefaultTrainer):
                 self.initialize_dualvar_auxvar()
                 epo = 0
                 counter = 0
+                #handler = MultiProcessHandler()
+
+                # TODO: here we need to implement tensor buffering initialization of multiprocessing
+
+                if phase == 'admm' and tensor_buffering is True:
+                    # tensor_queue = Queue()
+                    # process = Process(target=tensor_saving_process, args=(tensor_queue, True,))
+                    # process.start()
+                    process_id = 1
+                    handler.start_process(
+                        process_id=process_id,
+                        class_to_instantiate=TensorBuffer,
+                        init_args=[8],  # Assuming the first argument is 'capacity'
+                        init_kwargs={
+                            'file_path': 'experiment/data/frames_w',
+                            'clear_file': True,
+                            'convert_to_png': True,
+                            'file_path_zero_matrices': 'experiment/data/frames_z'
+                            # Add other constructor arguments here
+                        },
+                        process_args=[],  # Additional args for the method you're calling in the loop
+                        process_kwargs={}  # Additional kwargs for the method
+                    )
+
                 while self.main_iterations > counter and epo < self.epoch:
                     for batch_idx, (data, target) in enumerate(dataloader):
 
@@ -401,6 +461,10 @@ class ADMMTrainer(DefaultTrainer):
 
                         if phase == "admm":
                             self.admm(counter)
+                            # TODO: here we need to implement tensor weight buffering
+                            if tensor_buffering is True and counter % (self.admm_iterations/10) == 0:
+                                w_z_weight = self.w_z_kernel_weight_extraction(0,0,0)
+                                handler.put_item_in_queue(process_id, w_z_weight)
                             if self.early_termination_flag is True:
                                 logger.info(f"Early Termination Flag was set, ADMM reached epsilon threshold")
                                 counter += self.main_iterations
@@ -412,6 +476,8 @@ class ADMMTrainer(DefaultTrainer):
                         self.optimizer.step()
 
                         counter += 1
+                        if self.main_iterations < counter:
+                            break
 
                     if phase == "retrain":
                         logger.info(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
@@ -426,6 +492,13 @@ class ADMMTrainer(DefaultTrainer):
                 #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
                 if self.save is True:
                     self.export_model(model_path=save_path, onnx=onnx_enabled)
+
+        if tensor_buffering is True:
+            handler.terminate_process(1)
+            # tensor_queue.put(None)
+            # process.join()
+
+
 
 
 

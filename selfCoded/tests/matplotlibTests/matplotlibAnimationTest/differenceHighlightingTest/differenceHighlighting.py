@@ -5,6 +5,7 @@ import imageio.v2 as imageio
 
 # Example matrices (replace or generate as needed)
 matrices = [np.random.rand(3, 3) for _ in range(5)]  # Generating 5 random 3x3 matrices
+print(matrices)
 
 # Function to compare matrices and assign colors
 def compare_matrices(current, previous):
@@ -48,3 +49,5 @@ with imageio.get_writer(gif_path, mode='I', duration=0.5) as writer:
         writer.append_data(image)
 
 print(f'GIF saved at: {gif_path}')
+
+#%%

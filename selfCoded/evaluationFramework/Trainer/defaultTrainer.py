@@ -217,6 +217,7 @@ class DefaultTrainer(Trainer):
         logger.info(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
         if snapshot_enabled is True:
             self.createSnapshot(test_loss, current_epoch)
+        return test_loss
 
     def getTestLoader(self):
         self.preTrainingChecks()

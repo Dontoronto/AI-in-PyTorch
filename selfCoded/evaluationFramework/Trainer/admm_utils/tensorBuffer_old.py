@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import glob
 import imageio.v2 as imageio
-import logging
-logger = logging.getLogger(__name__)
 
 # TODO: erst testen, dann erst implementieren und schauen wie sich das mit dem Trainer vereinbaren lässt
 # TODO: extend it to be able to stare all ADMM relevant tensors. Just one per Variable dW W U Z Mask
@@ -37,34 +35,36 @@ class TensorBuffer:
                 if self.file_path_zero_matrices is not None:
                     self.png_file_path_deleter(self.file_path_zero_matrices)
             else:
-                logger.info(f"Deleted: {file_path}")
                 os.remove(file_path)
 
-    def add_item(self, tensors):
+
+    @staticmethod
+    def png_file_path_deleter(file_path):
+        # Create a pattern to match all PNG files
+        pattern = os.path.join(file_path, '*.png')
+
+        # Use glob to find all files in the directory that match the pattern
+        png_files = glob.glob(pattern)
+
+        # Loop through the list of PNG files and remove each file
+        for file in png_files:
+            os.remove(file)
+            print(f"Deleted: {file}")
+
+    def add_tensors(self, tensors, convert_to_png):
         if len(tensors) == 1:
             self.buffer.extend(tensors)
             if len(self.buffer) >= self.capacity:
-                self._save_tensors()
+                self._save_tensors(convert_to_png)
                 self.buffer = self.buffer[self.capacity:]
         else:
             self.buffer.append(tensors)
             if len(self.buffer) >= self.capacity:
-                self._save_tensors_weight_zero()
+                self._save_tensors_weight_zero(convert_to_png)
                 self.buffer = self.buffer[self.capacity:]
 
-    def terminate(self):
-        if len(self.buffer) != 0:
-            self.capacity = len(self.buffer)
-            if len(self.buffer[0]) == 1:
-                self._save_tensors()
-                self.buffer = []
-            else:
-                self._save_tensors_weight_zero()
-                self.buffer = []
-
-
-    def _save_tensors(self):
-        if self.convert_to_png is False:
+    def _save_tensors(self, convert_to_png=False):
+        if convert_to_png is False:
             mode = 'ab' if os.path.exists(self.file_path) else 'wb'
             with open(self.file_path, mode) as file:
                 pickle.dump(self.buffer[:self.capacity], file)
@@ -76,8 +76,8 @@ class TensorBuffer:
                 self.previous_matrix = matrix
                 self.number += 1
 
-    def _save_tensors_weight_zero(self):
-        if self.convert_to_png is False:
+    def _save_tensors_weight_zero(self, convert_to_png=False):
+        if convert_to_png is False:
             mode = 'ab' if os.path.exists(self.file_path) else 'wb'
             with open(self.file_path, mode) as file:
                 pickle.dump(self.buffer[:self.capacity], file)
@@ -92,31 +92,19 @@ class TensorBuffer:
                 self.previous_matrix = matrices[0]
                 self.number += 1
 
-    @staticmethod
-    def png_file_path_deleter(file_path):
-        # Create a pattern to match all PNG files
-        pattern = os.path.join(file_path, '*.png')
-
-        # Use glob to find all files in the directory that match the pattern
-        png_files = glob.glob(pattern)
-
-        # Loop through the list of PNG files and remove each file
-        for file in png_files:
-            os.remove(file)
-            logger.info(f"Deleted: {file}")
-
-    @staticmethod
-    def load_pickle_tensors(file_path):
-        tensors = []
-        if os.path.exists(file_path):
-            with open(file_path, 'rb') as file:
-                while True:
-                    try:
-                        tensors.extend(pickle.load(file))
-                    except EOFError:
-                        break
-        return tensors
-
+    def load_tensors(self):
+        if self.convert_to_png is False:
+            tensors = []
+            if os.path.exists(self.file_path):
+                with open(self.file_path, 'rb') as file:
+                    while True:
+                        try:
+                            tensors.extend(pickle.load(file))
+                        except EOFError:
+                            break
+            return tensors
+        else:
+            print("tensor loading in PNG-Mode is not possible")
 
     @staticmethod
     def compare_matrices(current, previous):
@@ -159,50 +147,72 @@ class TensorBuffer:
         plt.savefig(filename)
         plt.close()
 
-    @staticmethod
-    def create_single_matrix_gif(directory_path, gif_path):
-        logger.info(f"first directory path was set to: {directory_path}")
-        logger.info(f"gif path was set to: {gif_path}")
+def computationally_expensive_operation(tensor_buffer=None, tensor_queue=None):
+    start_time = time.time()
+    for i in range(100):  # Number of iterations to simulate heavy computation
+        # Generate a computationally intensive tensor
+        tensor = np.dot(np.random.rand(1000, 1000), np.random.rand(1000, 1000))
+        if tensor_buffer is not None:
+            tensor_buffer.add_tensors([tensor])
+        if tensor_queue is not None:
+            tensor_queue.put([tensor])
+    if tensor_queue is not None:
+        tensor_queue.put(None)  # Signal to terminate the saving process
+    end_time = time.time()
+    return end_time - start_time
 
-        logger.info(f"Started creating single matrix gif file of png files")
-        filenames = sorted(glob.glob(os.path.join(directory_path, '*')))
 
-        with imageio.get_writer(gif_path, mode='I', duration=0.5) as writer:
-            for filename in filenames:
-                image = imageio.imread(filename)
-                writer.append_data(image)
+def computationally_expensive_operation_parallel(tensor_queue):
+    start_time = time.time()
+    for i in range(10):  # Number of iterations to simulate heavy computation
+        # Generate a computationally intensive tensor
+        tensor = np.random.rand(3, 3)
+        tensor_queue.put([tensor, np.array([[0, 1, 2], [3, 4, 0], [6, 0, 9]])])
+    end_time = time.time()
+    tensor_queue.put(None)  # Signal to terminate the saving process
+    return end_time - start_time
 
-        logger.info(f"Gif created at path: {gif_path}")
+def tensor_saving_process(queue, convert_to_png, file_path='tensors.pkl'):
+    if convert_to_png is True:
+        tensor_buffer = TensorBuffer(capacity=5, file_path='experiment/data/frames_w',
+                                     clear_file=True, convert_to_png=convert_to_png,
+                                     file_path_zero_matrices='experiment/data/frames_z')
+    else:
+        tensor_buffer = TensorBuffer(capacity=5, file_path=file_path, clear_file=False)
+    while True:
+        tensors = queue.get()
+        if tensors is None:
+            break
+        tensor_buffer.add_tensors(tensors, convert_to_png)
 
-    @staticmethod
-    def create_two_matrix_gif(first_path, second_path, gif_path):
+def create_single_matrix_gif(directory_path, gif_path):
+    filenames = sorted(glob.glob(os.path.join(directory_path, '*')))
 
-        logger.info(f"first directory path was set to: {first_path}")
-        logger.info(f"second directory path was set to: {second_path}")
-        logger.info(f"gif path was set to: {gif_path}")
+    with imageio.get_writer(gif_path, mode='I', duration=0.5) as writer:
+        for filename in filenames:
+            image = imageio.imread(filename)
+            writer.append_data(image)
 
-        logger.info(f"Started creating two matrix gif file of png files")
 
-        # Paths to the directories containing the PNG files
-        directory_path_1 = first_path
-        directory_path_2 = second_path
+def create_two_matrix_gif(first_path, second_path, gif_path):
 
-        # Ensure the filenames are sorted so corresponding images are matched
-        filenames_1 = sorted(glob.glob(os.path.join(directory_path_1, '*.png')))
-        filenames_2 = sorted(glob.glob(os.path.join(directory_path_2, '*.png')))
+    # Paths to the directories containing the PNG files
+    directory_path_1 = first_path
+    directory_path_2 = second_path
 
-        # Ensure both folders have the same number of PNG files
-        assert len(filenames_1) == len(filenames_2), "Folders contain a different number of PNG files."
+    # Ensure the filenames are sorted so corresponding images are matched
+    filenames_1 = sorted(glob.glob(os.path.join(directory_path_1, '*.png')))
+    filenames_2 = sorted(glob.glob(os.path.join(directory_path_2, '*.png')))
 
-        with imageio.get_writer(gif_path, mode='I', duration=0.5) as writer:
-            for filename_1, filename_2 in zip(filenames_1, filenames_2):
+    # Ensure both folders have the same number of PNG files
+    assert len(filenames_1) == len(filenames_2), "Folders contain a different number of PNG files."
 
-                image1 = imageio.imread(filename_1)
-                image2 = imageio.imread(filename_2)
+    with imageio.get_writer(gif_path, mode='I', duration=0.5) as writer:
+        for filename_1, filename_2 in zip(filenames_1, filenames_2):
 
-                combined_image = np.hstack((image1, image2))
+            image1 = imageio.imread(filename_1)
+            image2 = imageio.imread(filename_2)
 
-                writer.append_data(combined_image)
+            combined_image = np.hstack((image1, image2))
 
-        logger.info(f"Gif created at path: {gif_path}")
-
+            writer.append_data(combined_image)

@@ -1,47 +1,47 @@
-2024-03-22 18:14:12,268 - modelWrapper - INFO - ModelWrapper was initialized
-2024-03-22 18:14:12,270 - dataHandler - INFO - Datahandler initialized
-2024-03-22 18:14:12,271 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
-2024-03-22 18:14:12,271 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
-2024-03-22 18:14:12,271 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-03-22 18:14:12,271 - configurator - INFO - Preprocessing dtype is set so: float
-2024-03-22 18:14:12,271 - configurator - INFO - Preprocessing Normalization is activated
-2024-03-22 18:14:12,272 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-03-22 18:14:12,272 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-03-22 18:14:12,272 - configurator - INFO - Compose(
+2024-03-24 23:53:54,223 - modelWrapper - INFO - ModelWrapper was initialized
+2024-03-24 23:53:54,225 - dataHandler - INFO - Datahandler initialized
+2024-03-24 23:53:54,225 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
+2024-03-24 23:53:54,225 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
+2024-03-24 23:53:54,226 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-03-24 23:53:54,226 - configurator - INFO - Preprocessing dtype is set so: float
+2024-03-24 23:53:54,226 - configurator - INFO - Preprocessing Normalization is activated
+2024-03-24 23:53:54,226 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
+2024-03-24 23:53:54,226 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
+2024-03-24 23:53:54,227 - configurator - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-22 18:14:12,272 - dataHandler - INFO - Preprocessing Steps will be:
-2024-03-22 18:14:12,272 - dataHandler - INFO - Compose(
+2024-03-24 23:53:54,227 - dataHandler - INFO - Preprocessing Steps will be:
+2024-03-24 23:53:54,227 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-22 18:14:12,272 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-03-22 18:14:12,273 - configurator - INFO - Preprocessing dtype is set so: float
-2024-03-22 18:14:12,273 - configurator - INFO - Preprocessing Normalization is activated
-2024-03-22 18:14:12,273 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-03-22 18:14:12,273 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-03-22 18:14:12,273 - configurator - INFO - Compose(
+2024-03-24 23:53:54,227 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-03-24 23:53:54,227 - configurator - INFO - Preprocessing dtype is set so: float
+2024-03-24 23:53:54,228 - configurator - INFO - Preprocessing Normalization is activated
+2024-03-24 23:53:54,228 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
+2024-03-24 23:53:54,228 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
+2024-03-24 23:53:54,228 - configurator - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-22 18:14:12,273 - dataHandler - INFO - Preprocessing Steps will be:
-2024-03-22 18:14:12,273 - dataHandler - INFO - Compose(
+2024-03-24 23:53:54,228 - dataHandler - INFO - Preprocessing Steps will be:
+2024-03-24 23:53:54,228 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-22 18:14:12,274 - configParser - INFO - Trainer Configs from TrainerConfig.json:
-2024-03-22 18:14:12,274 - configParser - INFO - {'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 25, 'lr': 0.001, 'momentum': 0.9, 'pre_optimization_tuning_path': True}
-2024-03-22 18:14:12,274 - configurator - INFO - TrainerConfig settings was loaded via ConfigParser
-2024-03-22 18:14:12,274 - Trainer.trainerFactory - INFO - Filtered OptimizerConfig: {'lr': 0.001}
-2024-03-22 18:14:12,275 - Trainer.trainerFactory - INFO - Creating ADMMTrainer.
-2024-03-22 18:14:12,275 - Trainer.defaultTrainer - INFO - Trainer was configured
-2024-03-22 18:14:12,275 - Trainer.defaultTrainer - INFO - Epochs: 25
-2024-03-22 18:14:12,275 - Trainer.defaultTrainer - INFO - Optimizer: Adam (
+2024-03-24 23:53:54,229 - configParser - INFO - Trainer Configs from TrainerConfig.json:
+2024-03-24 23:53:54,229 - configParser - INFO - {'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 25, 'lr': 0.0005, 'momentum': 0.9, 'pre_optimization_tuning_path': True}
+2024-03-24 23:53:54,229 - configurator - INFO - TrainerConfig settings was loaded via ConfigParser
+2024-03-24 23:53:54,229 - Trainer.trainerFactory - INFO - Filtered OptimizerConfig: {'lr': 0.0005}
+2024-03-24 23:53:54,229 - Trainer.trainerFactory - INFO - Creating ADMMTrainer.
+2024-03-24 23:53:54,230 - Trainer.defaultTrainer - INFO - Trainer was configured
+2024-03-24 23:53:54,230 - Trainer.defaultTrainer - INFO - Epochs: 25
+2024-03-24 23:53:54,230 - Trainer.defaultTrainer - INFO - Optimizer: Adam (
 Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
@@ -50,640 +50,117 @@ Parameter Group 0
     eps: 1e-08
     foreach: None
     fused: None
-    lr: 0.001
+    lr: 0.0005
     maximize: False
     weight_decay: 0
 )
-2024-03-22 18:14:12,275 - Trainer.defaultTrainer - INFO - Lossfunction: CrossEntropyLoss()
-2024-03-22 18:14:12,276 - Trainer.defaultTrainer - INFO - DataHandler: <dataHandler.DataHandler object at 0x137dd2690>
-2024-03-22 18:14:12,276 - configParser - INFO - Dataloader Configs from TrainerConfig.json:
-2024-03-22 18:14:12,276 - configParser - INFO - {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
-2024-03-22 18:14:12,276 - configurator - INFO - Dataloader settings was loaded via ConfigParser
-2024-03-22 18:14:12,277 - configParser - INFO - Snapshot Configs from TrainerConfig.json:
-2024-03-22 18:14:12,277 - configParser - INFO - {'name': 'LeNet_epsiolon_test', 'snapshot_enabled': False, 'snapshot_model_path': 'models/LeNet/', 'snapshot_model_path_raw': 'models/LeNet/', 'recovery_epoch': 3}
-2024-03-22 18:14:12,277 - configurator - INFO - Snapshot settings was loaded via ConfigParser
-2024-03-22 18:14:12,277 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : False
-2024-03-22 18:14:12,277 - Trainer.defaultTrainer - INFO - Model file prefix was set to : LeNet_epsiolon_test
-2024-03-22 18:14:12,277 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
-2024-03-22 18:14:12,277 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
-2024-03-22 18:14:12,278 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : 3
-2024-03-22 18:14:12,278 - configParser - INFO - Loaded admm_model_architecture from ConfigRegistry.json
-2024-03-22 18:14:12,278 - configParser - INFO - Loaded admm_model_architecture has path: configs/preOptimizingTuning/ADMMModelArchitecture.json
-2024-03-22 18:14:12,278 - configParser - INFO - Loaded admm_model_architecture
-2024-03-22 18:14:12,279 - configurator - INFO - Loaded admm_model_architecture from Registry
-2024-03-22 18:14:12,279 - Trainer.mapper.admm_mapper - INFO - ADMM Architecture Config was loaded into ADMMTrainer
-2024-03-22 18:14:12,279 - configParser - INFO - Loaded admm_settings from ConfigRegistry.json
-2024-03-22 18:14:12,279 - configParser - INFO - Loaded admm_settings has path: configs/preOptimizingTuning/ADMMConfig.json
-2024-03-22 18:14:12,279 - configParser - INFO - Loaded admm_settings
-2024-03-22 18:14:12,279 - configurator - INFO - Loaded admm_settings from Registry
-2024-03-22 18:14:12,280 - Trainer.mapper.admm_mapper - INFO - ADMM Config was loaded into ADMMTrainer
-2024-03-22 18:14:12,280 - Trainer.mapper.admm_mapper - INFO - main_iterations set to 50 of type <class 'int'>
-2024-03-22 18:14:12,280 - Trainer.mapper.admm_mapper - INFO - admm_iterations set to 10 of type <class 'int'>
-2024-03-22 18:14:12,280 - Trainer.mapper.admm_mapper - INFO - dynamic masking set to True of type <class 'bool'>
-2024-03-22 18:14:12,280 - Trainer.mapper.admm_mapper - INFO - rho set to 0.0001 of type <class 'float'>
-2024-03-22 18:14:12,280 - Trainer.mapper.admm_mapper - INFO - gradient_threshold set to 6 of type <class 'int'>
-2024-03-22 18:14:12,280 - Trainer.mapper.admm_mapper - INFO - batch_size_norm_coeff set to 0.03125 of type <class 'float'>
-2024-03-22 18:14:12,280 - Trainer.mapper.admm_mapper - INFO - regularization_l2_norm_enabled set to True of type <class 'bool'>
-2024-03-22 18:14:12,281 - Trainer.mapper.admm_mapper - INFO - regularization_l_norm_decay set to 5e-06 of type <class 'float'>
-2024-03-22 18:14:12,281 - Trainer.mapper.admm_mapper - INFO - Phase list set to ['admm'] of type <class 'list'>
-2024-03-22 18:14:12,281 - Trainer.mapper.admm_mapper - INFO - save set to False of type <class 'bool'>
-2024-03-22 18:14:12,281 - Trainer.mapper.admm_mapper - INFO - epsilon_W set to 1.5 of type <class 'float'>
-2024-03-22 18:14:12,281 - Trainer.mapper.admm_mapper - INFO - epsilon_Z set to 1 of type <class 'int'>
-2024-03-22 18:14:12,281 - configParser - INFO - Dataset Configs from DataHandlerConfig.json:
-2024-03-22 18:14:12,281 - configParser - INFO - {'datasetName': 'mnist', 'storageType': 'default', 'root': '/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/dataset/mnist/', 'query': ['Volumes', 'PortableSSD', 'Projekte', 'datasets', 'celeba_dataset', 'IMG', 'img_align_celeba'], 'download': True, 'transform': True, 'target_transform': None}
-2024-03-22 18:14:12,281 - configurator - INFO - DatasetConfig was loaded via ConfigParser
-2024-03-22 18:14:12,282 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
-2024-03-22 18:14:12,325 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-03-22 18:14:12,326 - dataHandler - INFO - Compose(
+2024-03-24 23:53:54,230 - Trainer.defaultTrainer - INFO - Lossfunction: CrossEntropyLoss()
+2024-03-24 23:53:54,230 - Trainer.defaultTrainer - INFO - DataHandler: <dataHandler.DataHandler object at 0x12b9f1490>
+2024-03-24 23:53:54,231 - configParser - INFO - Dataloader Configs from TrainerConfig.json:
+2024-03-24 23:53:54,231 - configParser - INFO - {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
+2024-03-24 23:53:54,231 - configurator - INFO - Dataloader settings was loaded via ConfigParser
+2024-03-24 23:53:54,232 - configParser - INFO - Snapshot Configs from TrainerConfig.json:
+2024-03-24 23:53:54,232 - configParser - INFO - {'name': 'LeNet_epsiolon_test', 'snapshot_enabled': False, 'snapshot_model_path': 'models/LeNet/', 'snapshot_model_path_raw': 'models/LeNet/', 'recovery_epoch': 3}
+2024-03-24 23:53:54,232 - configurator - INFO - Snapshot settings was loaded via ConfigParser
+2024-03-24 23:53:54,232 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : False
+2024-03-24 23:53:54,232 - Trainer.defaultTrainer - INFO - Model file prefix was set to : LeNet_epsiolon_test
+2024-03-24 23:53:54,233 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
+2024-03-24 23:53:54,233 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
+2024-03-24 23:53:54,233 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : 3
+2024-03-24 23:53:54,233 - configParser - INFO - Loaded admm_model_architecture from ConfigRegistry.json
+2024-03-24 23:53:54,233 - configParser - INFO - Loaded admm_model_architecture has path: configs/preOptimizingTuning/ADMMModelArchitecture.json
+2024-03-24 23:53:54,234 - configParser - INFO - Loaded admm_model_architecture
+2024-03-24 23:53:54,234 - configurator - INFO - Loaded admm_model_architecture from Registry
+2024-03-24 23:53:54,234 - Trainer.mapper.admm_mapper - INFO - ADMM Architecture Config was loaded into ADMMTrainer
+2024-03-24 23:53:54,234 - configParser - INFO - Loaded admm_settings from ConfigRegistry.json
+2024-03-24 23:53:54,234 - configParser - INFO - Loaded admm_settings has path: configs/preOptimizingTuning/ADMMConfig.json
+2024-03-24 23:53:54,235 - configParser - INFO - Loaded admm_settings
+2024-03-24 23:53:54,235 - configurator - INFO - Loaded admm_settings from Registry
+2024-03-24 23:53:54,235 - Trainer.mapper.admm_mapper - INFO - ADMM Config was loaded into ADMMTrainer
+2024-03-24 23:53:54,235 - Trainer.mapper.admm_mapper - INFO - main_iterations set to 100 of type <class 'int'>
+2024-03-24 23:53:54,235 - Trainer.mapper.admm_mapper - INFO - admm_iterations set to 10 of type <class 'int'>
+2024-03-24 23:53:54,235 - Trainer.mapper.admm_mapper - INFO - dynamic masking set to True of type <class 'bool'>
+2024-03-24 23:53:54,236 - Trainer.mapper.admm_mapper - INFO - rho set to 0.0001 of type <class 'float'>
+2024-03-24 23:53:54,236 - Trainer.mapper.admm_mapper - INFO - gradient_threshold set to 6 of type <class 'int'>
+2024-03-24 23:53:54,236 - Trainer.mapper.admm_mapper - INFO - batch_size_norm_coeff set to 0.03125 of type <class 'float'>
+2024-03-24 23:53:54,236 - Trainer.mapper.admm_mapper - INFO - regularization_l2_norm_enabled set to True of type <class 'bool'>
+2024-03-24 23:53:54,236 - Trainer.mapper.admm_mapper - INFO - regularization_l_norm_decay set to 5e-06 of type <class 'float'>
+2024-03-24 23:53:54,236 - Trainer.mapper.admm_mapper - INFO - Phase list set to ['admm'] of type <class 'list'>
+2024-03-24 23:53:54,236 - Trainer.mapper.admm_mapper - INFO - save set to False of type <class 'bool'>
+2024-03-24 23:53:54,236 - Trainer.mapper.admm_mapper - INFO - epsilon_W set to 0.5 of type <class 'float'>
+2024-03-24 23:53:54,237 - Trainer.mapper.admm_mapper - INFO - epsilon_Z set to 0.5 of type <class 'float'>
+2024-03-24 23:53:54,237 - configParser - INFO - Dataset Configs from DataHandlerConfig.json:
+2024-03-24 23:53:54,237 - configParser - INFO - {'datasetName': 'mnist', 'storageType': 'default', 'root': '/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/dataset/mnist/', 'query': ['Volumes', 'PortableSSD', 'Projekte', 'datasets', 'celeba_dataset', 'IMG', 'img_align_celeba'], 'download': True, 'transform': True, 'target_transform': None}
+2024-03-24 23:53:54,237 - configurator - INFO - DatasetConfig was loaded via ConfigParser
+2024-03-24 23:53:54,237 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
+2024-03-24 23:53:54,268 - dataHandler - INFO - Transformer of Dataset was changed to:
+2024-03-24 23:53:54,268 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-22 18:14:12,326 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-03-22 18:14:12,326 - dataHandler - INFO - Compose(
+2024-03-24 23:53:54,269 - dataHandler - INFO - Transformer of Dataset was changed to:
+2024-03-24 23:53:54,269 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-22 18:14:12,326 - dataHandler - INFO - Transformer loaded into Dataset
-2024-03-22 18:14:12,327 - Trainer.defaultTrainer - INFO - Dataset was loaded in Trainer class
-2024-03-22 18:14:12,328 - Trainer.defaultTrainer - INFO - Labels of Dataset are in the correct form to be processed with CrossEntropyLoss()
-2024-03-22 18:14:12,328 - Trainer.defaultTrainer - INFO - Created Dataloader with settings: {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
-2024-03-22 18:14:12,329 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-03-22 18:14:12,329 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-03-22 18:14:12,329 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-03-22 18:14:12,329 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-03-22 18:14:12,330 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-03-22 18:14:12,330 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-03-22 18:14:12,330 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-03-22 18:14:12,331 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-03-22 18:14:12,331 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-03-22 18:14:12,331 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-03-22 18:14:12,332 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-03-22 18:14:12,332 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-03-22 18:14:12,332 - Trainer.admmTrainer - INFO - Layer lists were created
-2024-03-22 18:14:13,979 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:13,980 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=11.252928733825684/1.5
-2024-03-22 18:14:13,981 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 11.252928733825684/1
-2024-03-22 18:14:14,042 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,043 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=9.1588773727417/1.5
-2024-03-22 18:14:14,044 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 2.6607840061187744/1
-2024-03-22 18:14:14,103 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,104 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=7.395722389221191/1.5
-2024-03-22 18:14:14,105 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 2.341813802719116/1
-2024-03-22 18:14:14,167 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,168 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.377284049987793/1.5
-2024-03-22 18:14:14,168 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 2.18528151512146/1
-2024-03-22 18:14:14,229 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,231 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.215860843658447/1.5
-2024-03-22 18:14:14,231 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 2.0316407680511475/1
-2024-03-22 18:14:14,291 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,292 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.199160099029541/1.5
-2024-03-22 18:14:14,293 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.9162442684173584/1
-2024-03-22 18:14:14,354 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,355 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.109035015106201/1.5
-2024-03-22 18:14:14,355 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.8259598016738892/1
-2024-03-22 18:14:14,419 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,421 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.951993942260742/1.5
-2024-03-22 18:14:14,421 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.7395684719085693/1
-2024-03-22 18:14:14,481 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,482 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.768078804016113/1.5
-2024-03-22 18:14:14,483 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.6163980960845947/1
-2024-03-22 18:14:14,543 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,544 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.707110404968262/1.5
-2024-03-22 18:14:14,545 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.5449464321136475/1
-2024-03-22 18:14:14,604 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,606 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.862669944763184/1.5
-2024-03-22 18:14:14,606 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.5116236209869385/1
-2024-03-22 18:14:14,666 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,668 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.071132659912109/1.5
-2024-03-22 18:14:14,668 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.3672593832015991/1
-2024-03-22 18:14:14,729 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,730 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.188683986663818/1.5
-2024-03-22 18:14:14,731 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.3651454448699951/1
-2024-03-22 18:14:14,793 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,794 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.133918762207031/1.5
-2024-03-22 18:14:14,795 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.2929046154022217/1
-2024-03-22 18:14:14,856 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,858 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.921476364135742/1.5
-2024-03-22 18:14:14,858 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.1803089380264282/1
-2024-03-22 18:14:14,918 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,919 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.653519630432129/1.5
-2024-03-22 18:14:14,919 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.1509344577789307/1
-2024-03-22 18:14:14,979 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:14,980 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.437915325164795/1.5
-2024-03-22 18:14:14,981 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.073493480682373/1
-2024-03-22 18:14:15,040 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,041 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.302978515625/1.5
-2024-03-22 18:14:15,042 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.0935965776443481/1
-2024-03-22 18:14:15,101 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,103 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.158822536468506/1.5
-2024-03-22 18:14:15,103 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.0237410068511963/1
-2024-03-22 18:14:15,163 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,164 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.96514892578125/1.5
-2024-03-22 18:14:15,164 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.9449374675750732/1
-2024-03-22 18:14:15,222 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,224 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.755677700042725/1.5
-2024-03-22 18:14:15,224 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.9526916742324829/1
-2024-03-22 18:14:15,285 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,286 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.597047805786133/1.5
-2024-03-22 18:14:15,287 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.002342939376831/1
-2024-03-22 18:14:15,347 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,349 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.583475112915039/1.5
-2024-03-22 18:14:15,349 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.1327686309814453/1
-2024-03-22 18:14:15,411 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,412 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.6079630851745605/1.5
-2024-03-22 18:14:15,413 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.0282487869262695/1
-2024-03-22 18:14:15,472 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,474 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.646050453186035/1.5
-2024-03-22 18:14:15,474 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8481680750846863/1
-2024-03-22 18:14:15,534 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,535 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.657588005065918/1.5
-2024-03-22 18:14:15,535 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8694133758544922/1
-2024-03-22 18:14:15,597 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,598 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.672970771789551/1.5
-2024-03-22 18:14:15,598 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.0052392482757568/1
-2024-03-22 18:14:15,656 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,658 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.714951515197754/1.5
-2024-03-22 18:14:15,658 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.1433770656585693/1
-2024-03-22 18:14:15,718 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,719 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.711584091186523/1.5
-2024-03-22 18:14:15,720 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.767227053642273/1
-2024-03-22 18:14:15,779 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,780 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.721973419189453/1.5
-2024-03-22 18:14:15,780 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.9178094863891602/1
-2024-03-22 18:14:15,840 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,841 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.8186211585998535/1.5
-2024-03-22 18:14:15,842 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.206248164176941/1
-2024-03-22 18:14:15,901 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,903 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.815390586853027/1.5
-2024-03-22 18:14:15,903 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.916189968585968/1
-2024-03-22 18:14:15,964 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:15,965 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.771357536315918/1.5
-2024-03-22 18:14:15,966 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.9106403589248657/1
-2024-03-22 18:14:16,026 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,027 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.6986308097839355/1.5
-2024-03-22 18:14:16,028 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7700784802436829/1
-2024-03-22 18:14:16,091 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,093 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.663726806640625/1.5
-2024-03-22 18:14:16,093 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8448512554168701/1
-2024-03-22 18:14:16,160 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,162 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.672693252563477/1.5
-2024-03-22 18:14:16,162 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7649668455123901/1
-2024-03-22 18:14:16,223 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,224 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.707707405090332/1.5
-2024-03-22 18:14:16,224 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8368266820907593/1
-2024-03-22 18:14:16,284 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,286 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.752182960510254/1.5
-2024-03-22 18:14:16,286 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.9153413772583008/1
-2024-03-22 18:14:16,351 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,352 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.80773401260376/1.5
-2024-03-22 18:14:16,353 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8756547570228577/1
-2024-03-22 18:14:16,416 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,417 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.8627610206604/1.5
-2024-03-22 18:14:16,418 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6944246292114258/1
-2024-03-22 18:14:16,481 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,483 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.96528434753418/1.5
-2024-03-22 18:14:16,483 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.9444073438644409/1
-2024-03-22 18:14:16,550 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,552 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.011190414428711/1.5
-2024-03-22 18:14:16,552 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7829259634017944/1
-2024-03-22 18:14:16,615 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,617 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.0503411293029785/1.5
-2024-03-22 18:14:16,617 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6985575556755066/1
-2024-03-22 18:14:16,682 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,683 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.050044059753418/1.5
-2024-03-22 18:14:16,684 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6410369873046875/1
-2024-03-22 18:14:16,749 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,750 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.055166244506836/1.5
-2024-03-22 18:14:16,751 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6621379852294922/1
-2024-03-22 18:14:16,817 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,818 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.060053825378418/1.5
-2024-03-22 18:14:16,819 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7560438513755798/1
-2024-03-22 18:14:16,884 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,885 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.079502105712891/1.5
-2024-03-22 18:14:16,886 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8051185011863708/1
-2024-03-22 18:14:16,956 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:16,957 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.071136474609375/1.5
-2024-03-22 18:14:16,958 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8471797108650208/1
-2024-03-22 18:14:17,020 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,021 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.060512065887451/1.5
-2024-03-22 18:14:17,021 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7142930030822754/1
-2024-03-22 18:14:17,083 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,084 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.057987213134766/1.5
-2024-03-22 18:14:17,085 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7743099331855774/1
-2024-03-22 18:14:17,145 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,147 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.052343368530273/1.5
-2024-03-22 18:14:17,147 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8009154796600342/1
-2024-03-22 18:14:17,219 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,220 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.054298400878906/1.5
-2024-03-22 18:14:17,221 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8127005100250244/1
-2024-03-22 18:14:17,283 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,285 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.049365520477295/1.5
-2024-03-22 18:14:17,285 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5874610543251038/1
-2024-03-22 18:14:17,346 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,347 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.055384635925293/1.5
-2024-03-22 18:14:17,347 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5994251370429993/1
-2024-03-22 18:14:17,407 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,408 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.052314758300781/1.5
-2024-03-22 18:14:17,409 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5603972673416138/1
-2024-03-22 18:14:17,469 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,470 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.055163860321045/1.5
-2024-03-22 18:14:17,470 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6724221110343933/1
-2024-03-22 18:14:17,534 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,535 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.044032096862793/1.5
-2024-03-22 18:14:17,536 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5958394408226013/1
-2024-03-22 18:14:17,595 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,596 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.032309532165527/1.5
-2024-03-22 18:14:17,596 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7389440536499023/1
-2024-03-22 18:14:17,656 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,657 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.015228748321533/1.5
-2024-03-22 18:14:17,658 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6115779876708984/1
-2024-03-22 18:14:17,718 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,719 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.0021867752075195/1.5
-2024-03-22 18:14:17,720 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.745623767375946/1
-2024-03-22 18:14:17,781 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,782 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.987383842468262/1.5
-2024-03-22 18:14:17,783 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.682084858417511/1
-2024-03-22 18:14:17,843 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,844 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.9666619300842285/1.5
-2024-03-22 18:14:17,845 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5923856496810913/1
-2024-03-22 18:14:17,905 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,906 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.936678409576416/1.5
-2024-03-22 18:14:17,906 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6897393465042114/1
-2024-03-22 18:14:17,966 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:17,967 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.899864196777344/1.5
-2024-03-22 18:14:17,968 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6062875986099243/1
-2024-03-22 18:14:18,029 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,030 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.856720924377441/1.5
-2024-03-22 18:14:18,030 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6335813999176025/1
-2024-03-22 18:14:18,090 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,091 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.816573143005371/1.5
-2024-03-22 18:14:18,091 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5507904291152954/1
-2024-03-22 18:14:18,152 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,153 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.791791915893555/1.5
-2024-03-22 18:14:18,153 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7741976976394653/1
-2024-03-22 18:14:18,213 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,214 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.754008769989014/1.5
-2024-03-22 18:14:18,215 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5607635974884033/1
-2024-03-22 18:14:18,280 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,281 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.720213890075684/1.5
-2024-03-22 18:14:18,281 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6180509924888611/1
-2024-03-22 18:14:18,342 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,343 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.684686183929443/1.5
-2024-03-22 18:14:18,344 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.47058743238449097/1
-2024-03-22 18:14:18,410 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,412 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.661961555480957/1.5
-2024-03-22 18:14:18,412 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6793384552001953/1
-2024-03-22 18:14:18,474 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,475 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.653607368469238/1.5
-2024-03-22 18:14:18,476 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6428251266479492/1
-2024-03-22 18:14:18,537 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,538 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.633599281311035/1.5
-2024-03-22 18:14:18,539 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6865717768669128/1
-2024-03-22 18:14:18,602 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,604 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.605120658874512/1.5
-2024-03-22 18:14:18,604 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6768103837966919/1
-2024-03-22 18:14:18,665 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,666 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.583934307098389/1.5
-2024-03-22 18:14:18,667 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5279206037521362/1
-2024-03-22 18:14:18,727 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,729 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.534934997558594/1.5
-2024-03-22 18:14:18,729 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.3994947075843811/1
-2024-03-22 18:14:18,788 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,789 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.51117467880249/1.5
-2024-03-22 18:14:18,790 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6323041915893555/1
-2024-03-22 18:14:18,852 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,853 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.487773418426514/1.5
-2024-03-22 18:14:18,853 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.43287843465805054/1
-2024-03-22 18:14:18,913 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,915 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.467038154602051/1.5
-2024-03-22 18:14:18,915 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5445510149002075/1
-2024-03-22 18:14:18,976 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:18,977 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.4548234939575195/1.5
-2024-03-22 18:14:18,978 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7107266783714294/1
-2024-03-22 18:14:19,037 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,038 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.462815284729004/1.5
-2024-03-22 18:14:19,039 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7917017936706543/1
-2024-03-22 18:14:19,100 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,101 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.471914768218994/1.5
-2024-03-22 18:14:19,101 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8380610346794128/1
-2024-03-22 18:14:19,161 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,163 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.488933563232422/1.5
-2024-03-22 18:14:19,163 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8826227188110352/1
-2024-03-22 18:14:19,223 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,225 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.472851276397705/1.5
-2024-03-22 18:14:19,225 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6388444900512695/1
-2024-03-22 18:14:19,292 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,293 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.436482906341553/1.5
-2024-03-22 18:14:19,294 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6003075242042542/1
-2024-03-22 18:14:19,354 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,356 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.397822856903076/1.5
-2024-03-22 18:14:19,356 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5600192546844482/1
-2024-03-22 18:14:19,421 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,422 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.382660865783691/1.5
-2024-03-22 18:14:19,423 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6076492667198181/1
-2024-03-22 18:14:19,484 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,485 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.365142822265625/1.5
-2024-03-22 18:14:19,485 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6481556296348572/1
-2024-03-22 18:14:19,546 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,547 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.345162868499756/1.5
-2024-03-22 18:14:19,547 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.573968768119812/1
-2024-03-22 18:14:19,608 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,609 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.3390679359436035/1.5
-2024-03-22 18:14:19,609 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5844992399215698/1
-2024-03-22 18:14:19,676 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,678 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.335590362548828/1.5
-2024-03-22 18:14:19,678 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6766893267631531/1
-2024-03-22 18:14:19,740 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,741 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.355655193328857/1.5
-2024-03-22 18:14:19,741 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7377872467041016/1
-2024-03-22 18:14:19,802 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,803 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.358158111572266/1.5
-2024-03-22 18:14:19,803 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7042973637580872/1
-2024-03-22 18:14:19,865 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,866 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.347016334533691/1.5
-2024-03-22 18:14:19,867 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.4537487030029297/1
-2024-03-22 18:14:19,926 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,927 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.361135482788086/1.5
-2024-03-22 18:14:19,928 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7477973103523254/1
-2024-03-22 18:14:19,989 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:19,990 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.374598979949951/1.5
-2024-03-22 18:14:19,991 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.765356183052063/1
-2024-03-22 18:14:20,051 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,052 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.380638122558594/1.5
-2024-03-22 18:14:20,052 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5194892883300781/1
-2024-03-22 18:14:20,113 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,114 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.388889312744141/1.5
-2024-03-22 18:14:20,114 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7317938804626465/1
-2024-03-22 18:14:20,175 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,177 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.401139259338379/1.5
-2024-03-22 18:14:20,177 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6501275300979614/1
-2024-03-22 18:14:20,237 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,238 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.412746906280518/1.5
-2024-03-22 18:14:20,239 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.669037938117981/1
-2024-03-22 18:14:20,299 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,300 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.407151222229004/1.5
-2024-03-22 18:14:20,301 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.44707393646240234/1
-2024-03-22 18:14:20,361 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,363 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.407561302185059/1.5
-2024-03-22 18:14:20,363 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5778170228004456/1
-2024-03-22 18:14:20,422 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,423 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.4171223640441895/1.5
-2024-03-22 18:14:20,424 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5151821374893188/1
-2024-03-22 18:14:20,485 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,486 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.420717716217041/1.5
-2024-03-22 18:14:20,486 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5688678026199341/1
-2024-03-22 18:14:20,547 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,548 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.438296318054199/1.5
-2024-03-22 18:14:20,549 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.9901437163352966/1
-2024-03-22 18:14:20,611 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,612 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.471377849578857/1.5
-2024-03-22 18:14:20,613 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7976836562156677/1
-2024-03-22 18:14:20,676 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,677 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.48153018951416/1.5
-2024-03-22 18:14:20,678 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.671545684337616/1
-2024-03-22 18:14:20,738 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,739 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.51169490814209/1.5
-2024-03-22 18:14:20,740 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7759737968444824/1
-2024-03-22 18:14:20,799 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,801 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.524646282196045/1.5
-2024-03-22 18:14:20,801 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6353554725646973/1
-2024-03-22 18:14:20,864 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,865 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.526935577392578/1.5
-2024-03-22 18:14:20,866 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.4984693229198456/1
-2024-03-22 18:14:20,934 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,935 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.527029991149902/1.5
-2024-03-22 18:14:20,935 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5336121916770935/1
-2024-03-22 18:14:20,996 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:20,997 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.5509233474731445/1.5
-2024-03-22 18:14:20,997 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7288558483123779/1
-2024-03-22 18:14:21,059 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,060 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.555581569671631/1.5
-2024-03-22 18:14:21,061 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.49061453342437744/1
-2024-03-22 18:14:21,121 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,122 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.573983192443848/1.5
-2024-03-22 18:14:21,122 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7164335250854492/1
-2024-03-22 18:14:21,185 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,186 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.584486484527588/1.5
-2024-03-22 18:14:21,187 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6120854020118713/1
-2024-03-22 18:14:21,247 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,248 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.590970516204834/1.5
-2024-03-22 18:14:21,248 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5066670179367065/1
-2024-03-22 18:14:21,313 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,314 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.606894016265869/1.5
-2024-03-22 18:14:21,314 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.741138219833374/1
-2024-03-22 18:14:21,374 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,375 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.620931148529053/1.5
-2024-03-22 18:14:21,376 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5940585136413574/1
-2024-03-22 18:14:21,437 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,438 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.599827289581299/1.5
-2024-03-22 18:14:21,439 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.4495584964752197/1
-2024-03-22 18:14:21,500 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,501 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.586521148681641/1.5
-2024-03-22 18:14:21,501 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5919262766838074/1
-2024-03-22 18:14:21,564 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,566 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.5804362297058105/1.5
-2024-03-22 18:14:21,566 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5410407781600952/1
-2024-03-22 18:14:21,631 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,633 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.601763725280762/1.5
-2024-03-22 18:14:21,633 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8002095818519592/1
-2024-03-22 18:14:21,698 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,700 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.587045669555664/1.5
-2024-03-22 18:14:21,700 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.43017029762268066/1
-2024-03-22 18:14:21,766 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,767 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.5555548667907715/1.5
-2024-03-22 18:14:21,768 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.3938307762145996/1
-2024-03-22 18:14:21,834 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,835 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.551191806793213/1.5
-2024-03-22 18:14:21,836 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.569819986820221/1
-2024-03-22 18:14:21,902 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,903 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.564358711242676/1.5
-2024-03-22 18:14:21,904 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6115512847900391/1
-2024-03-22 18:14:21,971 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:21,972 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.574580192565918/1.5
-2024-03-22 18:14:21,973 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6188741326332092/1
-2024-03-22 18:14:22,043 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,045 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.579111576080322/1.5
-2024-03-22 18:14:22,045 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5486750602722168/1
-2024-03-22 18:14:22,112 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,113 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.568772792816162/1.5
-2024-03-22 18:14:22,114 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.554790735244751/1
-2024-03-22 18:14:22,182 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,183 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.569676399230957/1.5
-2024-03-22 18:14:22,184 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5040683150291443/1
-2024-03-22 18:14:22,247 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,248 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.577428817749023/1.5
-2024-03-22 18:14:22,249 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6141459941864014/1
-2024-03-22 18:14:22,310 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,311 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.588337421417236/1.5
-2024-03-22 18:14:22,312 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7588721513748169/1
-2024-03-22 18:14:22,379 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,380 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.601521968841553/1.5
-2024-03-22 18:14:22,380 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6635951995849609/1
-2024-03-22 18:14:22,442 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,443 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.590309143066406/1.5
-2024-03-22 18:14:22,443 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5448684692382812/1
-2024-03-22 18:14:22,506 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,507 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.598222732543945/1.5
-2024-03-22 18:14:22,507 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.63759446144104/1
-2024-03-22 18:14:22,568 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,569 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.61748743057251/1.5
-2024-03-22 18:14:22,570 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6196321845054626/1
-2024-03-22 18:14:22,631 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,633 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.611981391906738/1.5
-2024-03-22 18:14:22,633 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.49152934551239014/1
-2024-03-22 18:14:22,694 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,695 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.6180853843688965/1.5
-2024-03-22 18:14:22,696 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5922350883483887/1
-2024-03-22 18:14:22,757 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,759 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.634529113769531/1.5
-2024-03-22 18:14:22,759 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5863669514656067/1
-2024-03-22 18:14:22,821 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,822 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.658787250518799/1.5
-2024-03-22 18:14:22,822 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6517738103866577/1
-2024-03-22 18:14:22,884 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,885 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.655775547027588/1.5
-2024-03-22 18:14:22,886 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.420293927192688/1
-2024-03-22 18:14:22,947 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:22,948 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.6511077880859375/1.5
-2024-03-22 18:14:22,949 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5389072299003601/1
-2024-03-22 18:14:23,010 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,011 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.6642961502075195/1.5
-2024-03-22 18:14:23,012 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6310722827911377/1
-2024-03-22 18:14:23,074 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,075 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.684595108032227/1.5
-2024-03-22 18:14:23,075 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6109600067138672/1
-2024-03-22 18:14:23,136 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,138 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.668824195861816/1.5
-2024-03-22 18:14:23,138 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.40050041675567627/1
-2024-03-22 18:14:23,201 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,202 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.652110576629639/1.5
-2024-03-22 18:14:23,202 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.48106619715690613/1
-2024-03-22 18:14:23,263 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,265 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.652590274810791/1.5
-2024-03-22 18:14:23,265 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6874198913574219/1
-2024-03-22 18:14:23,326 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,327 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.656558990478516/1.5
-2024-03-22 18:14:23,328 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.48668724298477173/1
-2024-03-22 18:14:23,388 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,390 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.6605634689331055/1.5
-2024-03-22 18:14:23,390 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7113984823226929/1
-2024-03-22 18:14:23,451 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,452 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.673399925231934/1.5
-2024-03-22 18:14:23,453 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7149381041526794/1
-2024-03-22 18:14:23,515 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,516 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.684765338897705/1.5
-2024-03-22 18:14:23,517 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7451531887054443/1
-2024-03-22 18:14:23,577 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,579 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.699444770812988/1.5
-2024-03-22 18:14:23,579 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6941328048706055/1
-2024-03-22 18:14:23,647 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,648 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.693589687347412/1.5
-2024-03-22 18:14:23,649 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6098420023918152/1
-2024-03-22 18:14:23,711 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,712 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.695751667022705/1.5
-2024-03-22 18:14:23,712 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8197020292282104/1
-2024-03-22 18:14:23,774 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,775 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.719464302062988/1.5
-2024-03-22 18:14:23,776 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6675020456314087/1
-2024-03-22 18:14:23,837 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,839 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.729635715484619/1.5
-2024-03-22 18:14:23,839 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.604663610458374/1
-2024-03-22 18:14:23,899 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,900 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.746621131896973/1.5
-2024-03-22 18:14:23,900 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6634040474891663/1
-2024-03-22 18:14:23,961 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:23,962 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.741020202636719/1.5
-2024-03-22 18:14:23,963 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.54478919506073/1
-2024-03-22 18:14:24,024 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,025 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.7337965965271/1.5
-2024-03-22 18:14:24,026 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5908554792404175/1
-2024-03-22 18:14:24,088 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,089 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.729524612426758/1.5
-2024-03-22 18:14:24,089 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5279529094696045/1
-2024-03-22 18:14:24,151 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,152 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.723368167877197/1.5
-2024-03-22 18:14:24,153 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5632176995277405/1
-2024-03-22 18:14:24,215 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,216 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.724083423614502/1.5
-2024-03-22 18:14:24,216 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5654723048210144/1
-2024-03-22 18:14:24,283 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,284 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.7256035804748535/1.5
-2024-03-22 18:14:24,284 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5825047492980957/1
-2024-03-22 18:14:24,352 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,353 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.725447177886963/1.5
-2024-03-22 18:14:24,354 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.45800620317459106/1
-2024-03-22 18:14:24,416 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,417 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.726296424865723/1.5
-2024-03-22 18:14:24,418 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5764057040214539/1
-2024-03-22 18:14:24,480 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,481 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.717123508453369/1.5
-2024-03-22 18:14:24,482 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.3256089389324188/1
-2024-03-22 18:14:24,544 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,545 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.724865436553955/1.5
-2024-03-22 18:14:24,546 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6572304964065552/1
-2024-03-22 18:14:24,607 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,609 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.742795467376709/1.5
-2024-03-22 18:14:24,609 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6273576021194458/1
-2024-03-22 18:14:24,671 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,673 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.736626148223877/1.5
-2024-03-22 18:14:24,673 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.551019549369812/1
-2024-03-22 18:14:24,741 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,743 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.735867977142334/1.5
-2024-03-22 18:14:24,743 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7114672064781189/1
-2024-03-22 18:14:24,804 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,805 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.740462303161621/1.5
-2024-03-22 18:14:24,806 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7236448526382446/1
-2024-03-22 18:14:24,867 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,868 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.747633934020996/1.5
-2024-03-22 18:14:24,868 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5835042595863342/1
-2024-03-22 18:14:24,930 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,931 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.744561195373535/1.5
-2024-03-22 18:14:24,932 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.46494531631469727/1
-2024-03-22 18:14:24,993 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:24,994 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.749476432800293/1.5
-2024-03-22 18:14:24,995 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5368281602859497/1
-2024-03-22 18:14:25,056 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,057 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.774617671966553/1.5
-2024-03-22 18:14:25,057 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6719107627868652/1
-2024-03-22 18:14:25,120 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,121 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.8014373779296875/1.5
-2024-03-22 18:14:25,122 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.8312112092971802/1
-2024-03-22 18:14:25,184 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,186 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.817270278930664/1.5
-2024-03-22 18:14:25,186 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6919561624526978/1
-2024-03-22 18:14:25,250 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,251 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.825272083282471/1.5
-2024-03-22 18:14:25,251 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6329324245452881/1
-2024-03-22 18:14:25,313 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,315 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.850637912750244/1.5
-2024-03-22 18:14:25,315 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.7970367074012756/1
-2024-03-22 18:14:25,377 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,378 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.864107131958008/1.5
-2024-03-22 18:14:25,379 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5356281995773315/1
-2024-03-22 18:14:25,440 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,441 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.88593864440918/1.5
-2024-03-22 18:14:25,442 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6675010919570923/1
-2024-03-22 18:14:25,504 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,505 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.887550354003906/1.5
-2024-03-22 18:14:25,505 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.515424370765686/1
-2024-03-22 18:14:25,568 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,570 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.864964485168457/1.5
-2024-03-22 18:14:25,570 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.6042892932891846/1
-2024-03-22 18:14:25,632 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,634 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.86580228805542/1.5
-2024-03-22 18:14:25,634 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5713124871253967/1
-2024-03-22 18:14:25,695 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,696 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.874109268188477/1.5
-2024-03-22 18:14:25,697 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5180920362472534/1
-2024-03-22 18:14:25,758 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,760 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.880670547485352/1.5
-2024-03-22 18:14:25,760 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.5727964043617249/1
-2024-03-22 18:14:25,829 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,830 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.8850274085998535/1.5
-2024-03-22 18:14:25,831 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.4928262531757355/1
-2024-03-22 18:14:25,892 - Trainer.admmTrainer - INFO - Pruning mask was created
-2024-03-22 18:14:25,894 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.881957054138184/1.5
-2024-03-22 18:14:25,894 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 0.43526986241340637/1
-2024-03-22 18:14:26,164 - Trainer.admmTrainer - INFO - Iteration Number: 1875 [59968/60000 (100%)]	Loss: 0.056194
+2024-03-24 23:53:54,269 - dataHandler - INFO - Transformer loaded into Dataset
+2024-03-24 23:53:54,269 - Trainer.defaultTrainer - INFO - Dataset was loaded in Trainer class
+2024-03-24 23:53:54,270 - Trainer.defaultTrainer - INFO - Labels of Dataset are in the correct form to be processed with CrossEntropyLoss()
+2024-03-24 23:53:54,270 - Trainer.defaultTrainer - INFO - Created Dataloader with settings: {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
+2024-03-24 23:53:54,271 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
+2024-03-24 23:53:54,271 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
+2024-03-24 23:53:54,271 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
+2024-03-24 23:53:54,271 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
+2024-03-24 23:53:54,272 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
+2024-03-24 23:53:54,272 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
+2024-03-24 23:53:54,272 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
+2024-03-24 23:53:54,273 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
+2024-03-24 23:53:54,273 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
+2024-03-24 23:53:54,273 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
+2024-03-24 23:53:54,273 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
+2024-03-24 23:53:54,274 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
+2024-03-24 23:53:54,274 - Trainer.admmTrainer - INFO - Layer lists were created
+2024-03-24 23:53:54,288 - Trainer.admm_utils.multiProcessHandler - INFO - Started Process with Process ID: 1
+2024-03-24 23:53:56,063 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,064 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=11.252928733825684/0.5
+2024-03-24 23:53:56,065 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 11.252928733825684/0.5
+2024-03-24 23:53:56,127 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,128 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=10.070348739624023/0.5
+2024-03-24 23:53:56,129 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.4561811685562134/0.5
+2024-03-24 23:53:56,195 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,197 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=9.010163307189941/0.5
+2024-03-24 23:53:56,197 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.314192295074463/0.5
+2024-03-24 23:53:56,258 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,259 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=7.978571891784668/0.5
+2024-03-24 23:53:56,260 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.2462576627731323/0.5
+2024-03-24 23:53:56,328 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,330 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=7.071027755737305/0.5
+2024-03-24 23:53:56,330 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.193935513496399/0.5
+2024-03-24 23:53:56,408 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,410 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.437141418457031/0.5
+2024-03-24 23:53:56,410 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.1598255634307861/0.5
+2024-03-24 23:53:56,478 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,479 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.161219596862793/0.5
+2024-03-24 23:53:56,480 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.1275708675384521/0.5
+2024-03-24 23:53:56,545 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,546 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.097644329071045/0.5
+2024-03-24 23:53:56,546 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.1033390760421753/0.5
+2024-03-24 23:53:56,614 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,616 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.0858354568481445/0.5
+2024-03-24 23:53:56,616 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.0777325630187988/0.5
+2024-03-24 23:53:56,699 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,701 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.061833381652832/0.5
+2024-03-24 23:53:56,701 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.0313485860824585/0.5
+2024-03-24 23:53:56,788 - Trainer.admmTrainer - INFO - Pruning mask was created
+2024-03-24 23:53:56,790 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.0186004638671875/0.5
+2024-03-24 23:53:56,790 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 1.0076580047607422/0.5
+2024-03-24 23:53:57,103 - Trainer.admmTrainer - INFO - Iteration Number: 101 [3200/60000 (5%)]	Loss: 0.027357
+2024-03-24 23:53:57,104 - Trainer.admm_utils.multiProcessHandler - INFO - Process with ID: 1 received termination flag: None
+2024-03-24 23:54:01,631 - Trainer.admm_utils.multiProcessHandler - INFO - Process and Queue with ID: 1 was deleted
+2024-03-24 23:54:01,770 - Trainer.admm_utils.tensorBuffer - INFO - first directory path was set to: experiment/data/frames_w
+2024-03-24 23:54:01,772 - Trainer.admm_utils.tensorBuffer - INFO - second directory path was set to: experiment/data/frames_z
+2024-03-24 23:54:01,779 - Trainer.admm_utils.tensorBuffer - INFO - gif path was set to: experiment/data/handlerGIF.gif
+2024-03-24 23:54:01,780 - Trainer.admm_utils.tensorBuffer - INFO - Started creating two matrix gif file of png files
+2024-03-24 23:54:03,306 - Trainer.admm_utils.tensorBuffer - INFO - Gif created at path: experiment/data/handlerGIF.gif
