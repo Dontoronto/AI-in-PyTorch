@@ -1,4 +1,5 @@
 from multiprocessing import Process, Queue
+import multiprocessing
 from typing import Any, Callable, Dict, List, Type
 import logging
 logger = logging.getLogger(__name__)
@@ -61,7 +62,17 @@ class MultiProcessHandler:
         :param process_args: Additional positional arguments for the process method.
         :param process_kwargs: Additional keyword arguments for the process method.
         """
+
+
+
         instance = class_to_instantiate(*init_args, **init_kwargs)
+        event = process_kwargs.get('event')
+        if event is not None and isinstance(event, multiprocessing.synchronize.Event):
+            event.set()
+            logger.critical("Event in MultiprocessManager was set!!!")
+        else:
+            logger.info("No event listener was set")
+
         while True:
             item = queue.get()
             if item is None:
@@ -69,4 +80,4 @@ class MultiProcessHandler:
                 break
             # Here, you would call the instance method you intend to use, for example:
             # instance.some_method(item, *process_args, **process_kwargs)
-            instance.add_item(item, *process_args, **process_kwargs)
+            instance.add_item(item)

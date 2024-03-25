@@ -7,11 +7,13 @@ from .admm_utils.layerInfo import ADMMVariable
 from .mapper.admm_mapper import ADMMConfigMapper, ADMMArchitectureConfigMapper
 from .admm_utils.multiProcessHandler import MultiProcessHandler
 from .admm_utils.tensorBuffer import TensorBuffer
+from .admm_utils.pattern_pruning.patternManager import PatternManager
 
 import torch
 from torch.nn.utils import clip_grad_norm_
 from multiprocessing import Process, Queue
 import logging
+from multiprocessing import Event
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +86,10 @@ class ADMMTrainer(DefaultTrainer):
         self.history_epsilon_Z = []
         self.early_termination_flag = False
 
+        self.patternManager = PatternManager()
+
+
+
     def setADMMConfig(self, kwargs):
         ADMMConfigMapper(self, kwargs)
 
@@ -138,12 +144,21 @@ class ADMMTrainer(DefaultTrainer):
         [layer_Z.set_admm_vars(ADMMVariable.Z) for layer_Z in self.list_Z]
         logger.info(f"Layer lists were created")
 
-    def initialize_pruning_mask_layer_list(self):
+    def initialize_pruning_mask_layer_list(self, firstTime=True):
         '''
         This method should be general. You only have to change the implementation to get the right mask.
         Assings the class variable list_masks the pruning masks per layer on same index level.
         '''
-        self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
+        conv_list = [layerZ.Z for layerZ in self.list_Z]
+        logger.critical(f"Amount of patterns available: {len(self.patternManager.available_patterns_indices)}")
+        if firstTime is True:
+            self.patternManager.assign_patterns_to_tensors(conv_list)
+            self.list_masks = self.patternManager.get_pattern_masks()
+        else:
+            self.patternManager.reduce_available_patterns(2)
+            self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=2)
+            self.list_masks = self.patternManager.get_pattern_masks()
+        # self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
         logger.info(f"Pruning mask was created")
 
     def clip_gradients(self):
@@ -359,14 +374,14 @@ class ADMMTrainer(DefaultTrainer):
         self.normalize_gradients()
         self.regularize_gradients()
         if curr_iteration % self.admm_iterations == 0:
-            # if statement für dynamische oder statische maske
-            if self.dynamic_masking is True:
-                self.initialize_pruning_mask_layer_list()
-            elif curr_iteration == 0:
-                self.initialize_pruning_mask_layer_list()
             # TODO: abbruch testen
             self.store_old_AuxVariable()
             self.project_aux_layers()
+            # if statement für dynamische oder statische maske
+            if self.dynamic_masking is True and curr_iteration != 0:
+                self.initialize_pruning_mask_layer_list(False)
+            elif curr_iteration == 0:
+                self.initialize_pruning_mask_layer_list(True)
             self.prune_aux_layers()
             self.update_termination_criterion()
             if curr_iteration != 0:
@@ -435,11 +450,12 @@ class ADMMTrainer(DefaultTrainer):
                     # tensor_queue = Queue()
                     # process = Process(target=tensor_saving_process, args=(tensor_queue, True,))
                     # process.start()
+                    complete = Event()
                     process_id = 1
                     handler.start_process(
                         process_id=process_id,
                         class_to_instantiate=TensorBuffer,
-                        init_args=[8],  # Assuming the first argument is 'capacity'
+                        init_args=[5],  # Assuming the first argument is 'capacity'
                         init_kwargs={
                             'file_path': 'experiment/data/frames_w',
                             'clear_file': True,
@@ -448,10 +464,115 @@ class ADMMTrainer(DefaultTrainer):
                             # Add other constructor arguments here
                         },
                         process_args=[],  # Additional args for the method you're calling in the loop
-                        process_kwargs={}  # Additional kwargs for the method
+                        process_kwargs={'event': complete}  # Additional kwargs for the method
                     )
+                    logger.critical("right before starting")
+                    complete.wait()
+                    logger.critical("After complete Event")
+
+                    complete = Event()
+                    process_id2 = 2
+                    handler.start_process(
+                        process_id=process_id2,
+                        class_to_instantiate=TensorBuffer,
+                        init_args=[5],  # Assuming the first argument is 'capacity'
+                        init_kwargs={
+                            'file_path': 'experiment/data/frames_w2',
+                            'clear_file': True,
+                            'convert_to_png': True,
+                            'file_path_zero_matrices': 'experiment/data/frames_z2'
+                            # Add other constructor arguments here
+                        },
+                        process_args=[],  # Additional args for the method you're calling in the loop
+                        process_kwargs={'event': complete}  # Additional kwargs for the method
+                    )
+                    logger.critical("right before starting")
+                    complete.wait()
+                    logger.critical("After complete Event")
+
+                    complete = Event()
+                    process_id3 = 3
+                    handler.start_process(
+                        process_id=process_id3,
+                        class_to_instantiate=TensorBuffer,
+                        init_args=[5],  # Assuming the first argument is 'capacity'
+                        init_kwargs={
+                            'file_path': 'experiment/data/frames_w3',
+                            'clear_file': True,
+                            'convert_to_png': True,
+                            'file_path_zero_matrices': 'experiment/data/frames_z3'
+                            # Add other constructor arguments here
+                        },
+                        process_args=[],  # Additional args for the method you're calling in the loop
+                        process_kwargs={'event': complete}  # Additional kwargs for the method
+                    )
+                    logger.critical("right before starting")
+                    complete.wait()
+                    logger.critical("After complete Event")
+
+                    complete = Event()
+                    process_id4 = 4
+                    handler.start_process(
+                        process_id=process_id4,
+                        class_to_instantiate=TensorBuffer,
+                        init_args=[5],  # Assuming the first argument is 'capacity'
+                        init_kwargs={
+                            'file_path': 'experiment/data/frames_w4',
+                            'clear_file': True,
+                            'convert_to_png': True,
+                            'file_path_zero_matrices': 'experiment/data/frames_z4'
+                            # Add other constructor arguments here
+                        },
+                        process_args=[],  # Additional args for the method you're calling in the loop
+                        process_kwargs={'event': complete}  # Additional kwargs for the method
+                    )
+                    logger.critical("right before starting")
+                    complete.wait()
+                    logger.critical("After complete Event")
+
+                    complete = Event()
+                    process_id5 = 5
+                    handler.start_process(
+                        process_id=process_id5,
+                        class_to_instantiate=TensorBuffer,
+                        init_args=[5],  # Assuming the first argument is 'capacity'
+                        init_kwargs={
+                            'file_path': 'experiment/data/frames_w5',
+                            'clear_file': True,
+                            'convert_to_png': True,
+                            'file_path_zero_matrices': 'experiment/data/frames_z5'
+                            # Add other constructor arguments here
+                        },
+                        process_args=[],  # Additional args for the method you're calling in the loop
+                        process_kwargs={'event': complete}  # Additional kwargs for the method
+                    )
+                    logger.critical("right before starting")
+                    complete.wait()
+                    logger.critical("After complete Event")
+
+                    complete = Event()
+                    process_id6 = 6
+                    handler.start_process(
+                        process_id=process_id6,
+                        class_to_instantiate=TensorBuffer,
+                        init_args=[5],  # Assuming the first argument is 'capacity'
+                        init_kwargs={
+                            'file_path': 'experiment/data/frames_w6',
+                            'clear_file': True,
+                            'convert_to_png': True,
+                            'file_path_zero_matrices': 'experiment/data/frames_z6'
+                            # Add other constructor arguments here
+                        },
+                        process_args=[],  # Additional args for the method you're calling in the loop
+                        process_kwargs={'event': complete}  # Additional kwargs for the method
+                    )
+                    logger.critical("right before starting")
+                    complete.wait()
+                    logger.critical("After complete Event")
+
 
                 while self.main_iterations > counter and epo < self.epoch:
+                    logger.critical("Loop Started")
                     for batch_idx, (data, target) in enumerate(dataloader):
 
                         self.optimizer.zero_grad()
@@ -462,9 +583,19 @@ class ADMMTrainer(DefaultTrainer):
                         if phase == "admm":
                             self.admm(counter)
                             # TODO: here we need to implement tensor weight buffering
-                            if tensor_buffering is True and counter % (self.admm_iterations/10) == 0:
+                            if tensor_buffering is True and counter % (self.admm_iterations) == 0:
                                 w_z_weight = self.w_z_kernel_weight_extraction(0,0,0)
                                 handler.put_item_in_queue(process_id, w_z_weight)
+                                w_z_weight = self.w_z_kernel_weight_extraction(0,1,0)
+                                handler.put_item_in_queue(process_id2, w_z_weight)
+                                w_z_weight = self.w_z_kernel_weight_extraction(0,2,0)
+                                handler.put_item_in_queue(process_id3, w_z_weight)
+                                w_z_weight = self.w_z_kernel_weight_extraction(0,3,0)
+                                handler.put_item_in_queue(process_id4, w_z_weight)
+                                w_z_weight = self.w_z_kernel_weight_extraction(0,4,0)
+                                handler.put_item_in_queue(process_id5, w_z_weight)
+                                w_z_weight = self.w_z_kernel_weight_extraction(0,5,0)
+                                handler.put_item_in_queue(process_id6, w_z_weight)
                             if self.early_termination_flag is True:
                                 logger.info(f"Early Termination Flag was set, ADMM reached epsilon threshold")
                                 counter += self.main_iterations
@@ -476,7 +607,7 @@ class ADMMTrainer(DefaultTrainer):
                         self.optimizer.step()
 
                         counter += 1
-                        if self.main_iterations < counter:
+                        if self.main_iterations == counter:
                             break
 
                     if phase == "retrain":
@@ -494,7 +625,8 @@ class ADMMTrainer(DefaultTrainer):
                     self.export_model(model_path=save_path, onnx=onnx_enabled)
 
         if tensor_buffering is True:
-            handler.terminate_process(1)
+            #handler.terminate_process(1)
+            handler.terminate_all_processes()
             # tensor_queue.put(None)
             # process.join()
 

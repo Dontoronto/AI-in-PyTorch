@@ -39,6 +39,7 @@ class TensorBuffer:
             else:
                 logger.info(f"Deleted: {file_path}")
                 os.remove(file_path)
+        logger.critical("ended initialization")
 
     def add_item(self, tensors):
         if len(tensors) == 1:
@@ -190,11 +191,20 @@ class TensorBuffer:
         # Ensure the filenames are sorted so corresponding images are matched
         filenames_1 = sorted(glob.glob(os.path.join(directory_path_1, '*.png')))
         filenames_2 = sorted(glob.glob(os.path.join(directory_path_2, '*.png')))
+        # temp_1 = []
+        # temp_2 = []
+        # for i in range(0, len(filenames_1), 10):
+        #     temp_1.append(filenames_1[i])
+        #     temp_2.append(filenames_2[i])
+        #
+        # filenames_1 = temp_1
+        # filenames_2 = temp_2
+
 
         # Ensure both folders have the same number of PNG files
         assert len(filenames_1) == len(filenames_2), "Folders contain a different number of PNG files."
 
-        with imageio.get_writer(gif_path, mode='I', duration=0.5) as writer:
+        with imageio.get_writer(gif_path, mode='I', duration=0.3) as writer:
             for filename_1, filename_2 in zip(filenames_1, filenames_2):
 
                 image1 = imageio.imread(filename_1)

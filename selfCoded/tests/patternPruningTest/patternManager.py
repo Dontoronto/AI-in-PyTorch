@@ -39,6 +39,8 @@ class PatternManager:
         # initializes a list of available patterns with indices of pattern library
         self.available_patterns_indices = self.initialize_available_patterns()
 
+        self.connectivityPruningEnabled = False
+
     def get_tensor_assignment(self, tensor_index):
         """
         Retrieves the pattern assigned to a specific tensor.
@@ -58,6 +60,14 @@ class PatternManager:
     def load_available_patterns(self):
         # hier können die available patterns aktualisiert werden
         pass
+
+    def setConnectivityPruning(self, flag):
+        '''
+        With this setter you can turn on the connectivity pruning
+        :param flag: bool
+        '''
+        self.connectivityPruningEnabled = flag
+
 
     @classmethod
     def create_pattern_library(cls):
@@ -96,10 +106,19 @@ class PatternManager:
                 temp_layer.append(layer_tensor)
             self.tensor_assignments.append(temp_layer)
 
+        # here is the logic for connectivity pruning
+        if self.connectivityPruningEnabled is True:
+            threshold_ratios = [0.8, 0.5, 0.5]
+            assign_connectivity_pruned_kernel(self.tensor_assignments, tensor_list, self.pattern_library,
+                                              threshold_ratios)
+
         # tracks counts of all patterns
         self._count_pattern_assignments()
 
-        # tracks the impact of all patterns
+        # tracks the impact of all patterns in aggregated form
+        self._calc_abs_pattern_impact(tensor_list)
+
+        # tracks the impact of all patterns in average form
         self._calc_avg_pattern_impact()
 
     def _choose_best_pattern(self, tensor):
@@ -111,14 +130,10 @@ class PatternManager:
                 min = frob_distance
                 min_index = i
 
-        self._track_pattern_impact(tensor, min_index)
-
         return min_index
 
     # TODO: reducing impact aggregating
-    def _track_pattern_impact(self, tensor, index):
-        frob_distance = torch.norm(tensor * self.pattern_library[index], p='fro')
-        self.abs_impact_patterns[index] += float(frob_distance)
+
 
 
     # TODO: optimierung pattern_counts soll einmal erstellt werden und nur neu belegt werden
@@ -132,6 +147,22 @@ class PatternManager:
             self.pattern_counts[i] = count_occurrences_iterative(self.tensor_assignments, i)
 
         return self.pattern_counts
+
+    def _track_pattern_impact(self, tensor, index):
+        frob_distance = torch.norm(tensor * self.pattern_library[index], p='fro')
+        self.abs_impact_patterns[index] += float(frob_distance)
+
+    def _calc_abs_pattern_impact(self, tensor_list):
+        '''
+        calculates the absoulte value of the kernel*mask frobenius norms aggregated
+        :param tensor_list: list of layers (type tensor)
+        '''
+        for layer_idx, layer in enumerate(tensor_list):
+            for channel_idx, channel in enumerate(layer):
+                for kernel_idx, kernel in enumerate(channel):
+                    mask_idx = self.tensor_assignments[layer_idx][channel_idx][kernel_idx]
+                    if mask_idx is not None:  # Ensure the kernel hasn't been pruned already
+                        self._track_pattern_impact(kernel, mask_idx)
 
     def _calc_avg_pattern_impact(self):
 
@@ -161,7 +192,9 @@ class PatternManager:
 
     def get_pattern_masks(self):
         # Gibt eine Liste zurück, die für jeden Index in tensor_assignments das entsprechende Muster enthält
-        return convert_to_tensors(self.tensor_assignments, self.pattern_library)
+        #return convert_to_tensors(self.tensor_assignments, self.pattern_library)
+        return [convert_to_single_tensor(self.tensor_assignments, self.pattern_library, i)
+                for i in range(len(self.tensor_assignments))]
 
     def update_pattern_assignments(self, tensor_list, min_amount_indices=12):
         # Führt die erforderlichen Methoden nacheinander aus, um die Musterzuweisungen zu aktualisieren
@@ -197,6 +230,36 @@ class PatternManager:
         return temp
 
 
+def assign_connectivity_pruned_kernel(indices_list, layer_list, mask_list, threshold_ratios):
+    assert len(layer_list) == len(threshold_ratios), "Mismatch between number of layers and number of threshold ratios."
+
+    # comment this line out if you want ot enable inline configuration
+    updated_indices_list = indices_list #copy.deepcopy(indices_list)
+
+    # Process each layer with its corresponding pruning threshold
+    for layer_idx, (layer, threshold_ratio) in enumerate(zip(layer_list, threshold_ratios)):
+        norms = []
+
+        # Collect Frobenius norms for all kernels in the layer
+        for channel_idx, kernels in enumerate(layer):
+            for kernel_idx, _ in enumerate(kernels):
+                mask_idx = indices_list[layer_idx][channel_idx][kernel_idx]
+                if mask_idx is not None:  # Ensure the kernel hasn't been pruned already
+                    mask = mask_list[mask_idx]
+                    norm = torch.norm(kernels[kernel_idx] * mask, p='fro').item()
+                    norms.append((norm, layer_idx, channel_idx, kernel_idx))
+
+        # Determine how many kernels to prune based on the specified ratio
+        num_to_prune = round(len(norms) * threshold_ratio)
+        # Sort norms to identify which kernels have the lowest norms
+        norms_sorted = sorted(norms, key=lambda x: x[0])
+
+        # Prune the specified percentage of kernels with the lowest norms
+        for _, l_idx, c_idx, k_idx in norms_sorted[:num_to_prune]:
+            updated_indices_list[l_idx][c_idx][k_idx] = None
+
+
+    return updated_indices_list
 
 def count_occurrences_iterative(nested_list, value):
     '''
@@ -238,17 +301,19 @@ def convert_to_single_tensor(tensor_assignments, pattern_library, layer_index):
     sublist = tensor_assignments[layer_index]
 
     # Convert indices to a PyTorch tensor for advanced indexing
-    if len(sublist[0]) == 1:  # Shape (6,1,3,3)
+    if len(sublist[0]) == 1:  # Shape (1,1,3,3)
         # Flatten the sublist since it contains single-item lists
-        indices = torch.tensor([idx[0] for idx in sublist])
-        tensor = torch.stack([pattern_library[i] for i in indices]).unsqueeze(1)
-    else:  # Shape (16,6,3,3)
+        indices = [idx[0] for idx in sublist]
+        tensor = torch.stack([pattern_library[i] if i is not None else torch.zeros(3, 3)
+                              for i in indices]).unsqueeze(1)
+    else:  # Shape (6,16,3,3)
         # For more complex case, use advanced indexing if possible
         layer_tensors = []
         for group in sublist:
             # Convert group to tensor for advanced indexing
-            group_indices = torch.tensor(group)
-            group_tensor = torch.stack([pattern_library[i] for i in group_indices])
+            group_indices = [idx for idx in group]#torch.tensor(group)
+            group_tensor = torch.stack([pattern_library[i] if i is not None else torch.zeros(3, 3)
+                                        for i in group_indices])
             layer_tensors.append(group_tensor)
         tensor = torch.stack(layer_tensors)
 

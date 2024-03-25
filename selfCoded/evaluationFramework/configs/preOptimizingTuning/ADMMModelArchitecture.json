@@ -10,12 +10,12 @@
         "op_names": "model.conv2"
     },
     {
-        "sparsity": 0.4,
+        "sparsity": null,
         "op_types": "Linear",
         "op_names": "model.fc1"
     },
     {
-        "sparsity": 0.6,
+        "sparsity": null,
         "op_types": "Linear",
         "op_names": "model.fc2"
     },
