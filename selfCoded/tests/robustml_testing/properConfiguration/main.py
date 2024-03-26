@@ -29,7 +29,7 @@ def main():
     robust_attack = attack_custom.Cifar10PGD(model=_model,epsilon= 8/255, alpha=2/255, max_steps=40, show_images=False)
     provider = robustml.provider.CIFAR10("/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/dataset/cifar-10/cifar-10-batches-py/test_batch")
     start = 0
-    end = 10000
+    end = 100
 
     rate = robustml.evaluate.evaluate(
         model,

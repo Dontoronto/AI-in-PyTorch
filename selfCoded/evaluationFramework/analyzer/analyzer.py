@@ -189,7 +189,7 @@ class Analyzer():
         test_loader = test_loader
         with torch.no_grad():
             for data, target in test_loader:
-                output = self.model(data)
+                output = model(data)
                 test_loss += loss_func(output, target).item()
                 pred = output.argmax(dim=1, keepdim=True)
                 correct += pred.eq(target.view_as(pred)).sum().item()

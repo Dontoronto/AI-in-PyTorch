@@ -69,7 +69,7 @@ class MultiProcessHandler:
         event = process_kwargs.get('event')
         if event is not None and isinstance(event, multiprocessing.synchronize.Event):
             event.set()
-            logger.critical("Event in MultiprocessManager was set!!!")
+            logger.info("Event in MultiprocessManager was set")
         else:
             logger.info("No event listener was set")
 

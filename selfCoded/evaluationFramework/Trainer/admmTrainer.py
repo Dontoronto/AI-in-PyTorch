@@ -87,6 +87,7 @@ class ADMMTrainer(DefaultTrainer):
         self.early_termination_flag = False
 
         self.patternManager = PatternManager()
+        self.patternManager.setConnectivityPruning(True)
 
 
 
@@ -150,16 +151,15 @@ class ADMMTrainer(DefaultTrainer):
         Assings the class variable list_masks the pruning masks per layer on same index level.
         '''
         conv_list = [layerZ.Z for layerZ in self.list_Z]
-        logger.critical(f"Amount of patterns available: {len(self.patternManager.available_patterns_indices)}")
         if firstTime is True:
             self.patternManager.assign_patterns_to_tensors(conv_list)
             self.list_masks = self.patternManager.get_pattern_masks()
         else:
-            self.patternManager.reduce_available_patterns(2)
-            self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=2)
+            #self.patternManager.reduce_available_patterns(2)
+            self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=12)
             self.list_masks = self.patternManager.get_pattern_masks()
         # self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
-        logger.info(f"Pruning mask was created")
+        #logger.info(f"Pruning mask was created")
 
     def clip_gradients(self):
         if self.gradient_threshold is not None:
@@ -383,8 +383,8 @@ class ADMMTrainer(DefaultTrainer):
             elif curr_iteration == 0:
                 self.initialize_pruning_mask_layer_list(True)
             self.prune_aux_layers()
-            self.update_termination_criterion()
             if curr_iteration != 0:
+                self.update_termination_criterion()
                 self.update_dual_layers()
         self.solve_admm()
         pass
@@ -394,7 +394,8 @@ class ADMMTrainer(DefaultTrainer):
         self.normalize_gradients()
         self.regularize_gradients()
         if curr_iteration == 0:
-            self.initialize_pruning_mask_layer_list()
+            #self.initialize_pruning_mask_layer_list(True)
+            self.list_masks = self.patternManager.get_pattern_masks()
         self.prune_weight_layer()
 
 
@@ -410,7 +411,7 @@ class ADMMTrainer(DefaultTrainer):
 
         dataloader = self.createDataLoader(self.dataset)
         test_loader = None
-        if test is True:
+        if test is True or "retrain" in self.phase_list:
             self.prepareDataset(testset=True)
             test_loader = self.createDataLoader(self.testset)
             test_loader.shuffle = False
@@ -612,12 +613,12 @@ class ADMMTrainer(DefaultTrainer):
 
                     if phase == "retrain":
                         logger.info(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+                        self.test(test_loader, snapshot_enabled=False)
+                        epo +=1
                     else:
                         logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
-                        if phase == "retrain":
-                            epo +=1
                         self.test(test_loader, snapshot_enabled=False)
                 # saving model
                 #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")

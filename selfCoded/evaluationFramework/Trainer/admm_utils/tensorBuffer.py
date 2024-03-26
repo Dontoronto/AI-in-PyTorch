@@ -39,7 +39,6 @@ class TensorBuffer:
             else:
                 logger.info(f"Deleted: {file_path}")
                 os.remove(file_path)
-        logger.critical("ended initialization")
 
     def add_item(self, tensors):
         if len(tensors) == 1:

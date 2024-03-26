@@ -59,7 +59,9 @@ def main():
     Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
     Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
     Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
+
     Trainer.train(test=False, onnx_enabled=False, tensor_buffering=True)
+
     histW = Trainer.getHistoryEpsilonW()
     histZ = Trainer.getHistoryEpsilonZ()
     thrshW = Trainer.epsilon_W
@@ -100,6 +102,7 @@ def main():
 
     Analyzer.setDataset(DataHandler.loadDataset(testset=True))
 
+    Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
     Analyzer.add_model(Model, "Default Model")
     # Analyzer.setModel(Model)
     #Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
