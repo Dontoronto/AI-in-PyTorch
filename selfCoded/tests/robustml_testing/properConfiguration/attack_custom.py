@@ -19,6 +19,8 @@ class Cifar10PGD(robustml.attack.Attack):
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
+        self.mean = (0.5, 0.5, 0.5)
+        self.std = (0.5, 0.5, 0.5)
 
     def run(self, x, y, target=None):
 
@@ -39,8 +41,7 @@ class Cifar10PGD(robustml.attack.Attack):
         print(y_label.shape)
         adv_images = attack(x_in, y_label)
 
-        adv_numpy_img = adv_images.clone().detach().squeeze(0).permute((1,2,0)).numpy()
-        adv_numpy_img = adv_numpy_img/2+0.5
+        adv_numpy_img = self.preprocessBackwardsNonBatchedNumpy(adv_images)
 
         if self._showImages == True:
             plotten_real = np.copy(x)
@@ -52,6 +53,18 @@ class Cifar10PGD(robustml.attack.Attack):
 
 
         return adv_numpy_img
+
+    def preprocessBackwardsNonBatchedNumpy(self, tensor):
+        # TODO: evtl. müssen wir nicht image tensoren sondern auch batch tensoren zurück umwandeln. Hier
+        # TODO: testen und evtl. anpassen damit automatisch erkannt wird was gefordert ist
+        tensorBack = tensor.clone().detach()#
+        if self.mean is not None and self.std is not None:
+            meanBack = torch.tensor(self.mean).view(-1, 1, 1)
+            stdBack = torch.tensor(self.std).view(-1, 1, 1)
+            tensorBack = tensorBack * stdBack + meanBack
+        tensorBack = torch.clamp(tensorBack, 0, 1)
+        numpy_array = tensorBack.squeeze(0).permute((1,2,0)).numpy()
+        return numpy_array
 
 class NullAttack(robustml.attack.Attack):
     def run(self, x, y, target):

@@ -46,13 +46,19 @@ class DataHandler:
             return self.transform
         logger.info("Transformer is not configured")
 
+    def getPreprocessBatchedFunction(self):
+        return self.preprocessBatched
+
+    def getPreprocessBackwardsNonBatchedFunction(self):
+        return self.preprocessBackwardsNonBatched
+
     def preprocessNonBatched(self, img):
         return self.transform(img)
 
     def preprocessBatched(self, img):
         return self.transform(img).unsqueeze(0)
 
-    def preprocessBackwardsNonBatched(self, tensor):
+    def preprocessBackwardsNonBatched(self, tensor, numpy_original_shape_flag=False):
         # TODO: evtl. müssen wir nicht image tensoren sondern auch batch tensoren zurück umwandeln. Hier
         # TODO: testen und evtl. anpassen damit automatisch erkannt wird was gefordert ist
         tensorBack = tensor.clone().detach()
@@ -61,9 +67,14 @@ class DataHandler:
             stdBack = torch.tensor(self.std).view(-1, 1, 1)
             tensorBack = tensorBack * stdBack + meanBack
         tensorBack = torch.clamp(tensorBack, 0, 1)
-        to_pil = ToPILImage()
-        image = to_pil(tensorBack)
-        return image
+        if numpy_original_shape_flag is False:
+            to_pil = ToPILImage()
+            image = to_pil(tensorBack)
+            return image
+        else:
+            numpy_array = tensorBack.squeeze(0).permute((1,2,0)).numpy()
+            return numpy_array
+
 
     def preprocessBackwardsBatched(self, batch):
         # TODO: evtl. müssen wir nicht image tensoren sondern auch batch tensoren zurück umwandeln. Hier

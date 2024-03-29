@@ -24,6 +24,8 @@ from .evaluationMapsStrategy import EvaluationMapsStrategy
 
 from .utils import weight_export
 
+from .adversial import adversarialAttacker
+
 
 # Note: saliency-map: https://arxiv.org/pdf/1312.6034.pdf
 # Note: grad cam: https://arxiv.org/pdf/1610.02391.pdf
@@ -276,6 +278,38 @@ class Analyzer():
                                          f'{epsilon_symbol}-Threshold W',
                                          f'{epsilon_symbol}-Threshold Z',
                                          f'{epsilon_symbol}-Distances over ADMM-Iterations')
+
+
+    # ------------ Adversarial Area
+
+    def init_adversarial_environment(self, save_adversarial_images=False, **kwargs):
+        self.adversarial_module = adversarialAttacker.AdversarialAttacker(
+                                                                        self.model,
+                                                                        self.datahandler.getPreprocessBatchedFunction(),
+                                                                        self.datahandler.getPreprocessBackwardsNonBatchedFunction(),
+                                                                        save_adversarial_images,
+                                                                        **kwargs)
+
+    def set_threat_model_config(self, threat_model_config):
+        self.adversarial_module.setThreatModel(threat_model_config)
+
+    def set_provider_config(self, provider_config):
+        self.adversarial_module.setProvider(provider_config)
+
+    def set_attack_type_config(self, attack_type_config):
+        self.adversarial_module.setAttackTypeConfig(attack_type_config)
+
+    def select_attacks_from_config(self, start_index: int = None, amount_of_attacks: int = None):
+        self.adversarial_module.selectAttacks(start_index, amount_of_attacks)
+
+    def start_adversarial_evaluation(self, start, end):
+        return self.adversarial_module.evaluate(start, end)
+
+    def enable_saving(self, path):
+        self.adversarial_module.enableSaveMode(True)
+        self.adversarial_module.setSavePath(path)
+
+    # -----------------------------
 
 
 #%%
