@@ -15,6 +15,7 @@ from .featureMaps.gradCam import GradCAM
 
 from .measurement.sparseMeasurement import pruningCounter
 from .measurement.topPredictions import show_top_predictions, getSum_top_predictions
+from .measurement.distributionDensity import calculate_distribution_density, plot_distribution_density
 
 from .plotFuncs.plots import (plot_original_vs_observation, plot_model_comparison,
                               plot_model_comparison_with_table, model_comparison_table,
@@ -281,7 +282,13 @@ class Analyzer():
 
 
     # ------------ Adversarial Area
+    # TODO: kann noch so erweitert werden, dass modell liste durchgegangen wird und jedes mal die self.model -Variable
+    # TODO: geändert wird. Daraufhin bleibt die Referenz bestehen und die Modellwerte werden in alle Instanzen überneommen
+    # TODO: wenn es die gleiche Variable ist
 
+    # TODO: Funktionalität zum laden von eigenen Datasets und zum ablaufen lassen von tests auf diesen Datasets.
+    # TODO: Note: wir können über die Testfunktion einfach einen eigenen Dataloader für Tests reinladen
+    # TODO: Note: die Aufgabe zum erstellen von Dataloadern ist die von Datahandler nicht von Analyzer
     def init_adversarial_environment(self, save_adversarial_images=False, **kwargs):
         self.adversarial_module = adversarialAttacker.AdversarialAttacker(
                                                                         self.model,
@@ -308,6 +315,20 @@ class Analyzer():
     def enable_saving(self, path):
         self.adversarial_module.enableSaveMode(True)
         self.adversarial_module.setSavePath(path)
+
+    # -----------------------------
+
+    # ------------ Density Analysis
+    def density_evaluation(self, bins=100, density_range=None, log_scale=False):
+        '''
+        Berechnet und stellt das Verteilungsdiagramm der Modellgewichte dar
+
+        - bins (int): Die Anzahl der Bins für das Histogramm.
+        - density_range (tuple): Ein Tupel (min, max) zur Beschränkung des Wertebereichs.
+        - log_scale (bool): Wenn True, wird die y-Achse logarithmisch skaliert.
+        '''
+        density, bin_edges = calculate_distribution_density(self.model, bins, density_range)
+        plot_distribution_density(density, bin_edges, log_scale)
 
     # -----------------------------
 

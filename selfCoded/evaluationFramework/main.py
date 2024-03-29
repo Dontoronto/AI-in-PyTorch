@@ -67,11 +67,12 @@ def main():
     Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
     Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
     Analyzer.select_attacks_from_config(0, 1)
-    Analyzer.enable_saving("experiment/adversarial_images")
+    #Analyzer.enable_saving("experiment/adversarial_images")
 
     test1 = Analyzer.start_adversarial_evaluation(0, 5)
     print(f"First evaluation:")
     print(test1)
+    Analyzer.density_evaluation()
 
     # ------------- Note: end test of adv
 
