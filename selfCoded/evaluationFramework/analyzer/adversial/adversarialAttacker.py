@@ -229,6 +229,7 @@ def save_dataset(arrays, labels, root_dir):
     :param labels: Liste von Labels, die den Arrays entsprechen.
     :param root_dir: Wurzelverzeichnis, unter dem die Bilder gespeichert werden sollen.
     """
+    delete_folders_with_only_png(root_dir)
     for i, (array, label) in enumerate(zip(arrays, labels)):
         # Erstellen des Ordners für das Label, wenn er nicht existiert
         label_dir = os.path.join(root_dir, str(label))
@@ -259,3 +260,6 @@ def delete_folders_with_only_png(root_dir):
                 # Löschen des Verzeichnisses und seines Inhalts
                 shutil.rmtree(subdir_path)
                 print(f"{subdir_path} wurde gelöscht, da es ausschließlich PNG-Dateien enthielt.")
+            else:
+                print(f"{subdir_path} wurde nicht gelöscht, da es auch Daten enthält die nicht vom Typ PNG sind.")
+

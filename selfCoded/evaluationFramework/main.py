@@ -69,23 +69,9 @@ def main():
     Analyzer.select_attacks_from_config(0, 1)
     Analyzer.enable_saving("experiment/adversarial_images")
 
-    test1 = Analyzer.start_adversarial_evaluation(10, 20)
-
-
-    # Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_admm.pth"))
-    # Analyzer.setModel(Model)
-    # test2 = Analyzer.start_adversarial_evaluation(0, 100)
-    #
-    # Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
-    # Analyzer.setModel(Model)
-    # test3 = Analyzer.start_adversarial_evaluation(0, 100)
-    #
+    test1 = Analyzer.start_adversarial_evaluation(0, 5)
     print(f"First evaluation:")
     print(test1)
-    # print(f"Second evaluation:")
-    # print(test2)
-    # print(f"Third evaluation:")
-    # print(test3)
 
     # ------------- Note: end test of adv
 

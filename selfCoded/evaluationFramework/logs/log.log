@@ -1,48 +1,48 @@
-2024-03-29 04:18:23,894 - modelWrapper - INFO - ModelWrapper was initialized
-2024-03-29 04:18:23,896 - dataHandler - INFO - Datahandler initialized
-2024-03-29 04:18:23,896 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
-2024-03-29 04:18:23,896 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
-2024-03-29 04:18:23,896 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-03-29 04:18:23,896 - configurator - INFO - Preprocessing dtype is set so: float
-2024-03-29 04:18:23,897 - configurator - INFO - Preprocessing Normalization is activated
-2024-03-29 04:18:23,897 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-03-29 04:18:23,897 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-03-29 04:18:23,897 - configurator - INFO - Compose(
+2024-03-29 04:27:23,466 - modelWrapper - INFO - ModelWrapper was initialized
+2024-03-29 04:27:23,467 - dataHandler - INFO - Datahandler initialized
+2024-03-29 04:27:23,467 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
+2024-03-29 04:27:23,467 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
+2024-03-29 04:27:23,467 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-03-29 04:27:23,467 - configurator - INFO - Preprocessing dtype is set so: float
+2024-03-29 04:27:23,467 - configurator - INFO - Preprocessing Normalization is activated
+2024-03-29 04:27:23,467 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
+2024-03-29 04:27:23,467 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
+2024-03-29 04:27:23,467 - configurator - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-29 04:18:23,897 - dataHandler - INFO - Preprocessing Steps will be:
-2024-03-29 04:18:23,897 - dataHandler - INFO - Compose(
+2024-03-29 04:27:23,467 - dataHandler - INFO - Preprocessing Steps will be:
+2024-03-29 04:27:23,467 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-29 04:18:23,897 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-03-29 04:18:23,897 - configurator - INFO - Preprocessing dtype is set so: float
-2024-03-29 04:18:23,897 - configurator - INFO - Preprocessing Normalization is activated
-2024-03-29 04:18:23,897 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-03-29 04:18:23,897 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-03-29 04:18:23,897 - configurator - INFO - Compose(
+2024-03-29 04:27:23,467 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-03-29 04:27:23,467 - configurator - INFO - Preprocessing dtype is set so: float
+2024-03-29 04:27:23,467 - configurator - INFO - Preprocessing Normalization is activated
+2024-03-29 04:27:23,467 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
+2024-03-29 04:27:23,467 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
+2024-03-29 04:27:23,467 - configurator - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-29 04:18:23,897 - dataHandler - INFO - Preprocessing Steps will be:
-2024-03-29 04:18:23,897 - dataHandler - INFO - Compose(
+2024-03-29 04:27:23,467 - dataHandler - INFO - Preprocessing Steps will be:
+2024-03-29 04:27:23,467 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-29 04:18:23,897 - configParser - INFO - Loaded adversarial_threat_model from ConfigRegistry.json
-2024-03-29 04:18:23,897 - configParser - INFO - Loaded adversarial_threat_model has path: configs/adversarial_configs/ThreatModelConfig.json
-2024-03-29 04:18:23,897 - configParser - INFO - Loaded adversarial_threat_model
-2024-03-29 04:18:23,897 - configurator - INFO - Loaded adversarial_threat_model from Registry
-2024-03-29 04:18:23,897 - configParser - INFO - Loaded adversarial_provider from ConfigRegistry.json
-2024-03-29 04:18:23,897 - configParser - INFO - Loaded adversarial_provider has path: configs/adversarial_configs/ProviderConfig.json
-2024-03-29 04:18:23,897 - configParser - INFO - Loaded adversarial_provider
-2024-03-29 04:18:23,897 - configurator - INFO - Loaded adversarial_provider from Registry
-2024-03-29 04:18:23,930 - configParser - INFO - Loaded adversarial_attacks from ConfigRegistry.json
-2024-03-29 04:18:23,930 - configParser - INFO - Loaded adversarial_attacks has path: configs/adversarial_configs/AttacksConfig.json
-2024-03-29 04:18:23,930 - configParser - INFO - Loaded adversarial_attacks
-2024-03-29 04:18:23,931 - configurator - INFO - Loaded adversarial_attacks from Registry
+2024-03-29 04:27:23,467 - configParser - INFO - Loaded adversarial_threat_model from ConfigRegistry.json
+2024-03-29 04:27:23,467 - configParser - INFO - Loaded adversarial_threat_model has path: configs/adversarial_configs/ThreatModelConfig.json
+2024-03-29 04:27:23,467 - configParser - INFO - Loaded adversarial_threat_model
+2024-03-29 04:27:23,467 - configurator - INFO - Loaded adversarial_threat_model from Registry
+2024-03-29 04:27:23,467 - configParser - INFO - Loaded adversarial_provider from ConfigRegistry.json
+2024-03-29 04:27:23,467 - configParser - INFO - Loaded adversarial_provider has path: configs/adversarial_configs/ProviderConfig.json
+2024-03-29 04:27:23,467 - configParser - INFO - Loaded adversarial_provider
+2024-03-29 04:27:23,467 - configurator - INFO - Loaded adversarial_provider from Registry
+2024-03-29 04:27:23,494 - configParser - INFO - Loaded adversarial_attacks from ConfigRegistry.json
+2024-03-29 04:27:23,494 - configParser - INFO - Loaded adversarial_attacks has path: configs/adversarial_configs/AttacksConfig.json
+2024-03-29 04:27:23,494 - configParser - INFO - Loaded adversarial_attacks
+2024-03-29 04:27:23,494 - configurator - INFO - Loaded adversarial_attacks from Registry
