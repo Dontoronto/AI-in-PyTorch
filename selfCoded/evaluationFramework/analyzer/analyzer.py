@@ -312,9 +312,13 @@ class Analyzer():
     def start_adversarial_evaluation(self, start, end):
         return self.adversarial_module.evaluate(start, end)
 
-    def enable_saving(self, path):
-        self.adversarial_module.enableSaveMode(True)
-        self.adversarial_module.setSavePath(path)
+    def enable_adversarial_saving(self, path):
+        self.adversarial_module.enableAdversarialSaveMode(True)
+        self.adversarial_module.setAdversarialSavePath(path)
+
+    def enable_original_saving(self, path):
+        self.adversarial_module.enableOriginalSaveMode(True)
+        self.adversarial_module.setOriginalSavePath(path)
 
     # -----------------------------
 

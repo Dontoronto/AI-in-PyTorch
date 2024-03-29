@@ -1,14 +1,9 @@
-import robustml
-import sys
-import numpy as np
-import torchattacks
 import torch
-import json
 from PIL import Image
 import os
 import shutil
 
-
+from .robustml_utils.attack import Attack
 from .robustml_utils.evaluate import evaluate
 from .adversialModelWrapper import AdversarialModelWrapper
 from .adversialAttackFactory import AdversarialAttackerFactory
@@ -27,7 +22,8 @@ from .providerFactory import ProviderFactory
 # TODO: methode die für gewählten Index einmal das bild anzeigt welches daraus entstanden ist
 # TODO: abgeänderte Skripte behalten ohne das pip package zu verwenden.
 
-class AdversarialAttacker(robustml.attack.Attack):
+
+class AdversarialAttacker(Attack):
     def __init__(self, model, transform_batched_function,
                  backwards_transform_function,
                  save_adversarial_images=False,
@@ -48,12 +44,13 @@ class AdversarialAttacker(robustml.attack.Attack):
         # TODO: Wird evtl. nicht immer gebraucht und soll extern gesetzt werden
         self.backwards_transform_function = backwards_transform_function
 
-        self.save_images_flag = save_adversarial_images
-        self.save_arrays = list()
-        #self.save_arrays_raw = list()
+        self.save_adversarial_images_flag = save_adversarial_images
+        self.save_adversarial_arrays = list()
         self.save_labels = list()
-        #self.save_labels_raw = list()
-        self.save_path = None
+        self.save_adversarial_path = None
+        self.save_original_images_flag = False
+        self.save_original_arrays = list()
+        self.save_original_path = None
 
         self.adversarialModel = AdversarialModelWrapper(self._model, self.transform)
 
@@ -92,11 +89,17 @@ class AdversarialAttacker(robustml.attack.Attack):
     def setAttackTypeConfig(self, attack_type_config):
         self.attack_type_config = attack_type_config
 
-    def enableSaveMode(self, flag):
-        self.save_images_flag = flag
+    def enableAdversarialSaveMode(self, flag):
+        self.save_adversarial_images_flag = flag
 
-    def setSavePath(self, path):
-        self.save_path = path
+    def enableOriginalSaveMode(self, flag):
+        self.save_original_images_flag = flag
+
+    def setAdversarialSavePath(self, path):
+        self.save_adversarial_path = path
+
+    def setOriginalSavePath(self, path):
+        self.save_original_path = path
 
 
     def selectAttacks(self, start_index: int = None, amount_of_attacks: int = None):
@@ -131,6 +134,12 @@ class AdversarialAttacker(robustml.attack.Attack):
 
         results = dict()
 
+        if self.save_original_images_flag or self.save_adversarial_images_flag:
+            if len(self.attack_instances_list) > 1:
+                print(f"Image saving Mode is not possible while using multiple attacks.")
+                print(f"Please configure AttacksConfig.json or Arguments of selectAttacks-method")
+                return
+
         for i in range(len(self.attack_instances_list)):
             self.attack_instance = self.attack_instances_list[i]
 
@@ -146,8 +155,10 @@ class AdversarialAttacker(robustml.attack.Attack):
             print(f"Adversarial succeeded in l-norm with rate: {rate}")
             results[self.attack_instance_list_names[i]] = rate
 
-        if self.save_images_flag is True:
-            save_dataset(self.save_arrays, self.save_labels, self.save_path)
+        if self.save_adversarial_images_flag is True:
+            save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
+        if self.save_original_images_flag is True:
+            save_dataset(self.save_original_arrays, self.save_labels, self.save_original_path)
             #save_dataset(self.save_arrays_raw, self.save_labels_raw, "/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/selfCoded/evaluationFramework/saveDataRaw")
 
         return results
@@ -174,11 +185,12 @@ class AdversarialAttacker(robustml.attack.Attack):
 
         adv_numpy_img = self.backwards_transform_function(adv_images, numpy_original_shape_flag=True)
 
-        if self.save_images_flag is True:
-            self.save_arrays.append(adv_numpy_img)
+        if self.save_adversarial_images_flag or self.save_original_images_flag:
             self.save_labels.append(y)
-            #self.save_arrays_raw.append(x)
-            #self.save_labels_raw.append(y)
+            if self.save_adversarial_images_flag:
+                self.save_adversarial_arrays.append(adv_numpy_img)
+            if self.save_original_images_flag:
+                self.save_original_arrays.append(x)
 
         # plotten_real = np.copy(x)
         # plot_real_img = Image.fromarray((plotten_real[:,:,0] * 255).astype('uint8'))
@@ -189,10 +201,6 @@ class AdversarialAttacker(robustml.attack.Attack):
 
 
         return adv_numpy_img
-
-class NullAttack(robustml.attack.Attack):
-    def run(self, x, y, target):
-        return x
 
 
 def array_to_image(array, save_path):

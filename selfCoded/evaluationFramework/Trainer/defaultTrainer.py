@@ -57,12 +57,14 @@ class DefaultTrainer(Trainer):
         :param sampleLabel: just a label example of dataset
         :return: Bool of Dimensions of model and label matches
         '''
+        last_linear_layer = None
         for name, module in self.model.named_modules():
             if isinstance(module, torch.nn.Linear):  # Checking for the last Linear layer
                 last_linear_layer_name, last_linear_layer = name, module
         return last_linear_layer.out_features == sampleLabel.size(0)
 
     def getAmountModelOutputClasses(self):
+        last_linear_layer = None
         for name, module in self.model.named_modules():
             if isinstance(module, torch.nn.Linear):  # Checking for the last Linear layer
                 last_linear_layer_name, last_linear_layer = name, module
@@ -122,6 +124,11 @@ class DefaultTrainer(Trainer):
             logger.warning("No Configs for Dataloader available, creating Dataloader with default arguments")
             return DataLoader(sampleDataset)
 
+    def createCustomDataloader(self, sampleDataset, **kwargs):
+        self.checkLabelEncoding(sampleDataset)
+        logger.info(f"Creating Custom DataLoader with arguments: {kwargs}")
+        return DataLoader(sampleDataset, **kwargs)
+
     def setSnapshotSettings(self, kwargs: dict):
         super().setSnapshotSettings(kwargs)
 
@@ -172,13 +179,9 @@ class DefaultTrainer(Trainer):
             logger.warning(f"No recovery epoch was defined in TrainerConfig.json. Recovery Epoch set to " +
             f": {self.recovery_epoch}")
 
-
-
-
-
     # NOTE: here comes the trainer for mnist
     # TODO: make it more general with train and test, no redundant dataloader initialization and testset
-    def train(self, test=False): #model, device, train_loader, optimizer, epoch):
+    def train(self, test=False):
         self.model.train()
         self.preTrainingChecks()
         dataloader = self.createDataLoader(self.dataset)
@@ -198,8 +201,6 @@ class DefaultTrainer(Trainer):
 
             if test is True:
                 self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
-
-
 
 
     def test(self, test_loader, snapshot_enabled=False,current_epoch=None):
@@ -227,13 +228,35 @@ class DefaultTrainer(Trainer):
         return test_loader
 
     def createSnapshot(self, val_loss, epoch):
-            if epoch > self.recovery_epoch:
-                # Prüfen, ob es eine Verbesserung gibt
-                if val_loss < self.best_test_loss:
-                    self.best_test_loss = val_loss
-                    self.best_epoch = epoch
-                    self.epoch_since_improvement = 0
-                    # Speichern des besten Checkpoints
+        if epoch > self.recovery_epoch:
+            # Prüfen, ob es eine Verbesserung gibt
+            if val_loss < self.best_test_loss:
+                self.best_test_loss = val_loss
+                self.best_epoch = epoch
+                self.epoch_since_improvement = 0
+                # Speichern des besten Checkpoints
+                logger.info(f"New best Model will be safed to: {self.snapshot_model_path}")
+                torch.save({
+                    'epoch': epoch + 1,
+                    'model_state_dict': self.model.state_dict(),
+                    'optimizer_state_dict': self.optimizer.state_dict(),
+                    'loss': val_loss,
+                }, self.snapshot_model_path)
+                if self.snapshot_model_path_raw is not None:
+                    logger.info(f"New raw best Model will be safed to: {self.snapshot_model_path_raw}")
+                    torch.save(self.model.state_dict(),self.snapshot_model_path_raw)
+            else:
+                # Wenn sich das Modell in die falsche Richtung entwickelt
+                if os.path.exists(self.snapshot_model_path):
+                    self.epoch_since_improvement += 1
+                    if self.epoch_since_improvement >= self.recovery_epoch:
+                        logger.info(f'Keine Verbesserung seit {self.recovery_epoch} Epochen, lade besten Checkpoint von Epoche {self.best_epoch+1}')
+                        # Laden des besten Checkpoints
+                        checkpoint = torch.load(self.snapshot_model_path)
+                        self.model.load_state_dict(checkpoint['model_state_dict'])
+                        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+                        self.epoch_since_improvement = 0  # Reset der Patience nach dem Zurückladen
+                else:
                     logger.info(f"New best Model will be safed to: {self.snapshot_model_path}")
                     torch.save({
                         'epoch': epoch + 1,
@@ -244,120 +267,15 @@ class DefaultTrainer(Trainer):
                     if self.snapshot_model_path_raw is not None:
                         logger.info(f"New raw best Model will be safed to: {self.snapshot_model_path_raw}")
                         torch.save(self.model.state_dict(),self.snapshot_model_path_raw)
-                else:
-                    # Wenn sich das Modell in die falsche Richtung entwickelt
-                    if os.path.exists(self.snapshot_model_path):
-                        self.epoch_since_improvement += 1
-                        if self.epoch_since_improvement >= self.recovery_epoch:
-                            logger.info(f'Keine Verbesserung seit {self.recovery_epoch} Epochen, lade besten Checkpoint von Epoche {self.best_epoch+1}')
-                            # Laden des besten Checkpoints
-                            checkpoint = torch.load(self.snapshot_model_path)
-                            self.model.load_state_dict(checkpoint['model_state_dict'])
-                            self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-                            self.epoch_since_improvement = 0  # Reset der Patience nach dem Zurückladen
-                    else:
-                        logger.info(f"New best Model will be safed to: {self.snapshot_model_path}")
-                        torch.save({
-                            'epoch': epoch + 1,
-                            'model_state_dict': self.model.state_dict(),
-                            'optimizer_state_dict': self.optimizer.state_dict(),
-                            'loss': val_loss,
-                        }, self.snapshot_model_path)
-                        if self.snapshot_model_path_raw is not None:
-                            logger.info(f"New raw best Model will be safed to: {self.snapshot_model_path_raw}")
-                            torch.save(self.model.state_dict(),self.snapshot_model_path_raw)
-
-    # TODO: this method needs to be extended to meet the criteria of general trainer
-    # def train(self, test = False):
-    #     self.preTrainingChecks()
-    #     dataloader = self.createDataLoader(self.dataset)
-    #     self.model.train()
-    #     for batch, (X, y) in enumerate(dataloader):
-    #
-    #         # remove existing settings
-    #         self.optimizer.zero_grad()
-    #
-    #         # Compute prediction and loss
-    #         pred = self.model(X)
-    #         loss = self.loss(pred, y)
-    #
-    #         # Backpropagation
-    #         loss.backward()
-    #
-    #         return
-    #         # Apply optimization with gradients
-    #         self.optimizer.step()
-    #
-    #         if batch % 2 == 0:
-    #             loss, current = loss.item(), batch * len(X)
-    #             print(f"loss: {loss:>7f}  [{current:>5d}/{len(dataloader.dataset):>5d}]")
-    #
-    #
-    #     if test is True:
-    #         self.test()
-    #
-    #     pass
-
-
-
-    # TODO: needs to be adapted for generalization
-    # def test(self):
-    #     self.prepareDataset(testset=True)
-    #     if self.testset is None:
-    #         logger.warning("No DatasetConfigs were found in DataHandlerConfig.json")
-    #         return
-    #     self.checkLabelEncoding(self.testset)
-    #     # TODO: evtl. andere Configs für Dataloader bei tests
-    #     dataloader = self.createDataLoader(self.testset)
-    #     self.model.eval()
-    #     for batch, (X, y) in enumerate(dataloader):
-    #
-    #         # Compute prediction and loss
-    #         pred = self.model(X)
-    #         loss = self.loss(pred, y)
-    #
-    #         if batch % 2 == 0:
-    #             loss, current = loss.item(), batch * len(X)
-    #             print(f"loss: {loss:>7f}  [{current:>5d}/{len(dataloader.dataset):>5d}]")
-    #             break
-    #     pass
-
 
 
 def labelIntToHotEncoded(y,size):
     return torch.zeros(size, dtype=torch.float).scatter_(0, torch.tensor(y), value=1)
 
+
 def labelHotEncodedToInt(y):
     return torch.argmax(y, dim=0).item()
 
-
-# count = 0
-# for batch, labels in dataloader:
-#     count +=1
-#     if count == 2:
-#         break
-#     with torch.no_grad():
-#         if len(batch) == 1:
-#             # Step 4: Use the model and print the predicted category
-#             prediction = Model(batch.clone().detach()).squeeze(0).softmax(0)
-#             class_id = prediction.argmax().item()
-#             score = prediction[class_id].item()
-#             category_name = _weights.meta["categories"][class_id]
-#             print(f"{category_name}: {100 * score:.1f}%")
-#         else:
-#             # Assuming 'Model' is your model instance and 'batch' is your input batch of tensors
-#             predictions = Model(batch.clone().detach())
-#             dataset_image = DataHandler.preprocessBackwardsBatched(batch)
-#             for i in dataset_image:
-#                 i.show()
-#
-#             softmax_predictions = torch.softmax(predictions, dim=1)  # Apply softmax on the correct dimension
-#
-#             for i, prediction in enumerate(softmax_predictions):
-#                 class_id = prediction.argmax().item()
-#                 score = prediction[class_id].item()
-#                 category_name = _weights.meta["categories"][class_id]
-#                 print(f"Tensor {labels[i]}: {category_name}: {100 * score:.1f}%")
 
 
 

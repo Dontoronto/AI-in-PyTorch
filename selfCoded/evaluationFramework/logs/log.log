@@ -1,48 +1,84 @@
-2024-03-29 05:11:46,682 - modelWrapper - INFO - ModelWrapper was initialized
-2024-03-29 05:11:46,684 - dataHandler - INFO - Datahandler initialized
-2024-03-29 05:11:46,684 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
-2024-03-29 05:11:46,684 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
-2024-03-29 05:11:46,685 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-03-29 05:11:46,685 - configurator - INFO - Preprocessing dtype is set so: float
-2024-03-29 05:11:46,686 - configurator - INFO - Preprocessing Normalization is activated
-2024-03-29 05:11:46,686 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-03-29 05:11:46,686 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-03-29 05:11:46,687 - configurator - INFO - Compose(
+2024-03-29 18:43:47,256 - modelWrapper - INFO - ModelWrapper was initialized
+2024-03-29 18:43:47,258 - dataHandler - INFO - Datahandler initialized
+2024-03-29 18:43:47,259 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
+2024-03-29 18:43:47,259 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
+2024-03-29 18:43:47,259 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-03-29 18:43:47,259 - configurator - INFO - Preprocessing dtype is set so: float
+2024-03-29 18:43:47,259 - configurator - INFO - Preprocessing Normalization is activated
+2024-03-29 18:43:47,259 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
+2024-03-29 18:43:47,259 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
+2024-03-29 18:43:47,260 - configurator - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-29 05:11:46,687 - dataHandler - INFO - Preprocessing Steps will be:
-2024-03-29 05:11:46,687 - dataHandler - INFO - Compose(
+2024-03-29 18:43:47,260 - dataHandler - INFO - Preprocessing Steps will be:
+2024-03-29 18:43:47,260 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-29 05:11:46,688 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-03-29 05:11:46,688 - configurator - INFO - Preprocessing dtype is set so: float
-2024-03-29 05:11:46,688 - configurator - INFO - Preprocessing Normalization is activated
-2024-03-29 05:11:46,688 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-03-29 05:11:46,689 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-03-29 05:11:46,689 - configurator - INFO - Compose(
+2024-03-29 18:43:47,260 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
+2024-03-29 18:43:47,260 - configurator - INFO - Preprocessing dtype is set so: float
+2024-03-29 18:43:47,260 - configurator - INFO - Preprocessing Normalization is activated
+2024-03-29 18:43:47,260 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
+2024-03-29 18:43:47,261 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
+2024-03-29 18:43:47,261 - configurator - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-29 05:11:46,689 - dataHandler - INFO - Preprocessing Steps will be:
-2024-03-29 05:11:46,689 - dataHandler - INFO - Compose(
+2024-03-29 18:43:47,261 - dataHandler - INFO - Preprocessing Steps will be:
+2024-03-29 18:43:47,261 - dataHandler - INFO - Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
 )
-2024-03-29 05:11:46,690 - configParser - INFO - Loaded adversarial_threat_model from ConfigRegistry.json
-2024-03-29 05:11:46,690 - configParser - INFO - Loaded adversarial_threat_model has path: configs/adversarial_configs/ThreatModelConfig.json
-2024-03-29 05:11:46,690 - configParser - INFO - Loaded adversarial_threat_model
-2024-03-29 05:11:46,691 - configurator - INFO - Loaded adversarial_threat_model from Registry
-2024-03-29 05:11:46,691 - configParser - INFO - Loaded adversarial_provider from ConfigRegistry.json
-2024-03-29 05:11:46,691 - configParser - INFO - Loaded adversarial_provider has path: configs/adversarial_configs/ProviderConfig.json
-2024-03-29 05:11:46,692 - configParser - INFO - Loaded adversarial_provider
-2024-03-29 05:11:46,692 - configurator - INFO - Loaded adversarial_provider from Registry
-2024-03-29 05:11:46,722 - configParser - INFO - Loaded adversarial_attacks from ConfigRegistry.json
-2024-03-29 05:11:46,723 - configParser - INFO - Loaded adversarial_attacks has path: configs/adversarial_configs/AttacksConfig.json
-2024-03-29 05:11:46,723 - configParser - INFO - Loaded adversarial_attacks
-2024-03-29 05:11:46,723 - configurator - INFO - Loaded adversarial_attacks from Registry
+2024-03-29 18:43:47,261 - configParser - INFO - Loaded adversarial_threat_model from ConfigRegistry.json
+2024-03-29 18:43:47,262 - configParser - INFO - Loaded adversarial_threat_model has path: configs/adversarial_configs/ThreatModelConfig.json
+2024-03-29 18:43:47,262 - configParser - INFO - Loaded adversarial_threat_model
+2024-03-29 18:43:47,262 - configurator - INFO - Loaded adversarial_threat_model from Registry
+2024-03-29 18:43:47,262 - configParser - INFO - Loaded adversarial_provider from ConfigRegistry.json
+2024-03-29 18:43:47,262 - configParser - INFO - Loaded adversarial_provider has path: configs/adversarial_configs/ProviderConfig.json
+2024-03-29 18:43:47,263 - configParser - INFO - Loaded adversarial_provider
+2024-03-29 18:43:47,263 - configurator - INFO - Loaded adversarial_provider from Registry
+2024-03-29 18:43:47,296 - configParser - INFO - Loaded adversarial_attacks from ConfigRegistry.json
+2024-03-29 18:43:47,296 - configParser - INFO - Loaded adversarial_attacks has path: configs/adversarial_configs/AttacksConfig.json
+2024-03-29 18:43:47,297 - configParser - INFO - Loaded adversarial_attacks
+2024-03-29 18:43:47,297 - configurator - INFO - Loaded adversarial_attacks from Registry
+2024-03-29 18:43:47,298 - dataHandler - INFO - DataHandler returned Transformer
+2024-03-29 18:43:47,338 - dataHandler - INFO - DataHandler returned Transformer
+2024-03-29 18:43:47,375 - configParser - INFO - Trainer Configs from TrainerConfig.json:
+2024-03-29 18:43:47,376 - configParser - INFO - {'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 25, 'lr': 0.0001, 'momentum': 0.9, 'pre_optimization_tuning_path': True}
+2024-03-29 18:43:47,376 - configurator - INFO - TrainerConfig settings was loaded via ConfigParser
+2024-03-29 18:43:47,376 - Trainer.trainerFactory - INFO - Filtered OptimizerConfig: {'lr': 0.0001}
+2024-03-29 18:43:47,376 - Trainer.trainerFactory - INFO - Creating ADMMTrainer.
+2024-03-29 18:43:47,376 - Trainer.defaultTrainer - INFO - Trainer was configured
+2024-03-29 18:43:47,377 - Trainer.defaultTrainer - INFO - Epochs: 25
+2024-03-29 18:43:47,377 - Trainer.defaultTrainer - INFO - Optimizer: Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    lr: 0.0001
+    maximize: False
+    weight_decay: 0
+)
+2024-03-29 18:43:47,377 - Trainer.defaultTrainer - INFO - Lossfunction: CrossEntropyLoss()
+2024-03-29 18:43:47,377 - Trainer.defaultTrainer - INFO - DataHandler: <dataHandler.DataHandler object at 0x11e331490>
+2024-03-29 18:43:47,384 - Trainer.defaultTrainer - INFO - Labels of Dataset are in the correct form to be processed with CrossEntropyLoss()
+2024-03-29 18:43:47,384 - Trainer.defaultTrainer - INFO - Creating Custom DataLoader with arguments: {'batch_size': 32, 'shuffle': False}
+2024-03-29 18:43:47,385 - Trainer.defaultTrainer - INFO - Labels of Dataset are in the correct form to be processed with CrossEntropyLoss()
+2024-03-29 18:43:47,385 - Trainer.defaultTrainer - INFO - Creating Custom DataLoader with arguments: {'batch_size': 32, 'shuffle': False}
+2024-03-29 18:43:49,899 - analyzer.analyzer - INFO - 
+Test set: Average loss: 0.0023, Accuracy: 9889/10000 (99%)
+2024-03-29 18:43:52,382 - analyzer.analyzer - INFO - 
+Test set: Average loss: 0.0184, Accuracy: 8958/10000 (90%)
+2024-03-29 18:43:53,886 - analyzer.analyzer - INFO - 
+Test set: Average loss: 0.0022, Accuracy: 9777/10000 (98%)
+2024-03-29 18:43:55,004 - analyzer.analyzer - INFO - 
+Test set: Average loss: 0.0033, Accuracy: 9686/10000 (97%)

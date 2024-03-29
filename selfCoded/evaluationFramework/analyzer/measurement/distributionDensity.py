@@ -75,9 +75,9 @@ def plot_distribution_density(density, bin_edges, log_scale=False):
     bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
     plt.figure(figsize=(10, 6))
     plt.bar(bin_centers, density, width=bin_edges[1] - bin_edges[0], color='blue', alpha=0.7)
-    plt.xlabel('Gewichtswert')
-    plt.ylabel('Dichte')
-    plt.title('Verteilungsdichte der Modellgewichte')
+    plt.xlabel('Weight Value')
+    plt.ylabel('Density')
+    plt.title('Distribution Density of model weights')
     if log_scale:
         plt.yscale('log')
     plt.show()

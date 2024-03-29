@@ -13,7 +13,7 @@
     "num_workers": 1
   },
   "snapshot": {
-    "name": "LeNet_epsiolon_test",
+    "name": "LeNet_epsilon_test",
     "snapshot_enabled": false,
     "snapshot_model_path": "models/LeNet/",
     "snapshot_model_path_raw": "models/LeNet/",

@@ -1,9 +1,9 @@
 import torch
 import logging
 
+
 logger = logging.getLogger(__name__)
 
-@staticmethod
 def weight_export(model, layer_name, path):
 
     for name, module in model.named_modules():
@@ -19,4 +19,5 @@ def weight_export(model, layer_name, path):
             #print(f"shape of layers = {weight_tensor.shape}")
 
             return
+
 

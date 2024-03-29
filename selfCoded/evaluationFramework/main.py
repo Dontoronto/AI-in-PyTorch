@@ -67,12 +67,29 @@ def main():
     Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
     Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
     Analyzer.select_attacks_from_config(0, 1)
-    #Analyzer.enable_saving("experiment/adversarial_images")
+    #Analyzer.enable_adversarial_saving("experiment/adversarial_data/adversarial_images")
+    #Analyzer.enable_original_saving("experiment/adversarial_data/original_images")
 
-    test1 = Analyzer.start_adversarial_evaluation(0, 5)
-    print(f"First evaluation:")
-    print(test1)
+    # test1 = Analyzer.start_adversarial_evaluation(0, 10000)
+    # print(f"First evaluation:")
+    # print(test1)
+
+
+    adv_dataset = DataHandler.create_imageFolder_dataset("experiment/adversarial_data/adversarial_images")
+    orig_dataset = DataHandler.create_imageFolder_dataset("experiment/adversarial_data/original_images")
+    Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
+    adv_dataloader = Trainer.createCustomDataloader(adv_dataset, batch_size=32, shuffle=False)
+    orig_dataloader = Trainer.createCustomDataloader(orig_dataset, batch_size=32, shuffle=False)
+
+    Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
     Analyzer.density_evaluation()
+    Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
+    Analyzer.setModel(Model)
+    Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
+    Analyzer.density_evaluation()
+
 
     # ------------- Note: end test of adv
 
@@ -81,7 +98,7 @@ def main():
     # Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
     # Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
     # Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
-    #
+
     # Trainer.train(test=False, onnx_enabled=False, tensor_buffering=True)
     #
     # histW = Trainer.getHistoryEpsilonW()
@@ -120,7 +137,7 @@ def main():
     # # Note: this is just for visualization
     # test_loader = Trainer.getTestLoader()
     # loss_func = Trainer.getLossFunction()
-    # Analyzer = analyzer.Analyzer(Model, DataHandler)
+    # #Analyzer = analyzer.Analyzer(Model, DataHandler)
     #
     # Analyzer.setDataset(DataHandler.loadDataset(testset=True))
     #
@@ -148,8 +165,6 @@ def main():
 
     # TODO: überlegen wie man schön und geordnet Models hochladen kann und sie testen kann
     # TODO: Ordner wird cobenötigt oder irgendwas damit man strukturiert die Models speichert
-
-
 
 
 if __name__ == '__main__':

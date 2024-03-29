@@ -1,8 +1,8 @@
 {
   "admm_trainer": {
     "phase_list": ["admm","retrain"],
-    "save": true,
-    "main_iterations": 160000,
+    "save": false,
+    "main_iterations": 1600,
     "admm_iterations": 100,
     "dynamic_masking": true,
     "rho": 5e-4,

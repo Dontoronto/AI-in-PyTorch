@@ -26,7 +26,7 @@ class Trainer(ABC):
         pass
 
     @abstractmethod
-    def test(self):
+    def test(self, *args, **kwargs):
         pass
 
     @abstractmethod

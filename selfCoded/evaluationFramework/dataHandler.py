@@ -2,9 +2,11 @@ import torch
 import torchvision.transforms as T
 from torch.utils.data import Dataset
 from torchvision.transforms import ToPILImage
+from torchvision.datasets.folder import ImageFolder
 from PIL import Image
 
-from SharedServices.utils import singleton
+
+from SharedServices.utils import singleton, pil_loader
 
 import logging
 logger = logging.getLogger(__name__)
@@ -113,6 +115,16 @@ class DataHandler:
             self.testset = testset
         else:
             logger.warning("Failed to set Testset, Testset is not of type torch.utils.data.Dataset")
+
+    def create_imageFolder_dataset(self, path):
+        '''
+        Creates a Dataset Object of type Dataset from structured custom Data seperated in directorys
+        named according to the label
+        :param path: path to the root directory where subfolders are located
+        :return: Dataset object from torchvision ImageFolder
+        '''
+        return ImageFolder(path, loader=pil_loader, transform=self.getTransformer())
+
 
     #TODO: missmatch in train and test dataset when calling configurator first testset then argument train
     def loadDataset(self, testset=False):
