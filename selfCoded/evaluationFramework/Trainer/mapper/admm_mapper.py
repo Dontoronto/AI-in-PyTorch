@@ -67,6 +67,9 @@ class ADMMConfigMapper:
         logger.info(f"epsilon_W set to {self.trainer.epsilon_W} of type {type(self.trainer.epsilon_W)}")
         self.trainer.epsilon_Z = admm_config.get('epsilon_Z', self.trainer.epsilon_Z)
         logger.info(f"epsilon_Z set to {self.trainer.epsilon_Z} of type {type(self.trainer.epsilon_Z)}")
+        self.trainer.threshold_warmup = admm_config.get('threshold_warmup', self.trainer.threshold_warmup)
+        logger.info(f"threshold_warmup set to {self.trainer.threshold_warmup} of "
+                    f"type {type(self.trainer.threshold_warmup)}")
 
 
 

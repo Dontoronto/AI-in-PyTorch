@@ -3,7 +3,7 @@
     "optimizer": "Adam",
     "loss": "CrossEntropyLoss",
     "epoch":  25,
-    "lr": 0.0001,
+    "lr": 0.001,
     "momentum": 0.9,
     "pre_optimization_tuning_path": true
   },
@@ -13,7 +13,7 @@
     "num_workers": 1
   },
   "snapshot": {
-    "name": "LeNet_epsilon_test",
+    "name": "LeNet_allpatt_clip0_5_lr0_001_admm_iter1000",
     "snapshot_enabled": false,
     "snapshot_model_path": "models/LeNet/",
     "snapshot_model_path_raw": "models/LeNet/",

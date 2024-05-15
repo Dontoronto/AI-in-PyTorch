@@ -10,19 +10,21 @@ import glob
 import imageio.v2 as imageio
 import logging
 logger = logging.getLogger(__name__)
+plt.rcParams['savefig.dpi'] = 25
 
 # TODO: erst testen, dann erst implementieren und schauen wie sich das mit dem Trainer vereinbaren lässt
 # TODO: extend it to be able to stare all ADMM relevant tensors. Just one per Variable dW W U Z Mask
 class TensorBuffer:
 
-    def __init__(self, capacity=5, file_path='tensors.pkl', clear_file=False, convert_to_png=False,
-                 file_path_zero_matrices=None):
+    def __init__(self, capacity=5, file_path='tensors.pkl', clear_files=False, convert_to_png=False,
+                 file_path_zero_matrices=None, clear_after=False):
         """
         Initializes the TensorBuffer.
 
         :param capacity: The maximum number of tensors in the buffer before they are saved.
         :param file_path: The path to the file where the tensors are saved.
-        :param clear_file: If True, the existing file at file_path will be removed. Use this when starting a new saving process.
+        :param clear_files: If True, the existing file at file_path will be removed. Use this when starting a new saving process.
+        :param clear_after: If True, the existing file at file_path will be removed after termination
         """
         self.capacity = capacity
         self.file_path = file_path
@@ -31,7 +33,23 @@ class TensorBuffer:
         self.previous_matrix = None
         self.convert_to_png = convert_to_png
         self.file_path_zero_matrices = file_path_zero_matrices
-        if clear_file and os.path.exists(file_path):
+        self.clear_after = clear_after
+        if os.path.exists(self.file_path) is False:
+            os.makedirs(self.file_path)
+        if os.path.exists(self.file_path_zero_matrices) is False:
+            os.makedirs(self.file_path_zero_matrices)
+        # if clear_file and os.path.exists(file_path):
+        #     if self.convert_to_png is True:
+        #         self.png_file_path_deleter(file_path)
+        #         if self.file_path_zero_matrices is not None:
+        #             self.png_file_path_deleter(self.file_path_zero_matrices)
+        #     else:
+        #         logger.info(f"Deleted: {file_path}")
+        #         os.remove(file_path)
+        self.clear_png_files(file_path, clear_files)
+
+    def clear_png_files(self, file_path, clear_files):
+        if clear_files and os.path.exists(file_path):
             if self.convert_to_png is True:
                 self.png_file_path_deleter(file_path)
                 if self.file_path_zero_matrices is not None:
@@ -61,6 +79,14 @@ class TensorBuffer:
             else:
                 self._save_tensors_weight_zero()
                 self.buffer = []
+        # Clears afterwards
+        if self.clear_after is True:
+            upper_folder = os.path.dirname(self.file_path)
+            gif_path = os.path.join(upper_folder, os.path.basename(self.file_path)
+                        + os.path.basename(self.file_path_zero_matrices) + '.gif')
+            TensorBuffer.create_two_matrix_gif(first_path=self.file_path, second_path=self.file_path_zero_matrices,
+                                               gif_path=gif_path)
+            self.clear_png_files(self.file_path, clear_files=self.clear_after)
 
 
     def _save_tensors(self):
@@ -135,7 +161,7 @@ class TensorBuffer:
     def plot_colored_matrix(matrix, color_matrix, filename):
         fig, ax = plt.subplots()
         for (i, j), val in np.ndenumerate(matrix):
-            ax.text(j, i, f'{val:.2f}', va='center', ha='center', color='white')
+            ax.text(j, i, f'{val:.2f}', va='center', ha='center', color='black', size=26)
             ax.fill_between([j-0.5, j+0.5], [i-0.5, i-0.5], [i+0.5, i+0.5], color=color_matrix[i, j])
         ax.set_xticks(np.arange(-0.5, 3, 1))
         ax.set_yticks(np.arange(-0.5, 3, 1))
@@ -149,7 +175,7 @@ class TensorBuffer:
     def plot_colored_matrix_zeros(matrix, color_matrix, filename):
         fig, ax = plt.subplots()
         for (i, j), val in np.ndenumerate(matrix):
-            ax.text(j, i, f'{val:.2f}', va='center', ha='center', color='white')
+            ax.text(j, i, f'{val:.2f}', va='center', ha='center', color='black', size=26)
             ax.fill_between([j-0.5, j+0.5], [i-0.5, i-0.5], [i+0.5, i+0.5], color=color_matrix[i, j])
         ax.set_xticks(np.arange(-0.5, 3, 1))
         ax.set_yticks(np.arange(-0.5, 3, 1))

@@ -1,6 +1,10 @@
+import os
 from multiprocessing import Process, Queue
 import multiprocessing
 from typing import Any, Callable, Dict, List, Type
+from .mapper.tensorBufferMapper import TensorBufferConfigMapper
+from multiprocessing import Event
+from .tensorBuffer import TensorBuffer
 import logging
 logger = logging.getLogger(__name__)
 
@@ -8,6 +12,54 @@ class MultiProcessHandler:
     def __init__(self):
         self.processes: Dict[int, Process] = {}
         self.queues: Dict[int, Queue] = {}
+        self.layer_index = []
+        self.output_input_channel = []
+        self.file_path = ''
+        self.file_path_zero_matrices = ''
+        self.capacity = 0
+        self.clear_files = False
+        self.clear_after = False
+        self.convert_to_png = False
+
+        self.process_ids = None
+
+
+    def setTensorBufferConfig(self, kwargs):
+        TensorBufferConfigMapper(self, kwargs)
+
+    def getLayerIndex(self):
+        return self.layer_index
+
+    def getOutputInputChannel(self):
+        return self.output_input_channel
+
+    def getProcessIDs(self):
+        return self.process_ids
+
+    def init_processes(self, running_class=TensorBuffer):
+        completion_flags = [Event() for _ in range(6)]
+        self.process_ids = [i for i in range(len(self.layer_index))]
+
+        for process_id in self.process_ids:
+            self.start_process(
+                process_id=process_id,
+                class_to_instantiate=running_class,
+                init_args=[self.capacity],  # Assuming the first argument is 'capacity'
+                init_kwargs={
+                    'file_path': os.path.join(self.file_path, f"filterW_{process_id}"),
+                    'clear_files': self.clear_files,
+                    'convert_to_png': self.convert_to_png,
+                    'file_path_zero_matrices': os.path.join(self.file_path_zero_matrices,f"filterZ_{process_id}"),
+                    'clear_after': self.clear_after
+                    # Add other constructor arguments here
+                },
+                process_args=[],  # Additional args for the method you're calling in the loop
+                process_kwargs={'event': completion_flags[process_id]}  # Additional kwargs for the method
+            )
+        logger.critical("right before starting")
+        for complete in completion_flags:
+            complete.wait()
+        logger.critical("After complete Event")
 
     def start_process(self, process_id: int, class_to_instantiate: Type, init_args: List[Any] = [],
                       init_kwargs: Dict[str, Any] = {}, process_args: List[Any] = [],
@@ -81,3 +133,5 @@ class MultiProcessHandler:
             # Here, you would call the instance method you intend to use, for example:
             # instance.some_method(item, *process_args, **process_kwargs)
             instance.add_item(item)
+
+#%%

@@ -10,6 +10,7 @@ from .admm_utils.tensorBuffer import TensorBuffer
 from .admm_utils.pattern_pruning.patternManager import PatternManager
 
 import torch
+from torch.nn import Conv2d, Linear
 from torch.nn.utils import clip_grad_norm_
 from multiprocessing import Process, Queue
 import logging
@@ -80,6 +81,7 @@ class ADMMTrainer(DefaultTrainer):
         # TODO: safe epsilone history for post evaluating
         self.epsilon_W = None
         self.epsilon_Z = None
+        self.threshold_warmup = 0.1                         # start calc. termination criterion with delay
         # stores old layerlist Z for termination criterion
         self.old_layer_list_z = None
         self.history_epsilon_W = []
@@ -102,6 +104,11 @@ class ADMMTrainer(DefaultTrainer):
 
     def getHistoryEpsilonZ(self):
         return self.history_epsilon_Z
+
+    # TODO: Mapper erstellen
+    def setTensorBufferConfig(self, kwargs):
+        self.handler = MultiProcessHandler()
+        self.handler.setTensorBufferConfig(kwargs)
 
 
     # TODO: needs to be deleted at the end
@@ -129,6 +136,16 @@ class ADMMTrainer(DefaultTrainer):
                 logger.critical(f"Difference Model-Layer: {(param.grad - self.list_W[0].dW).sum()}")
                 logger.critical(f"Difference Deepcopy-Layer: {(grad_copy - self.list_W[0].dW).sum()}")
 
+    def show_pruning_layer_job(self):
+        '''
+        method shows the list of layer which will be pruned with some info
+        '''
+        logger.info(f"======================= SELECTED PRUNING LAYERS =======================")
+        for layer in self.list_W:
+            logger.info(f"Layer {layer.name} with shape {layer.W.shape} sparsity-ratio: {layer.sparsity}")
+        logger.info(f"=======================================================================")
+
+
     def initialize_dualvar_auxvar(self):
         """
         Create two lists containing shallow copies of instances from the original list.
@@ -145,19 +162,33 @@ class ADMMTrainer(DefaultTrainer):
         [layer_Z.set_admm_vars(ADMMVariable.Z) for layer_Z in self.list_Z]
         logger.info(f"Layer lists were created")
 
+    # TODO: Methode erstellen welche Pattern pruning mit magnitude Pruning von fc layern zusammenfügt
+    # TODO: PruningRate bei connectivity Pruning soll über Architecture config übernommen werden nicht als
+    # TODO: hardcoded list values
+    # TODO: pruning Ratios sollen dauerhaft gespeichert werden
+    # TODO: die logik muss in den Pattern Manager
     def initialize_pruning_mask_layer_list(self, firstTime=True):
         '''
         This method should be general. You only have to change the implementation to get the right mask.
         Assings the class variable list_masks the pruning masks per layer on same index level.
         '''
-        conv_list = [layerZ.Z for layerZ in self.list_Z]
+        # isinstance(module, Conv2d)
+        # isinstance(module, Linear)
+        # [pattern_library[i] if i is not None else torch.zeros(3, 3) for i in group_indices]
+        conv_list = [layerZ.Z for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
+        conv_layer_pruning_ratio_list = [layerZ.sparsity for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
+        fc_list = [layerZ for layerZ in self.list_Z if isinstance(layerZ.module, Linear)]
+        self.list_masks = []
         if firstTime is True:
-            self.patternManager.assign_patterns_to_tensors(conv_list)
+            self.patternManager.assign_patterns_to_tensors(conv_list, conv_layer_pruning_ratio_list)
             self.list_masks = self.patternManager.get_pattern_masks()
+            self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
         else:
             #self.patternManager.reduce_available_patterns(2)
-            self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=12)
+            self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=4,
+                                                           pruning_ratio_list=conv_layer_pruning_ratio_list)
             self.list_masks = self.patternManager.get_pattern_masks()
+            self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
         # self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
         #logger.info(f"Pruning mask was created")
 
@@ -234,6 +265,7 @@ class ADMMTrainer(DefaultTrainer):
             layerZ.Z.mul_(mask)
 
     # TODO: vllt schon allgemeine Methode wird ja immer so ablaufen?? vllt ändern
+    # TODO: NOTE: Hier war debug auf if abfrage weiß nicht wieso genauer hinschauen
     def _prune_layerW_with_layerMask(self):
         '''
         Applies pre-existing pruning masks to the weights/gradients in self.list_W in-place.
@@ -364,7 +396,15 @@ class ADMMTrainer(DefaultTrainer):
 
         return [w_weight, z_weight]
 
-
+    def tensorBuffer_saving(self):
+        '''
+        Just for extracting config and select kernel
+        :return:
+        '''
+        for index, process_id, oi_channel in zip(self.handler.layer_index, self.handler.process_ids,
+                                           self.handler.output_input_channel):
+            w_z_weight = self.w_z_kernel_weight_extraction(index,oi_channel[1],oi_channel[0])
+            self.handler.put_item_in_queue(process_id, w_z_weight)
 
 
     # TODO: weiß nichtmehr genau aber einfach im Kopf behalten
@@ -379,12 +419,13 @@ class ADMMTrainer(DefaultTrainer):
             self.project_aux_layers()
             # if statement für dynamische oder statische maske
             if self.dynamic_masking is True and curr_iteration != 0:
-                self.initialize_pruning_mask_layer_list(False)
+                self.initialize_pruning_mask_layer_list(firstTime=False)
             elif curr_iteration == 0:
-                self.initialize_pruning_mask_layer_list(True)
+                self.initialize_pruning_mask_layer_list(firstTime=True)
             self.prune_aux_layers()
             if curr_iteration != 0:
-                self.update_termination_criterion()
+                if curr_iteration/self.main_iterations > self.threshold_warmup:
+                    self.update_termination_criterion()
                 self.update_dual_layers()
         self.solve_admm()
         pass
@@ -393,9 +434,9 @@ class ADMMTrainer(DefaultTrainer):
         self.clip_gradients()
         self.normalize_gradients()
         self.regularize_gradients()
-        if curr_iteration == 0:
-            #self.initialize_pruning_mask_layer_list(True)
-            self.list_masks = self.patternManager.get_pattern_masks()
+        if curr_iteration == 0 and "admm" not in self.phase_list:
+            self.initialize_pruning_mask_layer_list(True)
+            #self.list_masks = self.patternManager.get_pattern_masks()
         self.prune_weight_layer()
 
 
@@ -405,7 +446,7 @@ class ADMMTrainer(DefaultTrainer):
     def train(self, test=False, onnx_enabled=False, tensor_buffering = False):
         self.model.train()
         self.preTrainingChecks()
-        handler = MultiProcessHandler()
+        #self.handler = MultiProcessHandler()
 
         # self.initialize_dualvar_auxvar()
 
@@ -443,133 +484,13 @@ class ADMMTrainer(DefaultTrainer):
                 self.initialize_dualvar_auxvar()
                 epo = 0
                 counter = 0
-                #handler = MultiProcessHandler()
 
                 # TODO: here we need to implement tensor buffering initialization of multiprocessing
 
                 if phase == 'admm' and tensor_buffering is True:
-                    # tensor_queue = Queue()
-                    # process = Process(target=tensor_saving_process, args=(tensor_queue, True,))
-                    # process.start()
-                    complete = Event()
-                    process_id = 1
-                    handler.start_process(
-                        process_id=process_id,
-                        class_to_instantiate=TensorBuffer,
-                        init_args=[5],  # Assuming the first argument is 'capacity'
-                        init_kwargs={
-                            'file_path': 'experiment/data/frames_w',
-                            'clear_file': True,
-                            'convert_to_png': True,
-                            'file_path_zero_matrices': 'experiment/data/frames_z'
-                            # Add other constructor arguments here
-                        },
-                        process_args=[],  # Additional args for the method you're calling in the loop
-                        process_kwargs={'event': complete}  # Additional kwargs for the method
-                    )
-                    logger.critical("right before starting")
-                    complete.wait()
-                    logger.critical("After complete Event")
 
-                    complete = Event()
-                    process_id2 = 2
-                    handler.start_process(
-                        process_id=process_id2,
-                        class_to_instantiate=TensorBuffer,
-                        init_args=[5],  # Assuming the first argument is 'capacity'
-                        init_kwargs={
-                            'file_path': 'experiment/data/frames_w2',
-                            'clear_file': True,
-                            'convert_to_png': True,
-                            'file_path_zero_matrices': 'experiment/data/frames_z2'
-                            # Add other constructor arguments here
-                        },
-                        process_args=[],  # Additional args for the method you're calling in the loop
-                        process_kwargs={'event': complete}  # Additional kwargs for the method
-                    )
-                    logger.critical("right before starting")
-                    complete.wait()
-                    logger.critical("After complete Event")
-
-                    complete = Event()
-                    process_id3 = 3
-                    handler.start_process(
-                        process_id=process_id3,
-                        class_to_instantiate=TensorBuffer,
-                        init_args=[5],  # Assuming the first argument is 'capacity'
-                        init_kwargs={
-                            'file_path': 'experiment/data/frames_w3',
-                            'clear_file': True,
-                            'convert_to_png': True,
-                            'file_path_zero_matrices': 'experiment/data/frames_z3'
-                            # Add other constructor arguments here
-                        },
-                        process_args=[],  # Additional args for the method you're calling in the loop
-                        process_kwargs={'event': complete}  # Additional kwargs for the method
-                    )
-                    logger.critical("right before starting")
-                    complete.wait()
-                    logger.critical("After complete Event")
-
-                    complete = Event()
-                    process_id4 = 4
-                    handler.start_process(
-                        process_id=process_id4,
-                        class_to_instantiate=TensorBuffer,
-                        init_args=[5],  # Assuming the first argument is 'capacity'
-                        init_kwargs={
-                            'file_path': 'experiment/data/frames_w4',
-                            'clear_file': True,
-                            'convert_to_png': True,
-                            'file_path_zero_matrices': 'experiment/data/frames_z4'
-                            # Add other constructor arguments here
-                        },
-                        process_args=[],  # Additional args for the method you're calling in the loop
-                        process_kwargs={'event': complete}  # Additional kwargs for the method
-                    )
-                    logger.critical("right before starting")
-                    complete.wait()
-                    logger.critical("After complete Event")
-
-                    complete = Event()
-                    process_id5 = 5
-                    handler.start_process(
-                        process_id=process_id5,
-                        class_to_instantiate=TensorBuffer,
-                        init_args=[5],  # Assuming the first argument is 'capacity'
-                        init_kwargs={
-                            'file_path': 'experiment/data/frames_w5',
-                            'clear_file': True,
-                            'convert_to_png': True,
-                            'file_path_zero_matrices': 'experiment/data/frames_z5'
-                            # Add other constructor arguments here
-                        },
-                        process_args=[],  # Additional args for the method you're calling in the loop
-                        process_kwargs={'event': complete}  # Additional kwargs for the method
-                    )
-                    logger.critical("right before starting")
-                    complete.wait()
-                    logger.critical("After complete Event")
-
-                    complete = Event()
-                    process_id6 = 6
-                    handler.start_process(
-                        process_id=process_id6,
-                        class_to_instantiate=TensorBuffer,
-                        init_args=[5],  # Assuming the first argument is 'capacity'
-                        init_kwargs={
-                            'file_path': 'experiment/data/frames_w6',
-                            'clear_file': True,
-                            'convert_to_png': True,
-                            'file_path_zero_matrices': 'experiment/data/frames_z6'
-                            # Add other constructor arguments here
-                        },
-                        process_args=[],  # Additional args for the method you're calling in the loop
-                        process_kwargs={'event': complete}  # Additional kwargs for the method
-                    )
-                    logger.critical("right before starting")
-                    complete.wait()
-                    logger.critical("After complete Event")
+                    self.handler.init_processes()
+                    self.show_pruning_layer_job()
 
 
                 while self.main_iterations > counter and epo < self.epoch:
@@ -585,18 +506,7 @@ class ADMMTrainer(DefaultTrainer):
                             self.admm(counter)
                             # TODO: here we need to implement tensor weight buffering
                             if tensor_buffering is True and counter % (self.admm_iterations) == 0:
-                                w_z_weight = self.w_z_kernel_weight_extraction(0,0,0)
-                                handler.put_item_in_queue(process_id, w_z_weight)
-                                w_z_weight = self.w_z_kernel_weight_extraction(0,1,0)
-                                handler.put_item_in_queue(process_id2, w_z_weight)
-                                w_z_weight = self.w_z_kernel_weight_extraction(0,2,0)
-                                handler.put_item_in_queue(process_id3, w_z_weight)
-                                w_z_weight = self.w_z_kernel_weight_extraction(0,3,0)
-                                handler.put_item_in_queue(process_id4, w_z_weight)
-                                w_z_weight = self.w_z_kernel_weight_extraction(0,4,0)
-                                handler.put_item_in_queue(process_id5, w_z_weight)
-                                w_z_weight = self.w_z_kernel_weight_extraction(0,5,0)
-                                handler.put_item_in_queue(process_id6, w_z_weight)
+                                self.tensorBuffer_saving()
                             if self.early_termination_flag is True:
                                 logger.info(f"Early Termination Flag was set, ADMM reached epsilon threshold")
                                 counter += self.main_iterations
@@ -626,10 +536,8 @@ class ADMMTrainer(DefaultTrainer):
                     self.export_model(model_path=save_path, onnx=onnx_enabled)
 
         if tensor_buffering is True:
-            #handler.terminate_process(1)
-            handler.terminate_all_processes()
-            # tensor_queue.put(None)
-            # process.join()
+            self.handler.terminate_all_processes()
+
 
 
 

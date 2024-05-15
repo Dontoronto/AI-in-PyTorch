@@ -35,6 +35,50 @@ def initialize_pattern_library(n, k):
 
     return patterns
 
+def initialize_elog_based_patterns():
+    '''
+    Generiert die vier spezifischen Sparse Convolution Patterns (SCPs) und gibt sie als Tensor zurück.
+    :return: ein Tensor, der die vier 3x3 SCP-Muster enthält
+    '''
+    # Definieren der vier SCP-Muster
+    scp1 = [
+        [0, 1, 0],
+        [1, 1, 1],
+        [0, 0, 0]
+    ]
+
+    scp2 = [
+        [0, 1, 0],
+        [1, 1, 0],
+        [0, 1, 0]
+    ]
+
+    scp3 = [
+        [0, 0, 0],
+        [1, 1, 1],
+        [0, 1, 0]
+    ]
+
+    scp4 = [
+        [0, 1, 0],
+        [0, 1, 1],
+        [0, 1, 0]
+    ]
+
+    # Konvertiere die Muster in Torch-Tensoren
+    scp1_tensor = torch.tensor(scp1, dtype=torch.float32)
+    scp2_tensor = torch.tensor(scp2, dtype=torch.float32)
+    scp3_tensor = torch.tensor(scp3, dtype=torch.float32)
+    scp4_tensor = torch.tensor(scp4, dtype=torch.float32)
+
+    # Erstellen einer Liste der Tensoren
+    _patterns = [scp1_tensor, scp2_tensor, scp3_tensor, scp4_tensor]
+
+    # Konvertieren der Liste in einen Tensor
+    patterns = torch.stack(_patterns)
+
+    return patterns
+
 
 
 

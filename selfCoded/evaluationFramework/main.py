@@ -28,6 +28,18 @@ from models.lenet import LeNet
 
 
 def main():
+
+    # Note: This code is just for exporting onnx model for tvm
+    # _model = LeNet()
+    # Model = modelWrapper.ModelWrapper(_model)
+    # Model.load_state_dict(torch.load("LeNet_pat_con_fc_admm_retrain.pth"))
+    # input_names = ["input"]
+    # output_names = ["output"]
+    # torch.onnx.export(Model.model,torch.randn(1,1,28,28),'model_opset.onnx', opset_version=11,
+    #                   input_names=input_names, output_names=output_names)
+
+
+
     # Resnet settings work
     # _weights = ResNet101_Weights.IMAGENET1K_V1
     # _model = resnet101(weights=_weights)
@@ -59,55 +71,69 @@ def main():
     # img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
 
 
-    # ------------- Note: test of adv
+
 
     Analyzer = analyzer.Analyzer(Model, DataHandler)
-    Analyzer.init_adversarial_environment()
-    Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
-    Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
-    Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
-    Analyzer.select_attacks_from_config(0, 1)
-    #Analyzer.enable_adversarial_saving("experiment/adversarial_data/adversarial_images")
-    #Analyzer.enable_original_saving("experiment/adversarial_data/original_images")
+    # Analyzer.init_adversarial_environment()
+    # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
+    # Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
+    # Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
+    # Analyzer.select_attacks_from_config(0, 1)
+    # #Analyzer.enable_adversarial_saving("experiment/adversarial_data/adversarial_images")
+    # #Analyzer.enable_original_saving("experiment/adversarial_data/original_images")
+    #
+    # # test1 = Analyzer.start_adversarial_evaluation(0, 10000)
+    # # print(f"First evaluation:")
+    # # print(test1)
+    #
+    #
 
-    # test1 = Analyzer.start_adversarial_evaluation(0, 10000)
-    # print(f"First evaluation:")
-    # print(test1)
+    # ------------- Note: test of adv
+    # adv_dataset = DataHandler.create_imageFolder_dataset("experiment/adversarial_data/adversarial_images")
+    # orig_dataset = DataHandler.create_imageFolder_dataset("experiment/adversarial_data/original_images")
+    # Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
+    # adv_dataloader = Trainer.createCustomDataloader(adv_dataset, batch_size=32, shuffle=False)
+    # orig_dataloader = Trainer.createCustomDataloader(orig_dataset, batch_size=32, shuffle=False)
+    # #
+    # Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    # Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
+    # #Analyzer.density_evaluation()
+    #
+    # Model.load_state_dict(torch.load("LeNet_elog_consparse_admm_retrain.pth"))
+    # Model.eval()
+    # Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    # Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
+    # #Analyzer.density_evaluation()
+    #
+    # Model.load_state_dict(torch.load("LeNet_all_patt_reduce_to_4_admm_retrain.pth"))
+    # Model.eval()
+    # Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    # Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
+    # #Analyzer.density_evaluation()
 
-
-    adv_dataset = DataHandler.create_imageFolder_dataset("experiment/adversarial_data/adversarial_images")
-    orig_dataset = DataHandler.create_imageFolder_dataset("experiment/adversarial_data/original_images")
-    Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
-    adv_dataloader = Trainer.createCustomDataloader(adv_dataset, batch_size=32, shuffle=False)
-    orig_dataloader = Trainer.createCustomDataloader(orig_dataset, batch_size=32, shuffle=False)
-
-    Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
-    Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
-    Analyzer.density_evaluation()
-    Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
-    Analyzer.setModel(Model)
-    Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
-    Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
-    Analyzer.density_evaluation()
 
 
     # ------------- Note: end test of adv
 
-    # Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
-    # Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
-    # Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
-    # Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
-    # Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
+    # ------------- Note: start of ADMM Optimization
 
-    # Trainer.train(test=False, onnx_enabled=False, tensor_buffering=True)
-    #
-    # histW = Trainer.getHistoryEpsilonW()
-    # histZ = Trainer.getHistoryEpsilonZ()
-    # thrshW = Trainer.epsilon_W
-    # thrshZ = Trainer.epsilon_Z
+    Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
+    Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
+    Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
+    Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
+    Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
+    Trainer.setTensorBufferConfig(Configurator.loadConfigFromRegistry("tensor_buffer"))
+
+    Trainer.train(test=False, onnx_enabled=False, tensor_buffering=True)
+    #Trainer.export_model("LeNet_pat_con_fc_admm_retrain", onnx=True)
+
+    histW = Trainer.getHistoryEpsilonW()
+    histZ = Trainer.getHistoryEpsilonZ()
+    thrshW = Trainer.epsilon_W
+    thrshZ = Trainer.epsilon_Z
     # Analyzer = analyzer.Analyzer(Model, DataHandler)
-    # Analyzer.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
-    # #
+    Analyzer.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
+
     # TensorBuffer.create_two_matrix_gif('experiment/data/frames_w',
     #                                    'experiment/data/frames_z',
     #                                    'experiment/data/handlerGIF.gif')
@@ -131,10 +157,10 @@ def main():
     # TensorBuffer.create_two_matrix_gif('experiment/data/frames_w6',
     #                                    'experiment/data/frames_z6',
     #                                    'experiment/data/handlerGIF6.gif')
-    #
-    # logger.critical(f"Time for algo is: {time.time()-start_time}")
-    #
-    # # Note: this is just for visualization
+
+    logger.critical(f"Time for algo is: {time.time()-start_time}")
+
+    # ---------------- Note: this is just for visualization
     # test_loader = Trainer.getTestLoader()
     # loss_func = Trainer.getLossFunction()
     # #Analyzer = analyzer.Analyzer(Model, DataHandler)
@@ -142,25 +168,29 @@ def main():
     # Analyzer.setDataset(DataHandler.loadDataset(testset=True))
     #
     # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    # Model.eval()
+    # Analyzer.grad_all(27)
     # Analyzer.add_model(Model, "Default Model")
     # # Analyzer.setModel(Model)
     # #Analyzer.run_single_model_test(101, test_end_index=None, test_loader=test_loader, loss_func=loss_func)
     # #Analyzer.grad_all(0)
     #
-    # Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_admm.pth"))
-    # # Analyzer.setModel(Model)
-    # Analyzer.add_model(Model, "ADMM Model")
+    # Model.load_state_dict(torch.load("LeNet_elog_consparse_admm_retrain.pth"))
+    # Model.eval()
+    # Analyzer.grad_all(27)
+    # Analyzer.add_model(Model, "elog")
     #
     #
-    # Model.load_state_dict(torch.load("LeNet_epsiolon_test_admm_retrain.pth"))
-    # # Analyzer.setModel(Model)
-    # Analyzer.add_model(Model, "Retrained Model")
+    # Model.load_state_dict(torch.load("LeNet_all_patt_reduce_to_4_admm_retrain.pth"))
+    # Model.eval()
+    # Analyzer.grad_all(27)
+    # Analyzer.add_model(Model, "all pat")
+    #
     #
     # #Analyzer.compare_models(10, 11)
-    # Analyzer.runCompareTest(10, test_end_index=12, target_layer='model.conv1',
+    # Analyzer.runCompareTest(25, test_end_index=29, target_layer='model.conv1',
     #                         loss_func=loss_func, test_loader=test_loader)
-    # Analyzer.setModel(Model)
-    # Analyzer.grad_all(22)
+    # -------------------------------------
 
 
     # TODO: überlegen wie man schön und geordnet Models hochladen kann und sie testen kann

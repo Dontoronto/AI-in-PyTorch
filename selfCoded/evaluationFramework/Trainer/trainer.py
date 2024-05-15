@@ -42,7 +42,8 @@ class Trainer(ABC):
             save(self.model.state_dict(), model_path + '.pth')
             logger.info(f'Model state_dict saved to {model_path}')
         else:
-            torch.onnx.dynamo_export(self.model,torch.randn(1,1,28,28)).save(model_path + '.onnx')
+            # TODO: hard coded input format...
+            torch.onnx.dynamo_export(self.model.model,torch.randn(1,1,28,28)).save(model_path + '.onnx')
             logger.info(f'Onnx-Model saved to {model_path}')
         # , onnx_path=None
         # if onnx_path is not None:

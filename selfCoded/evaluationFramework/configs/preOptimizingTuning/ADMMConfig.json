@@ -1,17 +1,18 @@
 {
   "admm_trainer": {
     "phase_list": ["admm","retrain"],
-    "save": false,
+    "save": true,
     "main_iterations": 1600,
     "admm_iterations": 100,
     "dynamic_masking": true,
     "rho": 5e-4,
-    "gradient_threshold": 6,
+    "gradient_threshold": 0.5,
     "batch_size": 32,
     "regularization_l2_norm_enabled": true,
     "regularization_l_norm_decay": 5e-6,
     "epsilon_W": 0.2,
-    "epsilon_Z": 0.2
+    "epsilon_Z": 0.2,
+    "threshold_warmup": 0.1
   },
   "dataloader": {
     "batch_size": 32,

@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.getcwd())
 import torch
 
-from .patternVariations import initialize_pattern_library
+from .patternVariations import initialize_pattern_library, initialize_elog_based_patterns
 from collections import deque
 
 #import utils
@@ -36,12 +36,15 @@ class PatternManager:
         '''
 
         # creating pattern library
-        self.pattern_library = self.create_pattern_library()
+        #self.pattern_library = self.create_pattern_library(elog_patterns=True)
+        self.pattern_library = self.create_pattern_library(elog_patterns=False)
 
         # initializes a list of available patterns with indices of pattern library
         self.available_patterns_indices = self.initialize_available_patterns()
 
         self.connectivityPruningEnabled = False
+
+        self._noReduction = False
 
     def get_tensor_assignment(self, tensor_index):
         """
@@ -71,14 +74,18 @@ class PatternManager:
         self.connectivityPruningEnabled = flag
 
 
-    @classmethod
-    def create_pattern_library(cls):
+    def create_pattern_library(self, elog_patterns=False):
         '''
         This method is for creation of a list of different patterns.
         Elements of list are in type tensor
         :return: list of unique patterns for example n=9, k=4 -> 3x3 Tensors with 4 Fields set to 1 rest to 0
         '''
-        tensor_list = initialize_pattern_library(9,4)
+
+        if elog_patterns == True:
+            tensor_list = initialize_elog_based_patterns()
+            self._noReduction = True
+        else:
+            tensor_list = initialize_pattern_library(9,4)
 
         pattern_library = list(tensor_list.unbind(dim=0))
 
@@ -87,7 +94,7 @@ class PatternManager:
     def initialize_available_patterns(self):
         return list(range(len(self.pattern_library)))
 
-    def assign_patterns_to_tensors(self, tensor_list):
+    def assign_patterns_to_tensors(self, tensor_list, pruning_ratio_list=None):
         """
         Assigns a pattern to a specific tensor.
         Platzhalter für das Zuweisen des am besten passenden Patterns zu jedem Tensor
@@ -110,18 +117,19 @@ class PatternManager:
 
         # here is the logic for connectivity pruning
         if self.connectivityPruningEnabled is True:
-            threshold_ratios = [0.8, 0.5]
+            threshold_ratios = pruning_ratio_list
             assign_connectivity_pruned_kernel(self.tensor_assignments, tensor_list, self.pattern_library,
                                               threshold_ratios)
 
-        # tracks counts of all patterns
-        self._count_pattern_assignments()
+        if self._noReduction is False:
+            # tracks counts of all patterns
+            self._count_pattern_assignments()
 
-        # tracks the impact of all patterns in aggregated form
-        self._calc_abs_pattern_impact(tensor_list)
+            # tracks the impact of all patterns in aggregated form
+            self._calc_abs_pattern_impact(tensor_list)
 
-        # tracks the impact of all patterns in average form
-        self._calc_avg_pattern_impact()
+            # tracks the impact of all patterns in average form
+            self._calc_avg_pattern_impact()
 
     def _choose_best_pattern(self, tensor):
         min = 1000
@@ -198,10 +206,11 @@ class PatternManager:
         return [convert_to_single_tensor(self.tensor_assignments, self.pattern_library, i)
                 for i in range(len(self.tensor_assignments))]
 
-    def update_pattern_assignments(self, tensor_list, min_amount_indices=12):
+    def update_pattern_assignments(self, tensor_list, min_amount_indices=12, pruning_ratio_list=None):
         # Führt die erforderlichen Methoden nacheinander aus, um die Musterzuweisungen zu aktualisieren
-        self.reduce_available_patterns(min_amount_indices=min_amount_indices)  # Reduziert die Liste der verfügbaren Muster
-        self.assign_patterns_to_tensors(tensor_list)  # Weist Muster den Tensoren erneut zu
+        if self._noReduction == False:
+            self.reduce_available_patterns(min_amount_indices=min_amount_indices)  # Reduziert die Liste der verfügbaren Muster
+        self.assign_patterns_to_tensors(tensor_list, pruning_ratio_list)  # Weist Muster den Tensoren erneut zu
 
     # TODO: maybe this won't work because of import error for testmain.py
     def save_pattern_library(self, folder_path):

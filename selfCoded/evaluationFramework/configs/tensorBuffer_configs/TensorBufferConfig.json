@@ -1,0 +1,21 @@
+{
+  "inspecting_kernel": {
+    "layer_index": [1,1,1,1,1,1],
+    "output_input_channel": [
+      [0,0],
+      [0,1],
+      [0,2],
+      [0,3],
+      [0,4],
+      [0,5]
+    ]
+  },
+  "processes": {
+    "file_path": "experiment/data",
+    "file_path_zero_matrices": "experiment/data",
+    "capacity": 5,
+    "clear_files": true,
+    "clear_after": true,
+    "convert_to_png": true
+  }
+}

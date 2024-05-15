@@ -271,6 +271,16 @@ class Analyzer():
 
     def eval_epsilon_distances(self, epsilon_listW, epsilon_listZ,
                                epsilon_threshold_W, epsilon_threshold_Z):
+
+        if ((not epsilon_listW and all(isinstance(item, float) for item in epsilon_listW)
+                or isinstance(epsilon_threshold_W, float) is False)
+                or (not epsilon_listZ and all(isinstance(item, float) for item in epsilon_listZ)
+                or isinstance(epsilon_threshold_Z, float) is False)):
+            logger.error("Not able to plot epsilon distance graph because either the input lists are\n"
+                         "empty or the values inside are not of type float. Another problem could be\n"
+                         "the threshold values are not of type float.")
+            return
+
         epsilon_symbol = '\u03B5'
         plot_float_lists_with_thresholds(epsilon_listW, epsilon_listZ,
                                          f'{epsilon_symbol}-Distance W',
@@ -335,6 +345,5 @@ class Analyzer():
         plot_distribution_density(density, bin_edges, log_scale)
 
     # -----------------------------
-
 
 #%%
