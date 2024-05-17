@@ -104,8 +104,10 @@ class Analyzer:
 
         self.trainer.train(**kwargs)
 
-        for method in self.analysis_methods:
-            self.get_analysis_method(method)
+        model_filenames = self.load_model_path_from_path(self.save_path)
+
+        for method, params in self.analysis_methods.items():
+            self.get_analysis_method(method, params, model_filenames)
 
         if self.copy_config is True:
             if os.path.isdir(self.config_path) is True and os.path.isdir(self.save_path):
@@ -116,23 +118,22 @@ class Analyzer:
                 logger.error(f"config source path: \n {self.config_path}")
                 logger.error(f"config destination path: \n {self.save_path}")
 
-        # postEvaluation
-        model_filenames = self.load_model_path_from_path(self.save_path)
-        #model_paths = [os.path.join(self.save_path, file) for file in model_filenames]
-        #plt.switch_backend('TkAgg')
-        self.report_grad_and_original(model_filenames, 27, grad_range=10)
-        self.report_grad(model_filenames, 27, 10)
-        self.report_saliency(model_filenames, 27, 10)
-        self.report_saliency_and_original(model_filenames, 27,10)
-        self.report_topk_accuracy(model_filenames,27,10)
-        self.report_pruning(model_filenames)
-        test = self.trainer.getLossFunction()
-        loader = self.trainer.getTestLoader()
-        self.report_accuracy(model_filenames, loader, test, titel='test')
+        # # postEvaluation
+        # model_filenames = self.load_model_path_from_path(self.save_path)
+
+        # self.report_grad_and_original(model_filenames, 27, grad_range=10)
+        # self.report_grad(model_filenames, 27, 10)
+        # self.report_saliency(model_filenames, 27, 10)
+        # self.report_saliency_and_original(model_filenames, 27,10)
+        # self.report_topk_accuracy(model_filenames,27,10)
+        # self.report_pruning(model_filenames)
+        # test = self.trainer.getLossFunction()
+        # loader = self.trainer.getTestLoader()
+        # self.report_accuracy(model_filenames, loader, test, titel='test')
 
         plt.close("all")
 
-    def report_accuracy(self, model_filenames, test_loader, loss_func, titel='testset'):
+    def report_accuracy(self, model_filenames, test_loader, loss_func, titel='default_testset'):
         accuracy_path = os.path.join(self.save_path, 'Accuracy')
         create_directory(accuracy_path)
 
@@ -421,15 +422,156 @@ class Analyzer:
 
         self.trainer.setModelName(self.name)
 
-    def get_analysis_method(self, method):
+    # TODO: adversial block runter verschieben, sodass erst ausgeführt wenn im else block
+    # TODO: evtl. bei großer Bildgenerierung von topK z.B. sollen mehrere Bilder erstellt werden
+    def get_analysis_method(self, method, params, model_filenames):
         '''
         This method decides which analysis method will be called
         :param method: string of a alias for the method to be called
         :return: returns the evaluation results
         '''
-        if method == 'epsilon_distance':
+        if method == 'epsilon_distance' and params.get("enabled", False) is True:
+
             histW, histZ, thrshW, thrshZ = self.trainer.getEpsilonResults()
             return self.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
+        elif method == 'accuracy_testset' and params.get("enabled", False) is True:
+
+            loss = self.trainer.getLossFunction()
+            loader = self.trainer.getTestLoader()
+            self.report_accuracy(model_filenames, loader, loss, titel=params.get('titel', 'test'))
+        elif method == 'accuracy_adversarial' and params.get("enabled", False) is True:
+
+            # init vars
+            adv_titel = params.get("adv_titel", None)
+            orig_titel = params.get("orig_titel", None)
+            adv_path = params.get("adv_dataset_path", None)
+            orig_path = params.get("orig_dataset_path", None)
+            batch_size = params.get("batch_size", None)
+            shuffle = params.get("shuffle", None)
+
+            # check variables and run report test
+            if (adv_path is None or orig_path is None or batch_size is None or
+                    shuffle is None or orig_titel is None or adv_titel is None):
+                logger.critical(f"Params for adversarial tests are not properly injected")
+                return
+            else:
+                adv_dataset = self.datahandler.create_imageFolder_dataset(adv_path)
+                orig_dataset = self.datahandler.create_imageFolder_dataset(orig_path)
+                adv_dataloader = self.trainer.createCustomDataloader(adv_dataset,
+                                                                     batch_size=batch_size, shuffle=shuffle)
+                orig_dataloader = self.trainer.createCustomDataloader(orig_dataset,
+                                                                      batch_size=batch_size, shuffle=shuffle)
+                loss = self.trainer.getLossFunction()
+                self.report_accuracy(model_filenames, orig_dataloader, loss, titel=orig_titel)
+                self.report_accuracy(model_filenames, adv_dataloader, loss, titel=adv_titel)
+        elif method == 'grad_and_original' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            grad_start_index = params.get("grad_start_index", None)
+            grad_range = params.get("grad_range", None)
+
+            if grad_start_index is None or grad_range is None:
+                logger.critical(f"Params for grad_and_original report are not properly injected")
+                return
+            else:
+                self.report_grad_and_original(model_filenames, grad_start_index, grad_range)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
+        elif method == 'grad' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            grad_start_index = params.get("grad_start_index", None)
+            grad_range = params.get("grad_range", None)
+            target_layer = params.get("target_layer", None)
+
+            if grad_start_index is None or grad_range is None or target_layer is None:
+                logger.critical(f"Params for grad report are not properly injected")
+                return
+            else:
+                self.report_grad(model_filenames, grad_start_index, grad_range, target_layer=target_layer)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
+        elif method == 'saliency_and_original' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            saliency_start_index = params.get("saliency_start_index", None)
+            saliency_range = params.get("saliency_range", None)
+
+            if saliency_start_index is None or saliency_range is None:
+                logger.critical(f"Params for saliency_and_original report are not properly injected")
+                return
+            else:
+                self.report_saliency_and_original(model_filenames, saliency_start_index, saliency_range)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
+        elif method == 'saliency' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            saliency_start_index = params.get("saliency_start_index", None)
+            saliency_range = params.get("saliency_range", None)
+
+            if saliency_start_index is None or saliency_range is None:
+                logger.critical(f"Params for saliency report are not properly injected")
+                return
+            else:
+                self.report_saliency(model_filenames, saliency_start_index, saliency_range)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
+        elif method == 'topk_accuracy' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            topk_start_index = params.get("topk_start_index", None)
+            topk_range = params.get("topk_range", None)
+
+            if topk_start_index is None or topk_range is None:
+                logger.critical(f"Params for saliency report are not properly injected")
+                return
+            else:
+                self.report_topk_accuracy(model_filenames, topk_start_index, topk_range)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
+        elif method == 'pruning' and params.get("enabled", False) is True:
+
+            # creates a paper about pruning stats
+            self.report_pruning(model_filenames)
+
+
+
 
     # ============================ Note: end of automatic report generation block
 

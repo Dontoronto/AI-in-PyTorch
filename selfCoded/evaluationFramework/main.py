@@ -58,8 +58,8 @@ def main():
     # LeNet Test
     _model = LeNet()
     Model = modelWrapper.ModelWrapper(_model)
-    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
-    Model.load_state_dict(torch.load("/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/selfCoded/evaluationFramework/experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/elog_800admmiter_no_connectivity/LeNet_all_pat_clipGrad_1_0.pth"))
+    Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    # Model.load_state_dict(torch.load("/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/selfCoded/evaluationFramework/experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/elog_800admmiter_no_connectivity/LeNet_all_pat_clipGrad_1_0.pth"))
     Model.eval()
 
 
@@ -118,20 +118,20 @@ def main():
     # =====================================================
 
     # ------------- Note: test of adv
-    adv_dataset = DataHandler.create_imageFolder_dataset("experiment/JSMA/adversarial_images")
-    orig_dataset = DataHandler.create_imageFolder_dataset("experiment/JSMA/original_images")
-    Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
-    adv_dataloader = Trainer.createCustomDataloader(adv_dataset, batch_size=32, shuffle=False)
-    orig_dataloader = Trainer.createCustomDataloader(orig_dataset, batch_size=32, shuffle=False)
+    # adv_dataset = DataHandler.create_imageFolder_dataset("experiment/JSMA/adversarial_images")
+    # orig_dataset = DataHandler.create_imageFolder_dataset("experiment/JSMA/original_images")
+    # Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
+    # adv_dataloader = Trainer.createCustomDataloader(adv_dataset, batch_size=32, shuffle=False)
+    # orig_dataloader = Trainer.createCustomDataloader(orig_dataset, batch_size=32, shuffle=False)
+    # #
+    # Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    # Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
+    # #Analyzer.density_evaluation()
     #
-    Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
-    Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
-    #Analyzer.density_evaluation()
-
-    Model.load_state_dict(torch.load("/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/selfCoded/evaluationFramework/experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/elog_800admmiter_no_connectivity/LeNet_all_pat_clipGrad_1_0_admm_retrain.pth"))
-    Model.eval()
-    Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
-    Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
+    # Model.load_state_dict(torch.load("/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/selfCoded/evaluationFramework/experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/elog_800admmiter_no_connectivity/LeNet_all_pat_clipGrad_1_0_admm_retrain.pth"))
+    # Model.eval()
+    # Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    # Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
     # #Analyzer.density_evaluation()
     #
     # Model.load_state_dict(torch.load("LeNet_all_patt_reduce_to_4_admm_retrain.pth"))
@@ -140,7 +140,6 @@ def main():
     # Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
     # #Analyzer.density_evaluation()
 
-    return
 
 
     # ------------- Note: end test of adv

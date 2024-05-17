@@ -5,9 +5,58 @@
   "name": "LeNet_test",
   "copy_config": true,
   "config_path": "configs",
-  "analysis_methods": [
-    "epsilon_distance"
-  ],
+  "analysis_methods": {
+    "epsilon_distance": {
+      "enabled": false
+    },
+    "pruning": {
+      "enabled": true
+    },
+    "accuracy_testset": {
+      "enabled": false,
+      "titel": "testset"
+    },
+    "accuracy_adversarial": {
+      "enabled": false,
+      "adv_titel": "adv_JSMA",
+      "orig_titel": "orig_JSMA",
+      "adv_dataset_path": "experiment/JSMA/adversarial_images",
+      "orig_dataset_path": "experiment/JSMA/original_images",
+      "batch_size": 32,
+      "shuffle": false
+    },
+    "grad_and_original": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "grad_start_index": 0,
+      "grad_range": 10
+    },
+    "grad": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "grad_start_index": 0,
+      "grad_range": 10,
+      "target_layer": "model.conv1"
+    },
+    "saliency_and_original": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 10
+    },
+    "saliency": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 10
+    },
+    "topk_accuracy": {
+      "enabled": false,
+      "adv_dataset_path": "experiment/JSMA/adversarial_images",
+      "topk_start_index": 0,
+      "topk_range": 10
+    }
+  },
   "changing_parameters": {
     "main_iterations": [
       40000, 80000, 120000, 160000, 200000, 240000

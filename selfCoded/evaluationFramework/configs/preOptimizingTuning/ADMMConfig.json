@@ -14,7 +14,7 @@
     "threshold_warmup": 0.1
   },
   "save": true,
-  "save_path": "experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/all_pat_480000",
+  "save_path": "experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/test",
   "onnx_enabled": false,
   "tensor_buffering_enabled": false
 }
