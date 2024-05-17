@@ -11,11 +11,10 @@
     ]
   },
   "processes": {
-    "file_path": "experiment/data",
-    "file_path_zero_matrices": "experiment/data",
     "capacity": 5,
     "clear_files": true,
     "clear_after": true,
-    "convert_to_png": true
+    "convert_to_png": true,
+    "convert_to_gif": true
   }
 }

@@ -1,7 +1,7 @@
 [
   {
     "class": "DeepFool",
-    "init_params": {"steps": 50, "overshoot": 0.3}
+    "init_params": {"steps": 100, "overshoot": 0.02}
   },
   {
     "class": "PGD",

@@ -307,12 +307,12 @@ class TensorFormatter:
         return formatted_str
 
 # Example usage
-if __name__ == "__main__":
-    conv_layer = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=3, bias=True)
-    linear_layer = nn.Linear(in_features=10, out_features=3)
-    tensor = torch.randn(10, 3)
-
-    print(TensorFormatter.format_tensor(conv_layer))
-    print(TensorFormatter.format_tensor(linear_layer))
-    print(TensorFormatter.format_tensor(tensor))
+# if __name__ == "__main__":
+#     conv_layer = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=3, bias=True)
+#     linear_layer = nn.Linear(in_features=10, out_features=3)
+#     tensor = torch.randn(10, 3)
+#
+#     print(TensorFormatter.format_tensor(conv_layer))
+#     print(TensorFormatter.format_tensor(linear_layer))
+#     print(TensorFormatter.format_tensor(tensor))
 

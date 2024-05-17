@@ -58,10 +58,6 @@ class ADMMConfigMapper:
         else:
             logger.warning("Phase list from ADMMConfig.json is not of type list. Example: ['admm', 'retrain']")
 
-        # For model saving configurations
-        self.trainer.save = admm_config.get('save', self.trainer.save)
-        logger.info(f"save set to {self.trainer.save} of type {type(self.trainer.save)}")
-
         # For termination criterion
         self.trainer.epsilon_W = admm_config.get('epsilon_W', self.trainer.epsilon_W)
         logger.info(f"epsilon_W set to {self.trainer.epsilon_W} of type {type(self.trainer.epsilon_W)}")
@@ -70,6 +66,25 @@ class ADMMConfigMapper:
         self.trainer.threshold_warmup = admm_config.get('threshold_warmup', self.trainer.threshold_warmup)
         logger.info(f"threshold_warmup set to {self.trainer.threshold_warmup} of "
                     f"type {type(self.trainer.threshold_warmup)}")
+
+        # ===================== Here is starting another structure (changes maybe in the future)
+
+        # For model saving configurations
+        self.trainer.save = self.config.get('save', self.trainer.save)
+        logger.warning(f"save set to {self.trainer.save} of type {type(self.trainer.save)}")
+
+        if self.trainer.save is True:
+            self.trainer.save_path = self.config.get('save_path', self.trainer.save_path)
+            logger.warning(f"safe_path was set to {self.trainer.save_path} of type {type(self.trainer.save_path)}")
+
+        self.trainer.onnx_enabled = self.config.get('onnx_enabled', self.trainer.onnx_enabled)
+        logger.warning(f"onnx_enabled set to {self.trainer.onnx_enabled} of type {type(self.trainer.onnx_enabled)}")
+
+        self.trainer.tensor_buffering_enabled = self.config.get('tensor_buffering_enabled',
+                                                                self.trainer.tensor_buffering_enabled)
+        logger.warning(f"tensor_buffering_enabled set to {self.trainer.tensor_buffering_enabled} of "
+                       f"type {type(self.trainer.tensor_buffering_enabled)}")
+
 
 
 

@@ -1,47 +1,49 @@
-2024-05-15 23:47:58,115 - modelWrapper - INFO - ModelWrapper was initialized
-2024-05-15 23:47:58,117 - dataHandler - INFO - Datahandler initialized
-2024-05-15 23:47:58,118 - configParser - INFO - Transformation Parameters from DataHandlerConfig.json:
-2024-05-15 23:47:58,118 - configParser - INFO - {'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}
-2024-05-15 23:47:58,118 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-05-15 23:47:58,118 - configurator - INFO - Preprocessing dtype is set so: float
-2024-05-15 23:47:58,119 - configurator - INFO - Preprocessing Normalization is activated
-2024-05-15 23:47:58,119 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-05-15 23:47:58,119 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-05-15 23:47:58,119 - configurator - INFO - Compose(
+2024-05-17 22:23:53,412-modelWrapper-INFO-ModelWrapper was initialized:
+2024-05-17 22:23:53,414-dataHandler-INFO-Datahandler initialized:
+2024-05-17 22:23:53,415-configParser-INFO-Transformation Parameters from DataHandlerConfig.json::
+2024-05-17 22:23:53,415-configParser-INFO-{'dtype': 'float', 'normalize': {'mean': [0.1307], 'std': [0.3081]}}:
+2024-05-17 22:23:53,415-configurator-INFO-DataHandlerConfig was loaded via ConfigParser:
+2024-05-17 22:23:53,415-configurator-INFO-Preprocessing dtype is set so: float:
+2024-05-17 22:23:53,416-configurator-INFO-Preprocessing Normalization is activated:
+2024-05-17 22:23:53,416-configurator-INFO-Preprocessing Normalization std is set to: [0.3081]:
+2024-05-17 22:23:53,416-configurator-INFO-Preprocessing Normalization mean is set to: [0.1307]:
+2024-05-17 22:23:53,416-configurator-INFO-Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
-)
-2024-05-15 23:47:58,119 - dataHandler - INFO - Preprocessing Steps will be:
-2024-05-15 23:47:58,119 - dataHandler - INFO - Compose(
+):
+2024-05-17 22:23:53,416-dataHandler-INFO-Preprocessing Steps will be::
+2024-05-17 22:23:53,416-dataHandler-INFO-Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
-)
-2024-05-15 23:47:58,120 - configurator - INFO - DataHandlerConfig was loaded via ConfigParser
-2024-05-15 23:47:58,120 - configurator - INFO - Preprocessing dtype is set so: float
-2024-05-15 23:47:58,120 - configurator - INFO - Preprocessing Normalization is activated
-2024-05-15 23:47:58,120 - configurator - INFO - Preprocessing Normalization std is set to: [0.3081]
-2024-05-15 23:47:58,120 - configurator - INFO - Preprocessing Normalization mean is set to: [0.1307]
-2024-05-15 23:47:58,120 - configurator - INFO - Compose(
+):
+2024-05-17 22:23:53,416-configurator-INFO-DataHandlerConfig was loaded via ConfigParser:
+2024-05-17 22:23:53,417-configurator-INFO-Preprocessing dtype is set so: float:
+2024-05-17 22:23:53,417-configurator-INFO-Preprocessing Normalization is activated:
+2024-05-17 22:23:53,417-configurator-INFO-Preprocessing Normalization std is set to: [0.3081]:
+2024-05-17 22:23:53,417-configurator-INFO-Preprocessing Normalization mean is set to: [0.1307]:
+2024-05-17 22:23:53,417-configurator-INFO-Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
-)
-2024-05-15 23:47:58,121 - dataHandler - INFO - Preprocessing Steps will be:
-2024-05-15 23:47:58,121 - dataHandler - INFO - Compose(
+):
+2024-05-17 22:23:53,417-dataHandler-INFO-Preprocessing Steps will be::
+2024-05-17 22:23:53,417-dataHandler-INFO-Compose(
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.1307], std=[0.3081])
-)
-2024-05-15 23:47:58,121 - configParser - INFO - Trainer Configs from TrainerConfig.json:
-2024-05-15 23:47:58,121 - configParser - INFO - {'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 25, 'lr': 0.001, 'momentum': 0.9, 'pre_optimization_tuning_path': True}
-2024-05-15 23:47:58,122 - configurator - INFO - TrainerConfig settings was loaded via ConfigParser
-2024-05-15 23:47:58,122 - Trainer.trainerFactory - INFO - Filtered OptimizerConfig: {'lr': 0.001}
-2024-05-15 23:47:58,122 - Trainer.trainerFactory - INFO - Creating ADMMTrainer.
-2024-05-15 23:47:58,122 - Trainer.defaultTrainer - INFO - Trainer was configured
-2024-05-15 23:47:58,123 - Trainer.defaultTrainer - INFO - Epochs: 25
-2024-05-15 23:47:58,123 - Trainer.defaultTrainer - INFO - Optimizer: Adam (
+):
+2024-05-17 22:23:53,418-dataHandler-INFO-DataHandler returned Transformer:
+2024-05-17 22:23:53,418-dataHandler-INFO-DataHandler returned Transformer:
+2024-05-17 22:23:53,419-configParser-INFO-Trainer Configs from TrainerConfig.json::
+2024-05-17 22:23:53,419-configParser-INFO-{'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 25, 'lr': 0.0001, 'momentum': 0.9, 'pre_optimization_tuning_path': True}:
+2024-05-17 22:23:53,420-configurator-INFO-TrainerConfig settings was loaded via ConfigParser:
+2024-05-17 22:23:53,420-Trainer.trainerFactory-INFO-Filtered OptimizerConfig: {'lr': 0.0001}:
+2024-05-17 22:23:53,421-Trainer.trainerFactory-INFO-Creating ADMMTrainer.:
+2024-05-17 22:23:53,421-Trainer.defaultTrainer-INFO-Trainer was configured:
+2024-05-17 22:23:53,421-Trainer.defaultTrainer-INFO-Epochs: 25:
+2024-05-17 22:23:53,421-Trainer.defaultTrainer-INFO-Optimizer: Adam (
 Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
@@ -50,182 +52,21 @@ Parameter Group 0
     eps: 1e-08
     foreach: None
     fused: None
-    lr: 0.001
+    lr: 0.0001
     maximize: False
     weight_decay: 0
-)
-2024-05-15 23:47:58,123 - Trainer.defaultTrainer - INFO - Lossfunction: CrossEntropyLoss()
-2024-05-15 23:47:58,123 - Trainer.defaultTrainer - INFO - DataHandler: <dataHandler.DataHandler object at 0x134ef2d90>
-2024-05-15 23:47:58,126 - configParser - INFO - Dataloader Configs from TrainerConfig.json:
-2024-05-15 23:47:58,126 - configParser - INFO - {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
-2024-05-15 23:47:58,126 - configurator - INFO - Dataloader settings was loaded via ConfigParser
-2024-05-15 23:47:58,127 - configParser - INFO - Snapshot Configs from TrainerConfig.json:
-2024-05-15 23:47:58,127 - configParser - INFO - {'name': 'LeNet_allpatt_clip0_5_lr0_001_admm_iter1000', 'snapshot_enabled': False, 'snapshot_model_path': 'models/LeNet/', 'snapshot_model_path_raw': 'models/LeNet/', 'recovery_epoch': 3}
-2024-05-15 23:47:58,127 - configurator - INFO - Snapshot settings was loaded via ConfigParser
-2024-05-15 23:47:58,127 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : False
-2024-05-15 23:47:58,127 - Trainer.defaultTrainer - INFO - Model file prefix was set to : LeNet_allpatt_clip0_5_lr0_001_admm_iter1000
-2024-05-15 23:47:58,127 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
-2024-05-15 23:47:58,128 - Trainer.defaultTrainer - INFO - Snapshot model path was set to : models/LeNet/
-2024-05-15 23:47:58,128 - Trainer.defaultTrainer - INFO - Recovery Epoch was set to : 3
-2024-05-15 23:47:58,128 - configParser - INFO - Loaded admm_model_architecture from ConfigRegistry.json
-2024-05-15 23:47:58,128 - configParser - INFO - Loaded admm_model_architecture has path: configs/preOptimizingTuning/ADMMModelArchitecture.json
-2024-05-15 23:47:58,129 - configParser - INFO - Loaded admm_model_architecture
-2024-05-15 23:47:58,129 - configurator - INFO - Loaded admm_model_architecture from Registry
-2024-05-15 23:47:58,129 - Trainer.mapper.admm_mapper - INFO - ADMM Architecture Config was loaded into ADMMTrainer
-2024-05-15 23:47:58,129 - configParser - INFO - Loaded admm_settings from ConfigRegistry.json
-2024-05-15 23:47:58,130 - configParser - INFO - Loaded admm_settings has path: configs/preOptimizingTuning/ADMMConfig.json
-2024-05-15 23:47:58,130 - configParser - INFO - Loaded admm_settings
-2024-05-15 23:47:58,130 - configurator - INFO - Loaded admm_settings from Registry
-2024-05-15 23:47:58,130 - Trainer.mapper.admm_mapper - INFO - ADMM Config was loaded into ADMMTrainer
-2024-05-15 23:47:58,130 - Trainer.mapper.admm_mapper - INFO - main_iterations set to 1600 of type <class 'int'>
-2024-05-15 23:47:58,131 - Trainer.mapper.admm_mapper - INFO - admm_iterations set to 100 of type <class 'int'>
-2024-05-15 23:47:58,131 - Trainer.mapper.admm_mapper - INFO - dynamic masking set to True of type <class 'bool'>
-2024-05-15 23:47:58,131 - Trainer.mapper.admm_mapper - INFO - rho set to 0.0005 of type <class 'float'>
-2024-05-15 23:47:58,131 - Trainer.mapper.admm_mapper - INFO - gradient_threshold set to 0.5 of type <class 'float'>
-2024-05-15 23:47:58,132 - Trainer.mapper.admm_mapper - INFO - batch_size_norm_coeff set to 0.03125 of type <class 'float'>
-2024-05-15 23:47:58,132 - Trainer.mapper.admm_mapper - INFO - regularization_l2_norm_enabled set to True of type <class 'bool'>
-2024-05-15 23:47:58,132 - Trainer.mapper.admm_mapper - INFO - regularization_l_norm_decay set to 5e-06 of type <class 'float'>
-2024-05-15 23:47:58,132 - Trainer.mapper.admm_mapper - INFO - Phase list set to ['admm', 'retrain'] of type <class 'list'>
-2024-05-15 23:47:58,132 - Trainer.mapper.admm_mapper - INFO - save set to True of type <class 'bool'>
-2024-05-15 23:47:58,132 - Trainer.mapper.admm_mapper - INFO - epsilon_W set to 0.2 of type <class 'float'>
-2024-05-15 23:47:58,133 - Trainer.mapper.admm_mapper - INFO - epsilon_Z set to 0.2 of type <class 'float'>
-2024-05-15 23:47:58,133 - Trainer.mapper.admm_mapper - INFO - threshold_warmup set to 0.1 of type <class 'float'>
-2024-05-15 23:47:58,133 - configParser - INFO - Loaded tensor_buffer from ConfigRegistry.json
-2024-05-15 23:47:58,133 - configParser - INFO - Loaded tensor_buffer has path: configs/tensorBuffer_configs/TensorBufferConfig.json
-2024-05-15 23:47:58,133 - configParser - INFO - Loaded tensor_buffer
-2024-05-15 23:47:58,134 - configurator - INFO - Loaded tensor_buffer from Registry
-2024-05-15 23:47:58,134 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - Tensor Buffer Config was loaded into MultiProcessHandler
-2024-05-15 23:47:58,134 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - layer_index set to [1, 1, 1, 1, 1, 1]
-2024-05-15 23:47:58,135 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - output_input_channel set to [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]]
-2024-05-15 23:47:58,135 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - file_path set to experiment/data
-2024-05-15 23:47:58,135 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - file_path_zero_matrices set to experiment/data
-2024-05-15 23:47:58,135 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - capacity set to 5
-2024-05-15 23:47:58,135 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - clear_files set to True
-2024-05-15 23:47:58,135 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - clear_after set to True
-2024-05-15 23:47:58,135 - Trainer.admm_utils.mapper.tensorBufferMapper - INFO - convert_to_png set to True
-2024-05-15 23:47:58,136 - configParser - INFO - Dataset Configs from DataHandlerConfig.json:
-2024-05-15 23:47:58,136 - configParser - INFO - {'datasetName': 'mnist', 'storageType': 'default', 'root': '/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/dataset/mnist/', 'query': ['Volumes', 'PortableSSD', 'Projekte', 'datasets', 'celeba_dataset', 'IMG', 'img_align_celeba'], 'download': True, 'transform': True, 'target_transform': None}
-2024-05-15 23:47:58,136 - configurator - INFO - DatasetConfig was loaded via ConfigParser
-2024-05-15 23:47:58,136 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
-2024-05-15 23:47:58,173 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-05-15 23:47:58,174 - dataHandler - INFO - Compose(
-    ToTensor()
-    ConvertImageDtype()
-    Normalize(mean=[0.1307], std=[0.3081])
-)
-2024-05-15 23:47:58,174 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-05-15 23:47:58,175 - dataHandler - INFO - Compose(
-    ToTensor()
-    ConvertImageDtype()
-    Normalize(mean=[0.1307], std=[0.3081])
-)
-2024-05-15 23:47:58,175 - dataHandler - INFO - Transformer loaded into Dataset
-2024-05-15 23:47:58,175 - Trainer.defaultTrainer - INFO - Dataset was loaded in Trainer class
-2024-05-15 23:47:58,176 - Trainer.defaultTrainer - INFO - Labels of Dataset are in the correct form to be processed with CrossEntropyLoss()
-2024-05-15 23:47:58,176 - Trainer.defaultTrainer - INFO - Created Dataloader with settings: {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
-2024-05-15 23:47:58,177 - configurator - INFO - DatasetConfig was loaded via ConfigParser
-2024-05-15 23:47:58,177 - IOComponent.datasetFactory - INFO - Creating preconfigured Dataset for MNIST
-2024-05-15 23:47:58,185 - dataHandler - INFO - Transformer of Dataset was changed to:
-2024-05-15 23:47:58,186 - dataHandler - INFO - Compose(
-    ToTensor()
-    ConvertImageDtype()
-    Normalize(mean=[0.1307], std=[0.3081])
-)
-2024-05-15 23:47:58,186 - dataHandler - INFO - Transformer of Testset was changed to:
-2024-05-15 23:47:58,186 - dataHandler - INFO - Compose(
-    ToTensor()
-    ConvertImageDtype()
-    Normalize(mean=[0.1307], std=[0.3081])
-)
-2024-05-15 23:47:58,187 - dataHandler - INFO - Transformer loaded into Testset
-2024-05-15 23:47:58,187 - Trainer.defaultTrainer - INFO - Testet was loaded in Trainer class
-2024-05-15 23:47:58,187 - Trainer.defaultTrainer - INFO - Created Dataloader with settings: {'batch_size': 32, 'shuffle': True, 'num_workers': 1}
-2024-05-15 23:47:58,188 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-05-15 23:47:58,188 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-05-15 23:47:58,188 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-05-15 23:47:58,188 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-05-15 23:47:58,189 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-05-15 23:47:58,189 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-05-15 23:47:58,189 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-05-15 23:47:58,190 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-05-15 23:47:58,190 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-05-15 23:47:58,190 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-05-15 23:47:58,191 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-05-15 23:47:58,191 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-05-15 23:47:58,191 - Trainer.admmTrainer - INFO - Layer lists were created
-2024-05-15 23:47:58,207 - Trainer.admm_utils.multiProcessHandler - INFO - Started Process with Process ID: 0
-2024-05-15 23:47:58,214 - Trainer.admm_utils.multiProcessHandler - INFO - Started Process with Process ID: 1
-2024-05-15 23:47:58,221 - Trainer.admm_utils.multiProcessHandler - INFO - Started Process with Process ID: 2
-2024-05-15 23:47:58,230 - Trainer.admm_utils.multiProcessHandler - INFO - Started Process with Process ID: 3
-2024-05-15 23:47:58,244 - Trainer.admm_utils.multiProcessHandler - INFO - Started Process with Process ID: 4
-2024-05-15 23:47:58,256 - Trainer.admm_utils.multiProcessHandler - INFO - Started Process with Process ID: 5
-2024-05-15 23:47:58,262 - Trainer.admm_utils.multiProcessHandler - CRITICAL - right before starting
-2024-05-15 23:48:00,069 - Trainer.admm_utils.multiProcessHandler - CRITICAL - After complete Event
-2024-05-15 23:48:00,071 - Trainer.admmTrainer - INFO - ======================= SELECTED PRUNING LAYERS =======================
-2024-05-15 23:48:00,071 - Trainer.admmTrainer - INFO - Layer model.conv1 with shape torch.Size([6, 1, 3, 3]) sparsity-ratio: 0.0
-2024-05-15 23:48:00,072 - Trainer.admmTrainer - INFO - Layer model.conv2 with shape torch.Size([16, 6, 3, 3]) sparsity-ratio: 0.67
-2024-05-15 23:48:00,072 - Trainer.admmTrainer - INFO - Layer model.fc1 with shape torch.Size([120, 784]) sparsity-ratio: 0.7
-2024-05-15 23:48:00,072 - Trainer.admmTrainer - INFO - Layer model.fc2 with shape torch.Size([84, 120]) sparsity-ratio: 0.7
-2024-05-15 23:48:00,073 - Trainer.admmTrainer - INFO - =======================================================================
-2024-05-15 23:48:00,073 - Trainer.admmTrainer - CRITICAL - Loop Started
-2024-05-15 23:48:02,935 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=7.609618663787842/0.2
-2024-05-15 23:48:02,936 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 6.864712715148926/0.2
-2024-05-15 23:48:03,584 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=8.03967571258545/0.2
-2024-05-15 23:48:03,585 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 9.714107513427734/0.2
-2024-05-15 23:48:04,242 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=6.5029754638671875/0.2
-2024-05-15 23:48:04,243 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 10.360526084899902/0.2
-2024-05-15 23:48:05,328 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.8046112060546875/0.2
-2024-05-15 23:48:05,328 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 9.670671463012695/0.2
-2024-05-15 23:48:05,998 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=5.644057750701904/0.2
-2024-05-15 23:48:05,999 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 9.164520263671875/0.2
-2024-05-15 23:48:06,621 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.881187438964844/0.2
-2024-05-15 23:48:06,622 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 8.098794937133789/0.2
-2024-05-15 23:48:07,250 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.477614879608154/0.2
-2024-05-15 23:48:07,250 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 7.319692611694336/0.2
-2024-05-15 23:48:07,893 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.18244743347168/0.2
-2024-05-15 23:48:07,893 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 6.829625129699707/0.2
-2024-05-15 23:48:08,881 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=4.012291431427002/0.2
-2024-05-15 23:48:08,881 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 6.597818374633789/0.2
-2024-05-15 23:48:09,523 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=3.6342222690582275/0.2
-2024-05-15 23:48:09,523 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 6.173835277557373/0.2
-2024-05-15 23:48:10,152 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=3.746919870376587/0.2
-2024-05-15 23:48:10,152 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 6.0841450691223145/0.2
-2024-05-15 23:48:10,788 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=3.639120101928711/0.2
-2024-05-15 23:48:10,789 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 5.957025527954102/0.2
-2024-05-15 23:48:11,403 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=3.554734468460083/0.2
-2024-05-15 23:48:11,404 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 5.685550689697266/0.2
-2024-05-15 23:48:12,214 - Trainer.admmTrainer - INFO - Condition for termination criterion W^(k+1)-Z^(k+1)=3.426607608795166/0.2
-2024-05-15 23:48:12,214 - Trainer.admmTrainer - INFO - Condition for termination criterion Z^(k+1)-Z^k= 5.44329833984375/0.2
-2024-05-15 23:48:13,000 - Trainer.admmTrainer - INFO - Iteration Number: 1600 [51168/60000 (85%)]	Loss: 0.007019
-2024-05-15 23:48:13,002 - Trainer.trainer - INFO - Model state_dict saved to LeNet_allpatt_clip0_5_lr0_001_admm_iter1000_admm_admm
-2024-05-15 23:48:13,002 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-05-15 23:48:13,003 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-05-15 23:48:13,003 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-05-15 23:48:13,003 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Weight Layer 'W' with Weight and Gradient
-2024-05-15 23:48:13,003 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-05-15 23:48:13,004 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-05-15 23:48:13,004 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-05-15 23:48:13,004 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Dual Variable Layer 'U' with same shape as weights
-2024-05-15 23:48:13,004 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-05-15 23:48:13,004 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-05-15 23:48:13,005 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-05-15 23:48:13,005 - Trainer.admm_utils.layerInfo - INFO - Layer was set as Auxiliary Variable Layer 'Z' copy of Weights
-2024-05-15 23:48:13,005 - Trainer.admmTrainer - INFO - Layer lists were created
-2024-05-15 23:48:13,005 - Trainer.admmTrainer - CRITICAL - Loop Started
-2024-05-15 23:48:23,346 - Trainer.admmTrainer - INFO - Retrain Epoch: 0 [51168/60000 (85%)]	Loss: 0.001458
-2024-05-15 23:48:25,515 - Trainer.defaultTrainer - INFO - 
-Test set: Average loss: 0.0013, Accuracy: 9856/10000 (99%)
-2024-05-15 23:48:25,518 - Trainer.trainer - INFO - Model state_dict saved to LeNet_allpatt_clip0_5_lr0_001_admm_iter1000_admm_retrain
-2024-05-15 23:48:25,518 - Trainer.admm_utils.multiProcessHandler - INFO - Process with ID: 0 received termination flag: None
-2024-05-15 23:48:25,806 - Trainer.admm_utils.multiProcessHandler - INFO - Process and Queue with ID: 0 was deleted
-2024-05-15 23:48:25,807 - Trainer.admm_utils.multiProcessHandler - INFO - Process with ID: 1 received termination flag: None
-2024-05-15 23:48:26,082 - Trainer.admm_utils.multiProcessHandler - INFO - Process and Queue with ID: 1 was deleted
-2024-05-15 23:48:26,087 - Trainer.admm_utils.multiProcessHandler - INFO - Process with ID: 2 received termination flag: None
-2024-05-15 23:48:26,366 - Trainer.admm_utils.multiProcessHandler - INFO - Process and Queue with ID: 2 was deleted
-2024-05-15 23:48:26,367 - Trainer.admm_utils.multiProcessHandler - INFO - Process with ID: 3 received termination flag: None
-2024-05-15 23:48:26,657 - Trainer.admm_utils.multiProcessHandler - INFO - Process and Queue with ID: 3 was deleted
-2024-05-15 23:48:26,657 - Trainer.admm_utils.multiProcessHandler - INFO - Process with ID: 4 received termination flag: None
-2024-05-15 23:48:26,939 - Trainer.admm_utils.multiProcessHandler - INFO - Process and Queue with ID: 4 was deleted
-2024-05-15 23:48:26,940 - Trainer.admm_utils.multiProcessHandler - INFO - Process with ID: 5 received termination flag: None
-2024-05-15 23:48:27,211 - Trainer.admm_utils.multiProcessHandler - INFO - Process and Queue with ID: 5 was deleted
-2024-05-15 23:48:27,325 - __main__ - CRITICAL - Time for algo is: 29.211115837097168
+):
+2024-05-17 22:23:53,421-Trainer.defaultTrainer-INFO-Lossfunction: CrossEntropyLoss():
+2024-05-17 22:23:53,421-Trainer.defaultTrainer-INFO-DataHandler: <dataHandler.DataHandler object at 0x1594b7fd0>:
+2024-05-17 22:23:53,427-Trainer.defaultTrainer-INFO-Labels of Dataset are in the correct form to be processed with CrossEntropyLoss():
+2024-05-17 22:23:53,427-Trainer.defaultTrainer-INFO-Creating Custom DataLoader with arguments: {'batch_size': 32, 'shuffle': False}:
+2024-05-17 22:23:53,428-Trainer.defaultTrainer-INFO-Labels of Dataset are in the correct form to be processed with CrossEntropyLoss():
+2024-05-17 22:23:53,428-Trainer.defaultTrainer-INFO-Creating Custom DataLoader with arguments: {'batch_size': 32, 'shuffle': False}:
+2024-05-17 22:23:53,454-analyzer.analyzer-INFO-
+Test set: Average loss: 0.0063, Accuracy: 99/100 (99%):
+2024-05-17 22:23:53,478-analyzer.analyzer-INFO-
+Test set: Average loss: 0.7195, Accuracy: 31/100 (31%):
+2024-05-17 22:23:53,496-analyzer.analyzer-INFO-
+Test set: Average loss: 0.0020, Accuracy: 99/100 (99%):
+2024-05-17 22:23:53,510-analyzer.analyzer-INFO-
+Test set: Average loss: 0.1073, Accuracy: 64/100 (64%):

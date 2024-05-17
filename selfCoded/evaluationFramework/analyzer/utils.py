@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import torch
 import logging
 
@@ -19,5 +22,31 @@ def weight_export(model, layer_name, path):
             #print(f"shape of layers = {weight_tensor.shape}")
 
             return
+
+
+def create_directory(file_path):
+    if os.path.exists(file_path) is False:
+        os.makedirs(file_path)
+        logger.warning(f"created directory at {file_path}")
+    else:
+        logger.critical(f"could not create directory at {file_path}")
+
+def copy_directory(source_dir, destination_dir):
+    try:
+        # Check if the source directory exists
+        if not os.path.exists(source_dir):
+            logger.warning(f"Source directory '{source_dir}' does not exist.")
+            return
+
+        # Check if the destination directory already exists
+        if os.path.exists(destination_dir):
+            logger.warning(f"Destination directory '{destination_dir}' already exists.")
+            return
+
+        # Copy the directory tree
+        shutil.copytree(source_dir, destination_dir)
+        logger.warning(f"Directory '{source_dir}' has been copied to '{destination_dir}'.")
+    except Exception as e:
+        logger.critical(f"An error occurred while copying the directory: {e}")
 
 

@@ -1,3 +1,4 @@
+import numpy as np
 from torch import topk, sum
 
 import logging
@@ -44,14 +45,16 @@ def getSum_top_predictions(model, single_batch, top_values):
 
     # get top predictions of model
     probabilities, labels = topk(prediction, top_values)
+    logger.critical(probabilities)
 
     # Convert to percentages
-    probabilities = probabilities * 100
+    probabilities = probabilities #* 100
 
     top_predictions = dict()
 
     top_val = float(sum(probabilities))
+    top_label = np.array(labels)
 
     logger.info(f"TopK prediction of first {top_values} values: {top_val}")
 
-    return round(top_val,5)
+    return top_val, top_label #round(top_val,4)

@@ -1,3 +1,4 @@
+import csv
 from abc import ABC, abstractmethod
 
 import torch.onnx
@@ -45,6 +46,16 @@ class Trainer(ABC):
             # TODO: hard coded input format...
             torch.onnx.dynamo_export(self.model.model,torch.randn(1,1,28,28)).save(model_path + '.onnx')
             logger.info(f'Onnx-Model saved to {model_path}')
+
+    def export_tensor_list_csv(self, csv_path, tensor_list):
+        with open(csv_path, 'w', newline='') as f:
+            writer = csv.writer(f)
+            for tensor in tensor_list:
+                writer.writerow(['Tensor'])
+                writer.writerows(tensor.tolist())
+                writer.writerow([])  # Add a blank row for separation
+
+        logger.info("Tensors saved to tensors_multidim.csv")
         # , onnx_path=None
         # if onnx_path is not None:
         #     assert input_shape is not None, 'input_shape must be specified to export onnx model'

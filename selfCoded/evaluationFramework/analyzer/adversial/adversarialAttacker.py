@@ -150,7 +150,7 @@ class AdversarialAttacker(Attack):
                 start,
                 end,
                 deterministic=False,
-                debug=False
+                debug=True
             )
             print(f"Adversarial succeeded in l-norm with rate: {rate}")
             results[self.attack_instance_list_names[i]] = rate

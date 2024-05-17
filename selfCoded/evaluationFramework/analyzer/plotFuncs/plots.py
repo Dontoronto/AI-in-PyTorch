@@ -3,6 +3,66 @@ import numpy as np
 from matplotlib.gridspec import GridSpec
 
 
+def plot_table(table_data, row_names, column_names):
+
+
+    if len(row_names) < len(column_names):
+        col_head = row_names
+        row_head = column_names
+        if isinstance(table_data, (list, tuple)):
+            data = list(map(list, zip(*table_data)))
+        elif isinstance(table_data, np.ndarray):
+            data = reshape_numpy_2d_3d(table_data)
+    else:
+        row_head = row_names
+        col_head = column_names
+        data = table_data
+
+    fig, ax = plt.subplots()
+    ax.axis('off')
+
+    ax.table(cellText=data,
+             rowLabels=row_head,
+             colLabels=col_head,
+             loc='center',
+             cellLoc='center',
+             edges='horizontal')
+
+    table_label_obj = plt.gcf()
+    plt.show()
+    plt.close(table_label_obj)
+
+    return table_label_obj
+
+def combine_plots_vertically(plot_list):
+    # Determine the number of plots
+    num_plots = len(plot_list)
+
+    # Create a new figure to hold the subplots
+    combined_fig = plt.figure(figsize=(8, num_plots * 4))  # Adjust the height as needed
+    gs = GridSpec(num_plots, 1, height_ratios=[1] * num_plots)
+
+    # Loop through the list of figures and add each as a subplot
+    for i, plot in enumerate(plot_list):
+        ax_combined = combined_fig.add_subplot(gs[i])
+        for ax in plot.get_axes():
+            # Extract elements from the original axes and plot them on the combined axes
+            for line in ax.get_lines():
+                ax_combined.plot(line.get_xdata(), line.get_ydata(), label=line.get_label(), color=line.get_color())
+            for label in ax.get_xticklabels():
+                ax_combined.set_xticks(ax.get_xticks())
+                ax_combined.set_xticklabels(ax.get_xticklabels())
+            for label in ax.get_yticklabels():
+                ax_combined.set_yticks(ax.get_yticks())
+                ax_combined.set_yticklabels(ax.get_yticklabels())
+            ax_combined.set_title(ax.get_title())
+            ax_combined.set_xlabel(ax.get_xlabel())
+            ax_combined.set_ylabel(ax.get_ylabel())
+            ax_combined.legend()
+
+    # Return the combined figure
+    return combined_fig
+
 def plot_original_vs_observation(img_as_tensor, result, text):
     fig, ax = plt.subplots(1, 2, figsize=(7.5, 5), facecolor='dimgray')
     adapt_axes(ax[0], img_as_tensor=img_as_tensor)
@@ -19,7 +79,13 @@ def plot_original_vs_observation(img_as_tensor, result, text):
     ax[1].set_title(text)
     plt.tight_layout()
     #fig.suptitle(text)
+
+    plt_obj = plt.gcf()
+
     plt.show()
+    plt.close()
+
+    return plt_obj
 
 
 def plot_model_comparison(input_tensor_images: list, model_results : list, model_name_list: list):
@@ -113,7 +179,7 @@ def model_comparison_table(table_data, row_labels, col_labels):
     ncols = len(col_labels)
 
     # Create a figure large enough to accommodate the table
-    fig, ax = plt.subplots(figsize=(ncols * 1.5, nrows * 0.5))  # Adjust size as needed
+    fig, ax = plt.subplots(figsize=(ncols * 0.5, nrows * 1.5))  # Adjust size as needed
 
     # Hide the axes
     ax.axis('off')
@@ -135,7 +201,13 @@ def model_comparison_table(table_data, row_labels, col_labels):
     table.scale(1, 1.5)  # Adjust the scaling of the table if necessary
 
     plt.tight_layout()
+
+    fig = plt.gcf()
+
+    # Show the plot
     plt.show()
+
+    return fig
 
 
 def plot_float_lists_with_thresholds(list1, list2, legend1, legend2, threshold1, threshold2, threshold_legend1, threshold_legend2, plot_title):
@@ -176,8 +248,12 @@ def plot_float_lists_with_thresholds(list1, list2, legend1, legend2, threshold1,
     # Adding legend
     plt.legend()
 
+    fig = plt.gcf()
+
     # Show the plot
     plt.show()
+
+    return fig
 
 
 def adapt_axes(axes, img_as_tensor):
@@ -193,3 +269,15 @@ def adapt_axes(axes, img_as_tensor):
     else:
         # Note: Not tested atm, have to check if image values are from 0 to 255 not 0 to 1 and maybe more
         axes.imshow(img_as_tensor.cpu().detach().clone().numpy().transpose(1, 2, 0))
+
+
+def reshape_numpy_2d_3d(array):
+    if array.ndim == 2:
+        # For 2D array, swap the first two dimensions
+        return array.transpose()
+    elif array.ndim == 3:
+        # For 3D array, swap the first two dimensions
+        return array.transpose(1, 0, 2)
+    else:
+        raise ValueError("This function only supports 2D and 3D arrays")
+

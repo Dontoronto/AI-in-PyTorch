@@ -15,11 +15,11 @@ class MultiProcessHandler:
         self.layer_index = []
         self.output_input_channel = []
         self.file_path = ''
-        self.file_path_zero_matrices = ''
         self.capacity = 0
         self.clear_files = False
         self.clear_after = False
         self.convert_to_png = False
+        self.convert_to_gif = False
 
         self.process_ids = None
 
@@ -36,30 +36,39 @@ class MultiProcessHandler:
     def getProcessIDs(self):
         return self.process_ids
 
+    def setFilePath(self, path):
+        self.file_path = path
+
+    def getFilePath(self):
+        return self.file_path
+
     def init_processes(self, running_class=TensorBuffer):
         completion_flags = [Event() for _ in range(6)]
         self.process_ids = [i for i in range(len(self.layer_index))]
 
-        for process_id in self.process_ids:
+        for process_id, l_index, o_i_channel in zip(self.process_ids, self.layer_index, self.output_input_channel):
+            folder_prefix = f"filter_{l_index}_out_{o_i_channel[0]}_in_{o_i_channel[1]}"
             self.start_process(
                 process_id=process_id,
                 class_to_instantiate=running_class,
                 init_args=[self.capacity],  # Assuming the first argument is 'capacity'
                 init_kwargs={
-                    'file_path': os.path.join(self.file_path, f"filterW_{process_id}"),
+                    'file_path': os.path.join(self.file_path, f"{folder_prefix}_W"),
                     'clear_files': self.clear_files,
                     'convert_to_png': self.convert_to_png,
-                    'file_path_zero_matrices': os.path.join(self.file_path_zero_matrices,f"filterZ_{process_id}"),
-                    'clear_after': self.clear_after
+                    'file_path_zero_matrices': os.path.join(self.file_path, f"{folder_prefix}_Z"),
+                    'clear_after': self.clear_after,
+                    'convert_to_gif': self.convert_to_gif,
+                    'gif_filename': folder_prefix
                     # Add other constructor arguments here
                 },
                 process_args=[],  # Additional args for the method you're calling in the loop
                 process_kwargs={'event': completion_flags[process_id]}  # Additional kwargs for the method
             )
-        logger.critical("right before starting")
+        logger.warning("Waiting for all processes to start")
         for complete in completion_flags:
             complete.wait()
-        logger.critical("After complete Event")
+        logger.warning("All Processes started")
 
     def start_process(self, process_id: int, class_to_instantiate: Type, init_args: List[Any] = [],
                       init_kwargs: Dict[str, Any] = {}, process_args: List[Any] = [],
@@ -82,17 +91,17 @@ class MultiProcessHandler:
                                                               process_args, process_kwargs))
         process.start()
         self.processes[process_id] = process
-        logger.info(f"Started Process with Process ID: {process_id}")
+        logger.debug(f"Started Process with Process ID: {process_id}")
 
     def terminate_process(self, process_id: int):
         if process_id in self.queues:
             self.queues[process_id].put(None)
-            logger.info(f"Process with ID: {process_id} received termination flag: {None}")
+            logger.debug(f"Process with ID: {process_id} received termination flag: {None}")
         if process_id in self.processes:
             self.processes[process_id].join()
             del self.processes[process_id]
             del self.queues[process_id]
-            logger.info(f"Process and Queue with ID: {process_id} was deleted")
+            logger.debug(f"Process and Queue with ID: {process_id} was deleted")
 
     def terminate_all_processes(self):
         for process_id in list(self.processes.keys()):
@@ -121,9 +130,9 @@ class MultiProcessHandler:
         event = process_kwargs.get('event')
         if event is not None and isinstance(event, multiprocessing.synchronize.Event):
             event.set()
-            logger.info("Event in MultiprocessManager was set")
+            logger.debug("Event in MultiprocessManager was set")
         else:
-            logger.info("No event listener was set")
+            logger.critical("No event listener was set")
 
         while True:
             item = queue.get()

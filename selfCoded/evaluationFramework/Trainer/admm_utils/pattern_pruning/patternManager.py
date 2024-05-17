@@ -36,8 +36,8 @@ class PatternManager:
         '''
 
         # creating pattern library
-        #self.pattern_library = self.create_pattern_library(elog_patterns=True)
-        self.pattern_library = self.create_pattern_library(elog_patterns=False)
+        self.pattern_library = self.create_pattern_library(elog_patterns=True)
+        #self.pattern_library = self.create_pattern_library(elog_patterns=False)
 
         # initializes a list of available patterns with indices of pattern library
         self.available_patterns_indices = self.initialize_available_patterns()

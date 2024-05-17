@@ -25,9 +25,9 @@ def pruningCounter(model):
             total_weights = weight_tensor.numel()
             zero_weights_percentage = (zeros_count / total_weights) * 100
 
-            temp['zeros'] = zeros_count
-            temp['total_weights'] = total_weights
-            temp['zero_weights_percentage'] = zero_weights_percentage
+            temp['zero_params'] = zeros_count
+            temp['total_params'] = total_weights
+            temp['zero_ratio'] = zero_weights_percentage
             pruning_dict[name] = temp
             #temp = None
 

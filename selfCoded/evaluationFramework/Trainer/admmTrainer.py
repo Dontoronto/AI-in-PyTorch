@@ -1,4 +1,6 @@
 import copy
+import csv
+import os
 
 from .defaultTrainer import DefaultTrainer
 from .admm_utils.utils import (create_magnitude_pruned_mask, add_tensors_inplace, subtract_tensors_inplace,
@@ -58,6 +60,7 @@ class ADMMTrainer(DefaultTrainer):
 
         # flag for saving model afterwards
         self.save = False
+        self.save_path = None
 
         # layers to be pruned
         self.list_W = []
@@ -89,7 +92,12 @@ class ADMMTrainer(DefaultTrainer):
         self.early_termination_flag = False
 
         self.patternManager = PatternManager()
-        self.patternManager.setConnectivityPruning(True)
+        #self.patternManager.setConnectivityPruning(True)
+
+        self.tensor_buffering_enabled = False
+        self.onnx_enabled = False
+
+        logger.debug(f"ADMM Trainer was initialized: \n {self.__dict__}")
 
 
 
@@ -105,10 +113,34 @@ class ADMMTrainer(DefaultTrainer):
     def getHistoryEpsilonZ(self):
         return self.history_epsilon_Z
 
+    def getEpsilonResults(self):
+        return self.getHistoryEpsilonW(), self.getHistoryEpsilonZ(), self.epsilon_W, self.epsilon_Z
+
+    # def getTestLoader(self):
+    #     return super(ADMMTrainer, self).getTestLoader()
+    #
+    # def getLossFunction(self):
+    #     return super(ADMMTrainer, self).getLossFunction()
+
     # TODO: Mapper erstellen
     def setTensorBufferConfig(self, kwargs):
         self.handler = MultiProcessHandler()
         self.handler.setTensorBufferConfig(kwargs)
+        self.handler.setFilePath(self.save_path)
+
+    def changePaths(self, path):
+        if self.tensor_buffering_enabled is True:
+            logger.warning(f"Changing tensorbuffering path from {self.handler.getFilePath()} to {path}")
+            self.handler.setFilePath(path)
+        else:
+            logger.warning("TensorBuffering is not activated")
+
+        # Changes all paths the Trainer is interacting with
+        self.save_path = path
+
+    def setModelName(self, name):
+        self.model_name = name
+
 
 
     # TODO: needs to be deleted at the end
@@ -160,7 +192,7 @@ class ADMMTrainer(DefaultTrainer):
         [layer_W.set_admm_vars(ADMMVariable.W) for layer_W in self.list_W]
         [layer_U.set_admm_vars(ADMMVariable.U) for layer_U in self.list_U]
         [layer_Z.set_admm_vars(ADMMVariable.Z) for layer_Z in self.list_Z]
-        logger.info(f"Layer lists were created")
+        logger.info(f"Layer lists (ADMM Variables) were initialized")
 
     # TODO: Methode erstellen welche Pattern pruning mit magnitude Pruning von fc layern zusammenfügt
     # TODO: PruningRate bei connectivity Pruning soll über Architecture config übernommen werden nicht als
@@ -440,15 +472,14 @@ class ADMMTrainer(DefaultTrainer):
         self.prune_weight_layer()
 
 
-
     # TODO: methode umschreiben so dass epoch nichtmehr gebraucht wird für admm
     # TODO: symbiose von ADMM und retraining
-    def train(self, test=False, onnx_enabled=False, tensor_buffering = False):
+    def train(self, test=False):
+
+        logger.info(f"Current Trainer Tasks: {self.phase_list}")
+
         self.model.train()
         self.preTrainingChecks()
-        #self.handler = MultiProcessHandler()
-
-        # self.initialize_dualvar_auxvar()
 
         dataloader = self.createDataLoader(self.dataset)
         test_loader = None
@@ -456,9 +487,19 @@ class ADMMTrainer(DefaultTrainer):
             self.prepareDataset(testset=True)
             test_loader = self.createDataLoader(self.testset)
             test_loader.shuffle = False
+
+        if self.save is True:
+            if self.save_path is not None:
+                self.export_model(os.path.join(self.save_path, self.model_name), onnx=self.onnx_enabled)
+            else:
+                logger.error(f"Variable save_path is not configured in ADMMConfig or some other errror")
+                self.export_model(self.model_name, onnx=self.onnx_enabled)
+
         for phase in self.phase_list:
-            save_path = self.model_name + "_admm_" + phase
+            model_filename = self.model_name + "_admm_" + phase
             if phase == "train":
+                logger.info(f"Training phase -> {phase} is starting")
+
                 for epo in range(self.epoch):
                     for batch_idx, (data, target) in enumerate(dataloader):
 
@@ -477,7 +518,11 @@ class ADMMTrainer(DefaultTrainer):
 
                 #self.export_model(model_path=save_path)
                 if self.save is True:
-                    self.export_model(model_path=save_path, onnx=onnx_enabled)
+                    if self.save_path is not None:
+                        full_path = os.path.join(self.save_path, model_filename)
+                        self.export_model(model_path=full_path, onnx=self.onnx_enabled)
+                    else:
+                        self.export_model(model_path=model_filename, onnx=self.onnx_enabled)
                     #torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
 
             else:
@@ -487,14 +532,16 @@ class ADMMTrainer(DefaultTrainer):
 
                 # TODO: here we need to implement tensor buffering initialization of multiprocessing
 
-                if phase == 'admm' and tensor_buffering is True:
-
+                if phase == 'admm' and self.tensor_buffering_enabled is True:
                     self.handler.init_processes()
-                    self.show_pruning_layer_job()
+                elif phase == 'retrain' and self.tensor_buffering_enabled is True:
+                    self.handler.terminate_all_processes()
+
+                self.show_pruning_layer_job()
+                logger.info(f"ADMM phase -> {phase} is starting")
 
 
                 while self.main_iterations > counter and epo < self.epoch:
-                    logger.critical("Loop Started")
                     for batch_idx, (data, target) in enumerate(dataloader):
 
                         self.optimizer.zero_grad()
@@ -505,7 +552,7 @@ class ADMMTrainer(DefaultTrainer):
                         if phase == "admm":
                             self.admm(counter)
                             # TODO: here we need to implement tensor weight buffering
-                            if tensor_buffering is True and counter % (self.admm_iterations) == 0:
+                            if self.tensor_buffering_enabled is True and counter % (self.admm_iterations) == 0:
                                 self.tensorBuffer_saving()
                             if self.early_termination_flag is True:
                                 logger.info(f"Early Termination Flag was set, ADMM reached epsilon threshold")
@@ -523,20 +570,28 @@ class ADMMTrainer(DefaultTrainer):
 
                     if phase == "retrain":
                         logger.info(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
-                        self.test(test_loader, snapshot_enabled=False)
+                        self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                         epo +=1
                     else:
                         logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
-                        self.test(test_loader, snapshot_enabled=False)
+                        self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                 # saving model
                 #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
                 if self.save is True:
-                    self.export_model(model_path=save_path, onnx=onnx_enabled)
+                    if self.save_path is not None:
+                        full_path = os.path.join(self.save_path, model_filename)
+                        self.export_model(model_path=full_path, onnx=self.onnx_enabled)
+                        csv_path = os.path.join(self.save_path, f'{phase}_mask_tensor.csv')
+                        self.export_tensor_list_csv(csv_path, self.list_masks)
+                    else:
+                        self.export_model(model_path=model_filename, onnx=self.onnx_enabled)
+                        self.export_tensor_list_csv(f'{phase}_mask_tensor.csv', self.list_masks)
 
-        if tensor_buffering is True:
-            self.handler.terminate_all_processes()
+        # if self.tensor_buffering_enabled is True:
+        #     self.handler.terminate_all_processes()
+
 
 
 

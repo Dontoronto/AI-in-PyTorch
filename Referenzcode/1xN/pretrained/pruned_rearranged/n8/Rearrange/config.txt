@@ -1,0 +1,46 @@
+2021-04-22-09:52:31
+
+config: None
+use_dali: True
+label_smoothing: 0.0
+warmup_length: 5
+gpus: [0, 1]
+pretrained_model: /userhome/model/mobilenet_v2.pth.tar
+data_set: cifar10
+data_path: /dev/shm/memory_data/ImageNet/
+job_dir: /userhome/1_16/experiments/1-8-50-rearrl1-wl1/
+resume: False
+lr_decay_step: [50, 100]
+arch: mobilenet_v2
+num_epochs: 180
+train_batch_size: 256
+eval_batch_size: 256
+momentum: 0.9
+lr: 0.01
+optimizer: sgd
+lr_policy: cos
+lr_adjust: 30
+lr_gamma: 0.1
+weight_decay: 4e-05
+random_rule: random_pretrain
+test_only: False
+rearrange: True
+nesterov: False
+first_layer_dense: False
+last_layer_dense: False
+first_layer_type: None
+conv_type: BlockL1Conv
+layerwise: uniform
+bn_type: LearnedBatchNorm
+init: kaiming_normal
+no_bn_decay: False
+mode: fan_in
+nonlinearity: relu
+pr_target: 0.5
+debug: False
+criteria: abs
+rearr_criteria: l1
+full: False
+var_batch_size: 128
+N: 8
+

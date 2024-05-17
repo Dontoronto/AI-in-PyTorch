@@ -1,0 +1,28 @@
+{
+  "testrun": "clip_grad_1",
+  "save": true,
+  "save_path": "experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/test",
+  "name": "LeNet_test",
+  "copy_config": true,
+  "config_path": "configs",
+  "analysis_methods": [
+    "epsilon_distance"
+  ],
+  "changing_parameters": {
+    "main_iterations": [
+      40000, 80000, 120000, 160000, 200000, 240000
+    ],
+    "admm_iterations": [
+      200, 400, 500, 800, 1000, 2000
+    ],
+    "epoch": [
+      5, 10, 15, 20, 25
+    ],
+    "rho": [
+      2.5e-4, 5e-4, 2.5e-3, 5e-3
+    ],
+    "momentum": [
+      0.2, 0.4, 0.6, 0.8, 0.9
+    ]
+  }
+}
