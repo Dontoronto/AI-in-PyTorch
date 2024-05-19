@@ -6,3 +6,5 @@ selfCoded/evaluationFramework/experiment/
 selfCoded/evaluationFramework/models/LeNet/
 selfCoded/evaluationFramework/models/AlexNet/
 selfCoded/evaluationFramework/testImages/
+
+.DS_Store
