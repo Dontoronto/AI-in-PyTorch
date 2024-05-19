@@ -1,3 +1,4 @@
+import torch
 from PIL import Image
 import os, sys
 import shutil
@@ -54,3 +55,18 @@ def copy_directory(source_dir, destination_dir):
         logger.warning(f"Directory '{source_dir}' has been copied to '{destination_dir}'.")
     except Exception as e:
         logger.critical(f"An error occurred while copying the directory: {e}")
+
+
+# ============== Note: helper Class for Alexnet Evaluation
+
+def alexnet_prediction_evaluation(prediction, topk_values):
+
+    with open('models/AlexNet/imagenet_classes.txt') as f:
+        classes = [line.strip() for line in f.readlines()]
+    print("Number of classes: {}".format(len(classes)))
+
+    _, indices = torch.sort(prediction, descending=True)
+    percentage = torch.nn.functional.softmax(prediction, dim=1)[0] * 100
+    print([(classes[idx], percentage[idx].item()) for idx in indices[0][:topk_values]])
+
+# ===========================

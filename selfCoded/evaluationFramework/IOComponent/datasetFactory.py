@@ -39,7 +39,6 @@ class DatasetFactory:
                 expected_keys = {"root", "query"}
                 logger.info("Creating Custom Dataset of h5py-file")
                 return H5PYImageDataset(**kwargs_filter(kwargs,expected_keys))
-
         elif kwargs.get('datasetName') == 'cifar10':
             logger.info("Creating preconfigured Dataset for CIFAR10")
             expected_keys = {"root","download","train"}

@@ -1,3 +1,4 @@
+import sys
 from abc import ABCMeta, abstractmethod
 import numpy as np
 
@@ -78,6 +79,8 @@ class Lp(ThreatModel):
         if np.min(perturbed) < -self._SLOP or np.max(perturbed) > 1+self._SLOP:
             return False
         norm = np.linalg.norm(original - perturbed, ord=self._p)
+        print(f'{self._p}-Norm for Adv.-Image is: {norm}', file=sys.stderr)
+        print(f'{self._p}-Epsilon is: {self._epsilon + self._SLOP}', file=sys.stderr)
         return norm <= self._epsilon + self._SLOP
 
     @property

@@ -3,6 +3,10 @@ import argparse
 import warnings
 import time
 
+import torchvision.datasets
+from PIL import Image, UnidentifiedImageError
+from torch.utils.data import DataLoader
+
 warnings.filterwarnings("ignore", message="Failed to load image Python extension")
 import sys, os
 sys.path.append(os.getcwd())
@@ -16,6 +20,10 @@ import analyzer.analyzer as analyzer
 
 from Trainer.trainerFactory import TrainerFactory
 from SharedServices.logging_config import setup_logging
+import SharedServices.utils as utils
+# from torchvision.datasets import ImageNet
+from torchvision.datasets import ImageFolder
+
 
 setup_logging()
 import logging
@@ -23,6 +31,7 @@ logger = logging.getLogger(__name__)
 
 # NOTE: currently we are testing with LeNet-model
 from models.lenet import LeNet
+from torchvision import models
 
 
 def main():
@@ -49,28 +58,80 @@ def main():
     # Model = modelWrapper.ModelWrapper(_model)
     # Model.eval()
 
+
+    # AlexNet settings work
+    _weights = models.AlexNet_Weights.IMAGENET1K_V1
+    _model = models.alexnet(_weights)
+    Model = modelWrapper.ModelWrapper(_model)
+    Model.eval()
+
+
+    Configurator = configurator.Configurator()
+    DataHandler = dataHandler.DataHandler(Configurator)
+    DataHandler.setTransformer(_weights.transforms())
+
+    img = DataHandler.loadImage("testImages/desk.jpeg")
+    batch = DataHandler.preprocessBatched(img)
+
+    prediction = Model(batch)
+
+    utils.alexnet_prediction_evaluation(prediction, 5)
+
+    imagenet = ImageFolder("/Volumes/Extreme SSD/datasets/imagenet/imagenet1k/train/",
+                           transform=DataHandler.getTransformer())
+
+    generator1 = torch.Generator().manual_seed(42)
+    train_set, val_set = torch.utils.data.random_split(imagenet, [0.7, 0.3], generator1)
+
+
+    loader = DataLoader(train_set, batch_size=4, shuffle=False, num_workers=1)
+
+    for batch_idx, (image, label) in enumerate(loader):
+        prediction = Model(image)
+
+        #utils.alexnet_prediction_evaluation(prediction, 5)
+        if batch_idx == 100:
+            logger.critical(f"{batch_idx}")
+
+
+    return
+
+
     # =======================================
 
 
     start_time = time.time()
     warnings.filterwarnings(action='once')
 
+
+    # ================= Note: this is the standard model for this thesis
     # LeNet Test
-    _model = LeNet()
-    Model = modelWrapper.ModelWrapper(_model)
-    Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
-    # Model.load_state_dict(torch.load("/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/selfCoded/evaluationFramework/experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/elog_800admmiter_no_connectivity/LeNet_all_pat_clipGrad_1_0.pth"))
-    Model.eval()
+    # _model = LeNet()
+    # Model = modelWrapper.ModelWrapper(_model)
+    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    # Model.eval()
+    #
+    # Configurator = configurator.Configurator()
+    # DataHandler = dataHandler.DataHandler(Configurator)
+    #
+    # DataHandler.setTransformer(Configurator.loadTransformer())
+
+    # ==========================================
 
 
-    Configurator = configurator.Configurator()
-    DataHandler = dataHandler.DataHandler(Configurator)
 
-    #DataHandler.setTransformer(_weights.transforms())
-    DataHandler.setTransformer(Configurator.loadTransformer())
+    # =================== Note: basic block for working in the past with lenet
+    # Configurator = configurator.Configurator()
+    # DataHandler = dataHandler.DataHandler(Configurator)
+    #
+    #
+    #   Note: weights without configurator was for pretrained downloaded models
+    # #DataHandler.setTransformer(_weights.transforms())
+    # DataHandler.setTransformer(Configurator.loadTransformer())
+    # =================================
 
-    # img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
 
+    #img = DataHandler.loadImage("testImages/tisch_v2.jpeg")
 
 
 
@@ -78,17 +139,19 @@ def main():
 
     # ================== Note: this part is for generating adversarial examples
 
-    # Analyzer.init_adversarial_environment()
-    # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
-    # Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
-    # Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
-    # Analyzer.select_attacks_from_config(0, 1)
-    # Analyzer.enable_adversarial_saving("experiment/deepfool/adversarial_images")
-    # Analyzer.enable_original_saving("experiment/deepfool/original_images")
-    #
-    # test1 = Analyzer.start_adversarial_evaluation(0, 100)
-    # print(f"First evaluation:")
-    # print(test1)
+    Analyzer.init_adversarial_environment()
+    Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
+    Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
+    Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
+    Analyzer.select_attacks_from_config(2, 1)
+    Analyzer.enable_adversarial_saving("experiment/JSMA/adversarial_images")
+    Analyzer.enable_original_saving("experiment/JSMA/original_images")
+
+    test1 = Analyzer.start_adversarial_evaluation(0, 100)
+    print(f"First evaluation:")
+    print(test1)
+
+    return
 
     # Analyzer.init_adversarial_environment()
     # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))

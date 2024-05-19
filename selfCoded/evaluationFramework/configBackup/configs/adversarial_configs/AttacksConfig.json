@@ -1,0 +1,14 @@
+[
+  {
+    "class": "DeepFool",
+    "init_params": {"steps": 1000, "overshoot": 2.0}
+  },
+  {
+    "class": "PGD",
+    "init_params": {"eps": 0.7, "alpha": 0.01, "steps": 50, "random_start": false}
+  },
+  {
+    "class": "JSMA",
+    "init_params": {"theta": 0.2, "gamma": 0.6}
+  }
+]

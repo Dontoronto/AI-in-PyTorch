@@ -1,0 +1,32 @@
+{
+  "transform": {
+    "transformParam": {
+      "crop_size": 224,
+      "resize_size": 256,
+      "interpolation": "bilinear",
+      "antialias": true,
+      "dtype": "float",
+      "normalize": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ]
+      }
+    }
+  },
+  "dataset": {
+    "datasetName": "cifar100",
+    "storageType": "default",
+    "root": "/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/dataset/cifar-100/",
+    "query": ["Volumes","PortableSSD", "Projekte", "datasets", "celeba_dataset", "IMG", "img_align_celeba"],
+    "download": true,
+    "transform": true,
+    "target_transform": null
+  }
+}
