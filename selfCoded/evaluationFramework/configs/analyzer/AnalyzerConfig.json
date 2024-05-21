@@ -1,19 +1,19 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/test",
-  "name": "LeNet_test",
-  "copy_config": false,
+  "save_path": "experiment/Alexnet/v1/full_iterations_lr0_001_u_clipGrad_1",
+  "name": "AlexNet",
+  "copy_config": true,
   "config_path": "configs",
   "analysis_methods": {
     "epsilon_distance": {
-      "enabled": false
+      "enabled": true
     },
     "pruning": {
       "enabled": true
     },
     "accuracy_testset": {
-      "enabled": false,
+      "enabled": true,
       "titel": "testset"
     },
     "accuracy_adversarial": {
@@ -26,7 +26,7 @@
       "shuffle": false
     },
     "grad_and_original": {
-      "enabled": false,
+      "enabled": true,
       "adv_dataset_path": null,
       "grad_start_index": 0,
       "grad_range": 10
@@ -39,20 +39,20 @@
       "target_layer": "model.conv1"
     },
     "saliency_and_original": {
-      "enabled": false,
+      "enabled": true,
       "adv_dataset_path": null,
       "saliency_start_index": 0,
       "saliency_range": 10
     },
     "saliency": {
-      "enabled": false,
+      "enabled": true,
       "adv_dataset_path": null,
       "saliency_start_index": 0,
       "saliency_range": 10
     },
     "topk_accuracy": {
-      "enabled": false,
-      "adv_dataset_path": "experiment/JSMA/adversarial_images",
+      "enabled": true,
+      "adv_dataset_path": null,
       "topk_start_index": 0,
       "topk_range": 10
     }

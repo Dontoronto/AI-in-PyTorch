@@ -6,6 +6,7 @@ import time
 import torchvision.datasets
 from PIL import Image, UnidentifiedImageError
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 warnings.filterwarnings("ignore", message="Failed to load image Python extension")
 import sys, os
@@ -20,7 +21,7 @@ import analyzer.analyzer as analyzer
 
 from Trainer.trainerFactory import TrainerFactory
 from SharedServices.logging_config import setup_logging
-import SharedServices.utils as utils
+from SharedServices.modelArchitectureExtractor import ModelArchitectureExtractor
 # from torchvision.datasets import ImageNet
 from torchvision.datasets import ImageFolder
 
@@ -34,9 +35,22 @@ from models.lenet import LeNet
 from torchvision import models
 
 
+def check_filepath(path):
+    """
+    Überprüft, ob eine Datei mit "._" im Dateinamen beginnt.
+
+    Parameter:
+    path (str): Der gesamte Pfad der Datei.
+
+    Rückgabe:
+    bool: False, wenn der Dateiname mit "._" beginnt, True ansonsten.
+    """
+    filename = os.path.basename(path)
+    return not filename.startswith("._")
+
 def main():
 
-    #matplotlib.use('Agg')  # Use a non-interactive backend
+    matplotlib.use('Agg')  # Use a non-interactive backend
 
     # ====================== Note: This code is just for exporting onnx model for tvm
     # _model = LeNet()
@@ -70,32 +84,41 @@ def main():
     DataHandler = dataHandler.DataHandler(Configurator)
     DataHandler.setTransformer(_weights.transforms())
 
-    img = DataHandler.loadImage("testImages/desk.jpeg")
-    batch = DataHandler.preprocessBatched(img)
 
-    prediction = Model(batch)
-
-    utils.alexnet_prediction_evaluation(prediction, 5)
-
-    imagenet = ImageFolder("/Volumes/Extreme SSD/datasets/imagenet/imagenet1k/train/",
-                           transform=DataHandler.getTransformer())
-
-    generator1 = torch.Generator().manual_seed(42)
-    train_set, val_set = torch.utils.data.random_split(imagenet, [0.7, 0.3], generator1)
-
-
-    loader = DataLoader(train_set, batch_size=4, shuffle=False, num_workers=1)
-
-    for batch_idx, (image, label) in enumerate(loader):
-        prediction = Model(image)
-
-        #utils.alexnet_prediction_evaluation(prediction, 5)
-        if batch_idx == 100:
-            logger.critical(f"{batch_idx}")
-
-
-    return
-
+    # ------- rest ist testing only
+    # img = DataHandler.loadImage("testImages/desk.jpeg")
+    # batch = DataHandler.preprocessBatched(img)
+    #
+    # prediction = Model(batch)
+    #
+    # utils.alexnet_prediction_evaluation(prediction, 5)
+    #
+    # imagenet = ImageFolder("/Volumes/Extreme SSD/datasets/imagenet/imagenet1k/train/",
+    #                        transform=DataHandler.getTransformer(),
+    #                        is_valid_file=lambda path: not os.path.basename(path).startswith("._"))
+    #
+    # generator1 = torch.Generator().manual_seed(42)
+    # train_set, val_set = torch.utils.data.random_split(imagenet, [0.7, 0.3], generator1)
+    #
+    # dataset_len = len(train_set)
+    #
+    #
+    # loader = DataLoader(val_set, batch_size=4, shuffle=False, num_workers=1)
+    #
+    # # Initialisiere tqdm
+    # progress_bar = tqdm(enumerate(loader), total=len(loader), desc="Training Progress")
+    #
+    # for batch_idx, (image, label) in progress_bar:
+    #     prediction = Model(image)
+    #
+    #     #utils.alexnet_prediction_evaluation(prediction, 1)
+    #     #if batch_idx == 100:
+    #         #logger.critical(f"{batch_idx*32/dataset_len}")
+    #
+    #
+    #
+    # return
+    #
 
     # =======================================
 
@@ -139,19 +162,21 @@ def main():
 
     # ================== Note: this part is for generating adversarial examples
 
-    Analyzer.init_adversarial_environment()
-    Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
-    Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
-    Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
-    Analyzer.select_attacks_from_config(2, 1)
-    Analyzer.enable_adversarial_saving("experiment/JSMA/adversarial_images")
-    Analyzer.enable_original_saving("experiment/JSMA/original_images")
+    # Analyzer.init_adversarial_environment()
+    # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
+    # Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
+    # Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
+    # Analyzer.select_attacks_from_config(2, 1)
+    # Analyzer.enable_adversarial_saving("experiment/JSMA/adversarial_images")
+    # Analyzer.enable_original_saving("experiment/JSMA/original_images")
+    #
+    # test1 = Analyzer.start_adversarial_evaluation(0, 100)
+    # print(f"First evaluation:")
+    # print(test1)
+    #
+    # return
 
-    test1 = Analyzer.start_adversarial_evaluation(0, 100)
-    print(f"First evaluation:")
-    print(test1)
-
-    return
+    # -----
 
     # Analyzer.init_adversarial_environment()
     # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
@@ -207,7 +232,30 @@ def main():
 
     # ------------- Note: end test of adv
 
-    # ------------- Note: start of ADMM Optimization
+    # ------------- Note: start of ADMM Optimization LeNet
+
+    # Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
+    # Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
+    # Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
+    # Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
+    # Trainer.setADMMonfig(Configurator.loadConfigFromRegistry("admm_settings"))
+    # Trainer.setTensorBufferConfig(Configurator.loadConfigFromRegistry("tensor_buffer"))
+    #
+    # # Trainer.train(test=False, onnx_enabled=False, tensor_buffering=True)
+    #
+    #
+    # Analyzer.setAnalyzerConfig(Configurator.loadConfigFromRegistry("analyzer"))
+    # Analyzer.setTrainer(Trainer)
+    # train_kwargs = {
+    #     'test': False
+    # }
+    #
+    # Analyzer.startTestrun(train_kwargs)
+
+
+    logger.critical(f"Time for algo is: {time.time()-start_time}")
+
+    # =============== Note: test AlexNet
 
     Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
     Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
@@ -215,38 +263,15 @@ def main():
     Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
     Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
     Trainer.setTensorBufferConfig(Configurator.loadConfigFromRegistry("tensor_buffer"))
-
-    #Trainer.train(test=False, onnx_enabled=False, tensor_buffering=True)
-
+    #Trainer.train(test=False)
 
     Analyzer.setAnalyzerConfig(Configurator.loadConfigFromRegistry("analyzer"))
     Analyzer.setTrainer(Trainer)
-
-    # test_loader = Analyzer.trainer.getTestLoader()
-    # loss_func = Trainer.getLossFunction()
-
-
     train_kwargs = {
         'test': False
     }
 
     Analyzer.startTestrun(train_kwargs)
-
-    # test_loader = Analyzer.trainer.getTestLoader()
-    # loss_func = Trainer.getLossFunction()
-
-    # histW = Trainer.getHistoryEpsilonW()
-    # histZ = Trainer.getHistoryEpsilonZ()
-    # thrshW = Trainer.epsilon_W
-    # thrshZ = Trainer.epsilon_Z
-
-    #histW, histZ, thrshW, thrshZ = Trainer.getEpsilonResults()
-
-    #Analyzer.setSavePath("experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/all_pat")
-
-    #Analyzer.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
-
-    logger.critical(f"Time for algo is: {time.time()-start_time}")
 
 
     # copy_directory("configs",

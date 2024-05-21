@@ -5,6 +5,9 @@ import torch.onnx
 from torch import save
 
 import logging
+
+from torch.utils.data import DataLoader
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,12 +51,21 @@ class Trainer(ABC):
             logger.info(f'Onnx-Model saved to {model_path}')
 
     def export_tensor_list_csv(self, csv_path, tensor_list):
-        with open(csv_path, 'w', newline='') as f:
-            writer = csv.writer(f)
-            for tensor in tensor_list:
-                writer.writerow(['Tensor'])
-                writer.writerows(tensor.tolist())
-                writer.writerow([])  # Add a blank row for separation
+        # with open(csv_path, 'w', newline='') as f:
+        #     writer = csv.writer(f)
+        #     for tensor in tensor_list:
+        #         writer.writerow(['Tensor'])
+        #         writer.writerows(tensor.tolist())
+        #         writer.writerow([])  # Add a blank row for separation
+        with open(csv_path, 'w') as f:
+            for i, tensor in enumerate(tensor_list):
+                if i == 0:
+                    f.write('Tensor\n')
+
+                for row in tensor.tolist():
+                    f.write(','.join(map(str, row)) + '\n')
+
+                f.write('\n')  # Add a blank row for separation
 
         logger.info("Tensors saved to tensors_multidim.csv")
         # , onnx_path=None
@@ -65,6 +77,14 @@ class Trainer(ABC):
         #     input_data = torch.Tensor(*input_shape)
         #     torch.onnx.export(self._model_to_prune, input_data.to(device), onnx_path)
         #     _logger.info('Model in onnx with input shape %s saved to %s', input_data.shape, onnx_path)
+
+    def createDataLoader(self, sampleDataset):
+        if self.dataloaderConfig is not None:
+            logger.info("Created Dataloader with settings: " + str(self.dataloaderConfig))
+            return DataLoader(sampleDataset, **self.dataloaderConfig)
+        else:
+            logger.warning("No Configs for Dataloader available, creating Dataloader with default arguments")
+            return DataLoader(sampleDataset)
 
     def setDataLoaderSettings(self, kwargs: dict):
         '''

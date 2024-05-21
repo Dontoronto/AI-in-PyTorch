@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 from .h5pyImageDataset import H5PYImageDataset
 from torchvision.datasets import CIFAR10, CIFAR100, MNIST
 import torch
+from .imageNetDataset import ImagenetDataset
 
 
 @staticmethod
@@ -53,5 +54,9 @@ class DatasetFactory:
             logger.info("Creating preconfigured Dataset for MNIST")
             expected_keys = {"root","download","train"}
             return MNIST(**kwargs_filter(kwargs,expected_keys))
+        elif kwargs.get('datasetName') == 'imagenet':
+            logger.info("Creating preconfigured Dataset for ImageNet")
+            expected_keys = {"root","train","split_ratio","seed"}
+            return ImagenetDataset.get_dataset(**kwargs_filter(kwargs,expected_keys))
 
 

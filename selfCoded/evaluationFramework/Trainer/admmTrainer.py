@@ -2,6 +2,8 @@ import copy
 import csv
 import os
 
+from tqdm import tqdm
+
 from .defaultTrainer import DefaultTrainer
 from .admm_utils.utils import (create_magnitude_pruned_mask, add_tensors_inplace, subtract_tensors_inplace,
                                scale_and_add_tensors_inplace)
@@ -96,6 +98,10 @@ class ADMMTrainer(DefaultTrainer):
 
         self.tensor_buffering_enabled = False
         self.onnx_enabled = False
+
+        # just a feature not necessary
+        self.pbar_iteration = None
+        self.pbar_epoch = None
 
         logger.debug(f"ADMM Trainer was initialized: \n {self.__dict__}")
 
@@ -383,7 +389,7 @@ class ADMMTrainer(DefaultTrainer):
             differenceW = layerW.W - layerZ.Z
             frobenius_distance += torch.norm(differenceW, p='fro')
 
-        logger.info(f"Condition for termination criterion W^(k+1)-Z^(k+1)={frobenius_distance}/{self.epsilon_W}")
+        logger.debug(f"Condition for termination criterion W^(k+1)-Z^(k+1)={frobenius_distance}/{self.epsilon_W}")
         return float(frobenius_distance)
 
     # TODO: terminate ADMM in a good manner
@@ -394,7 +400,7 @@ class ADMMTrainer(DefaultTrainer):
             differenceW = layerZ.Z - old_layerZ.Z
             frobenius_distance += torch.norm(differenceW, p='fro')
 
-        logger.info(f"Condition for termination criterion Z^(k+1)-Z^k= {frobenius_distance}/{self.epsilon_Z}")
+        logger.debug(f"Condition for termination criterion Z^(k+1)-Z^k= {frobenius_distance}/{self.epsilon_Z}")
         return float(frobenius_distance)
 
     @staticmethod
@@ -446,6 +452,7 @@ class ADMMTrainer(DefaultTrainer):
         self.normalize_gradients()
         self.regularize_gradients()
         if curr_iteration % self.admm_iterations == 0:
+
             # TODO: abbruch testen
             self.store_old_AuxVariable()
             self.project_aux_layers()
@@ -458,7 +465,15 @@ class ADMMTrainer(DefaultTrainer):
             if curr_iteration != 0:
                 if curr_iteration/self.main_iterations > self.threshold_warmup:
                     self.update_termination_criterion()
+
+                    # feature progress bar
+                    self.pbar_iteration.set_postfix({"Epsilon_W": self.history_epsilon_W[-1],
+                                                     "Epsilon_Z": self.history_epsilon_Z[-1]})
                 self.update_dual_layers()
+
+            # feature progress bar
+            self.pbar_iteration.update(self.admm_iterations)
+
         self.solve_admm()
         pass
 
@@ -530,20 +545,25 @@ class ADMMTrainer(DefaultTrainer):
                 epo = 0
                 counter = 0
 
+                self.pbar_iteration = tqdm(total=self.main_iterations)
+
                 # TODO: here we need to implement tensor buffering initialization of multiprocessing
 
-                if phase == 'admm' and self.tensor_buffering_enabled is True:
-                    self.handler.init_processes()
-                elif phase == 'retrain' and self.tensor_buffering_enabled is True:
-                    self.handler.terminate_all_processes()
+                if phase == 'admm':
+                    self.pbar_iteration = tqdm(total=self.main_iterations, desc="ADMM-Phase Iteration")
+                    if self.tensor_buffering_enabled is True:
+                        self.handler.init_processes()
+                elif phase == 'retrain':
+                    self.pbar_iteration = tqdm(total=self.main_iterations, desc="Retrain-Phase Iteration")
+                    self.pbar_epoch = tqdm(total=self.epoch, desc="Retrain-Phase Epoch")
+                    if self.tensor_buffering_enabled is True:
+                        self.handler.terminate_all_processes()
 
                 self.show_pruning_layer_job()
                 logger.info(f"ADMM phase -> {phase} is starting")
 
-
                 while self.main_iterations > counter and epo < self.epoch:
                     for batch_idx, (data, target) in enumerate(dataloader):
-
                         self.optimizer.zero_grad()
                         output = self.model(data)
                         loss = self.loss(output, target)
@@ -561,6 +581,7 @@ class ADMMTrainer(DefaultTrainer):
 
                         if phase == "retrain":
                             self.retrain(counter)
+                            self.pbar_iteration.update(1)
 
                         self.optimizer.step()
 
@@ -569,16 +590,29 @@ class ADMMTrainer(DefaultTrainer):
                             break
 
                     if phase == "retrain":
-                        logger.info(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+                        #logger.debug(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                         epo +=1
+                        self.pbar_epoch.update(1)
                     else:
-                        logger.info(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
+                        logger.debug(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
                     if test is True:
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                 # saving model
                 #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
+
+                # Note: last time prune layers because optimizer tunes masked out values because of momentum etc.
+                if phase == 'admm':
+                    self.pbar_iteration.close()
+                    self.pbar_iteration = None
+                if phase == 'retrain':
+                    self.pbar_iteration.close()
+                    self.pbar_epoch.close()
+                    self.pbar_iteration = None
+                    self.pbar_epoch = None
+                    self.prune_weight_layer()
+
                 if self.save is True:
                     if self.save_path is not None:
                         full_path = os.path.join(self.save_path, model_filename)

@@ -1,6 +1,6 @@
 import torch
 import torchvision.transforms as T
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, Subset
 from torchvision.transforms import ToPILImage
 from torchvision.datasets.folder import ImageFolder
 from PIL import Image
@@ -157,11 +157,19 @@ class DataHandler:
 
 
     def updateDatasetTransformer(self):
-        if isinstance(self.dataset, Dataset):
+        if isinstance(self.dataset, Subset):
+            logger.info("Transformer of Subset Dataset was changed to:")
+            logger.info(self.transform)
+            self.dataset.dataset.transform = self.transform
+        elif isinstance(self.dataset, Dataset):
             logger.info("Transformer of Dataset was changed to:")
             logger.info(self.transform)
             self.dataset.transform = self.transform
-        if isinstance(self.testset, Dataset):
+        if isinstance(self.testset, Subset):
+            logger.info("Transformer of Subset Dataset was changed to:")
+            logger.info(self.transform)
+            self.testset.dataset.transform = self.transform
+        elif isinstance(self.testset, Dataset):
             logger.info("Transformer of Testset was changed to:")
             logger.info(self.transform)
             self.testset.transform = self.transform

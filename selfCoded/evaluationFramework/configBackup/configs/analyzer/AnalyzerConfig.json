@@ -2,22 +2,22 @@
   "testrun": "clip_grad_1",
   "save": true,
   "save_path": "experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/test",
-  "name": "LeNet_test",
-  "copy_config": false,
+  "name": "LeNet",
+  "copy_config": true,
   "config_path": "configs",
   "analysis_methods": {
     "epsilon_distance": {
-      "enabled": false
+      "enabled": true
     },
     "pruning": {
       "enabled": true
     },
     "accuracy_testset": {
-      "enabled": false,
+      "enabled": true,
       "titel": "testset"
     },
     "accuracy_adversarial": {
-      "enabled": false,
+      "enabled": true,
       "adv_titel": "adv_JSMA",
       "orig_titel": "orig_JSMA",
       "adv_dataset_path": "experiment/JSMA/adversarial_images",
@@ -26,35 +26,35 @@
       "shuffle": false
     },
     "grad_and_original": {
-      "enabled": false,
-      "adv_dataset_path": null,
+      "enabled": true,
+      "adv_dataset_path": "experiment/JSMA/adversarial_images",
       "grad_start_index": 0,
-      "grad_range": 10
+      "grad_range": 99
     },
     "grad": {
-      "enabled": false,
+      "enabled": true,
       "adv_dataset_path": null,
       "grad_start_index": 0,
-      "grad_range": 10,
+      "grad_range": 99,
       "target_layer": "model.conv1"
     },
     "saliency_and_original": {
-      "enabled": false,
-      "adv_dataset_path": null,
+      "enabled": true,
+      "adv_dataset_path": "experiment/JSMA/adversarial_images",
       "saliency_start_index": 0,
-      "saliency_range": 10
+      "saliency_range": 99
     },
     "saliency": {
-      "enabled": false,
+      "enabled": true,
       "adv_dataset_path": null,
       "saliency_start_index": 0,
       "saliency_range": 10
     },
     "topk_accuracy": {
-      "enabled": false,
+      "enabled": true,
       "adv_dataset_path": "experiment/JSMA/adversarial_images",
       "topk_start_index": 0,
-      "topk_range": 10
+      "topk_range": 99
     }
   },
   "changing_parameters": {

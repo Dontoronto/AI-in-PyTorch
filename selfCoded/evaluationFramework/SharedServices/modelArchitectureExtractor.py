@@ -32,7 +32,7 @@ class ModelArchitectureExtractor():
                     #'configuration': str(module)
                 })
                 logger.info(f"Layer Name: {name} was extracted.")
-        with open(folderName + "/ADMMModelArchitectureTest.json", 'w') as file:
+        with open(folderName + "/ADMModelArchitectureTest.json", 'w') as file:
             json.dump(config_list, file, indent=4)
         logger.info(f"Architecture extracted to folder: {folderName}")
         logger.info(f"Architecture file in {folderName} need to be extended with sparsity and moved to upper folder")

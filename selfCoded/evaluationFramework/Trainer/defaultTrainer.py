@@ -1,5 +1,7 @@
+from tqdm import tqdm
+
 from .trainer import Trainer
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 
 import os
 import torch
@@ -47,9 +49,11 @@ class DefaultTrainer(Trainer):
         if testset is False and self.dataset is None:
             self.dataset = self.DataHandler.loadDataset()
             logger.info("Dataset was loaded in Trainer class")
+            return self.dataset
         elif testset is True and self.testset is None:
             self.testset = self.DataHandler.loadDataset(testset=testset)
             logger.info("Testet was loaded in Trainer class")
+            return testset
 
     def checkModelOutputFeatures(self, sampleLabel):
         '''
@@ -79,13 +83,22 @@ class DefaultTrainer(Trainer):
         won't be transformed
         '''
         modelOutputClasses = self.getAmountModelOutputClasses()
-        if modelOutputClasses != len(SampleDataset.classes):
+        if isinstance(SampleDataset, Subset):
+            if modelOutputClasses != len(SampleDataset.dataset.classes):
+                # TODO: production mode is with lines below uncommented
+                logger.critical("Model Output Neurons {} and Dataset classes {} "
+                                "doesn't match".format(modelOutputClasses,len(SampleDataset.dataset.classes)))
+                logger.critical("Training of Model is not possible")
+                # raise ValueError("Model Output Neurons {} and Dataset classes {} "
+                #                  "doesn't match".format(modelOutputClasses,len(self.dataset.classes)))
+
+        elif modelOutputClasses != len(SampleDataset.classes):
             # TODO: production mode is with lines below uncommented
             logger.critical("Model Output Neurons {} and Dataset classes {} "
                             "doesn't match".format(modelOutputClasses,len(SampleDataset.classes)))
             logger.critical("Training of Model is not possible")
-            # raise ValueError("Model Output Neurons {} and Dataset classes {} "
-            #                  "doesn't match".format(modelOutputClasses,len(self.dataset.classes)))
+            raise ValueError("Model Output Neurons {} and Dataset classes {} "
+                             "doesn't match".format(modelOutputClasses,len(self.dataset.classes)))
         first_label = SampleDataset[0][1]
         if isinstance(self.loss, torch.nn.CrossEntropyLoss):
             if isinstance(first_label, int):
@@ -116,13 +129,13 @@ class DefaultTrainer(Trainer):
             return
         self.checkLabelEncoding(self.dataset)
 
-    def createDataLoader(self, sampleDataset):
-        if self.dataloaderConfig is not None:
-            logger.info("Created Dataloader with settings: " + str(self.dataloaderConfig))
-            return DataLoader(sampleDataset, **self.dataloaderConfig)
-        else:
-            logger.warning("No Configs for Dataloader available, creating Dataloader with default arguments")
-            return DataLoader(sampleDataset)
+    # def createDataLoader(self, sampleDataset):
+    #     if self.dataloaderConfig is not None:
+    #         logger.info("Created Dataloader with settings: " + str(self.dataloaderConfig))
+    #         return DataLoader(sampleDataset, **self.dataloaderConfig)
+    #     else:
+    #         logger.warning("No Configs for Dataloader available, creating Dataloader with default arguments")
+    #         return DataLoader(sampleDataset)
 
     def createCustomDataloader(self, sampleDataset, **kwargs):
         self.checkLabelEncoding(sampleDataset)
@@ -207,9 +220,11 @@ class DefaultTrainer(Trainer):
         self.model.eval()
         test_loss = 0
         correct = 0
-        test_loader = test_loader
+
+        progress_bar = tqdm(test_loader, total=len(test_loader), desc="Testing Progress")
+
         with torch.no_grad():
-            for data, target in test_loader:
+            for data, target in progress_bar:
                 output = self.model(data)
                 test_loss += self.loss(output, target).item()
                 pred = output.argmax(dim=1, keepdim=True)
@@ -218,6 +233,8 @@ class DefaultTrainer(Trainer):
         logger.info(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)')
         if snapshot_enabled is True:
             self.createSnapshot(test_loss, current_epoch)
+
+        progress_bar.close()
         return test_loss
 
     def getTestLoader(self):

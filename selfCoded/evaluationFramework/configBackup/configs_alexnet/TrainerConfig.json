@@ -2,7 +2,7 @@
   "trainer": {
     "optimizer": "Adam",
     "loss": "CrossEntropyLoss",
-    "epoch":  25,
+    "epoch":  5,
     "lr": 0.0001,
     "momentum": 0.9,
     "pre_optimization_tuning_path": true

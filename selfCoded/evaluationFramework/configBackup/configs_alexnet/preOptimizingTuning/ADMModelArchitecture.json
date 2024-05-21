@@ -1,0 +1,42 @@
+[
+    {
+        "sparsity": null,
+        "op_types": "Conv2d",
+        "op_names": "model.features.0"
+    },
+    {
+        "sparsity": null,
+        "op_types": "Conv2d",
+        "op_names": "model.features.3"
+    },
+    {
+        "sparsity": null,
+        "op_types": "Conv2d",
+        "op_names": "model.features.6"
+    },
+    {
+        "sparsity": 0.0,
+        "op_types": "Conv2d",
+        "op_names": "model.features.8"
+    },
+    {
+        "sparsity": 0.0,
+        "op_types": "Conv2d",
+        "op_names": "model.features.10"
+    },
+    {
+        "sparsity": 0.8,
+        "op_types": "Linear",
+        "op_names": "model.classifier.1"
+    },
+    {
+        "sparsity": 0.8,
+        "op_types": "Linear",
+        "op_names": "model.classifier.4"
+    },
+    {
+        "sparsity": null,
+        "op_types": "Linear",
+        "op_names": "model.classifier.6"
+    }
+]

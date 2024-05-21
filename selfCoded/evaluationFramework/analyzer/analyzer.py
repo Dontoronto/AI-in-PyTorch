@@ -434,11 +434,6 @@ class Analyzer:
 
             histW, histZ, thrshW, thrshZ = self.trainer.getEpsilonResults()
             return self.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
-        elif method == 'accuracy_testset' and params.get("enabled", False) is True:
-
-            loss = self.trainer.getLossFunction()
-            loader = self.trainer.getTestLoader()
-            self.report_accuracy(model_filenames, loader, loss, titel=params.get('titel', 'test'))
         elif method == 'accuracy_adversarial' and params.get("enabled", False) is True:
 
             # init vars
@@ -569,6 +564,11 @@ class Analyzer:
 
             # creates a paper about pruning stats
             self.report_pruning(model_filenames)
+        elif method == 'accuracy_testset' and params.get("enabled", False) is True:
+
+            loss = self.trainer.getLossFunction()
+            loader = self.trainer.getTestLoader()
+            self.report_accuracy(model_filenames, loader, loss, titel=params.get('titel', 'test'))
 
 
 
