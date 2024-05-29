@@ -51,4 +51,10 @@ class AnalyzerConfigMapper:
         else:
             logger.error(f"config_path was not able to map config: {self.config}")
 
+        #if 'cuda_enabled' in self.config:
+        #    self.analyzer.cuda_enabled = self.config.get('cuda_enabled')
+        #    logger.debug(f"cuda_enabled set to {self.analyzer.cuda_enabled}")
+        #else:
+        #    logger.error(f"cuda_enabled was not able to map config: {self.config}")
+
         logger.info(f"Analyzer config was loaded into Analyzer: {self.config}")

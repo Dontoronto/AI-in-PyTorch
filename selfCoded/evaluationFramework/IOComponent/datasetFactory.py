@@ -56,7 +56,7 @@ class DatasetFactory:
             return MNIST(**kwargs_filter(kwargs,expected_keys))
         elif kwargs.get('datasetName') == 'imagenet':
             logger.info("Creating preconfigured Dataset for ImageNet")
-            expected_keys = {"root","train","split_ratio","seed"}
+            expected_keys = {"root","train","split_ratio","seed","cuda_enabled"}
             return ImagenetDataset.get_dataset(**kwargs_filter(kwargs,expected_keys))
 
 

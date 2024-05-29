@@ -23,7 +23,28 @@ class Trainer(ABC):
         self.loss = loss
         self.dataloaderConfig = None
         self.snapshotConfig = None
+        try:
+            device = next(self.model.parameters()).device
+            if device.type == 'cuda':
+                torch.set_default_device('cuda')
+                self.cuda_enabled = True
+                print(f"Device= {device}")
+        except Exception:
+            print("Failed to set device automatically, please try set_device() manually.")
+            self.cuda_enabled = False
 
+    def getCudaState(self):
+        return self.cuda_enabled
+
+    def setCudaState(self, cuda_flag: bool):
+        if isinstance(cuda_flag, bool):
+            self.cuda_enabled = cuda_flag
+            if cuda_flag is True:
+                torch.set_default_device('cuda')
+            else:
+                torch.set_default_device('cpu')
+        else:
+            logger.critical("Cuda flag is not a bool value")
 
     @abstractmethod
     def train(self):
@@ -81,10 +102,22 @@ class Trainer(ABC):
     def createDataLoader(self, sampleDataset):
         if self.dataloaderConfig is not None:
             logger.info("Created Dataloader with settings: " + str(self.dataloaderConfig))
-            return DataLoader(sampleDataset, **self.dataloaderConfig)
+            if self.getCudaState():
+                generator = torch.Generator(device='cuda')
+                return DataLoader(sampleDataset, **self.dataloaderConfig, persistent_workers=True, prefetch_factor=2,
+                                  generator=generator, collate_fn=collate_fn)
+                # return DataLoader(sampleDataset, **self.dataloaderConfig, persistent_workers=True, prefetch_factor=2,
+                #                   generator=generator, collate_fn=collate_fn)
+            else:
+                return DataLoader(sampleDataset, **self.dataloaderConfig)
         else:
             logger.warning("No Configs for Dataloader available, creating Dataloader with default arguments")
-            return DataLoader(sampleDataset)
+            if self.getCudaState():
+                generator = torch.Generator(device='cuda')
+                return DataLoader(sampleDataset, prefetch_factor=2,
+                                  persistent_workers=True, num_workers=4, generator=generator, collate_fn=collate_fn)
+            else:
+                return DataLoader(sampleDataset)
 
     def setDataLoaderSettings(self, kwargs: dict):
         '''
@@ -97,5 +130,11 @@ class Trainer(ABC):
         sets snapshot configuration
         '''
         self.snapshotConfig = kwargs
+
+def collate_fn(batch):
+    images, labels = zip(*batch)
+    images = torch.stack(images).to('cuda')
+    labels = torch.tensor(labels).to('cuda')
+    return images, labels
 
 

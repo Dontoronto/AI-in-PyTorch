@@ -6,5 +6,6 @@ selfCoded/evaluationFramework/experiment/
 selfCoded/evaluationFramework/models/LeNet/
 selfCoded/evaluationFramework/models/AlexNet/
 selfCoded/evaluationFramework/testImages/
+__pycache__
 
 .DS_Store

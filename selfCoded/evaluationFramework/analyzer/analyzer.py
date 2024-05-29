@@ -1,6 +1,7 @@
 import copy
 import logging
 import os, sys
+import threading
 
 import numpy as np
 from PIL.Image import Image
@@ -16,6 +17,8 @@ import torch
 
 from .activationMaps.saliencyMap import SaliencyMap
 from .featureMaps.gradCam import GradCAM
+from .featureMaps import featureMap
+from .activationMaps.scoreCAM import ScoreCAM
 
 from .measurement.sparseMeasurement import pruningCounter
 from .measurement.topPredictions import show_top_predictions, getSum_top_predictions
@@ -37,6 +40,8 @@ from .mapper.analyzerMapper import AnalyzerConfigMapper
 
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 # from SharedServices.utils import copy_directory
+
+#torch.set_default_device('cuda')
 
 
 # Note: saliency-map: https://arxiv.org/pdf/1312.6034.pdf
@@ -64,6 +69,16 @@ class Analyzer:
         self.analysis_methods = None
         self.copy_config = False
         self.config_path = None
+        try:
+            device = next(self.model.parameters()).device
+            if device.type == 'cuda':
+                torch.set_default_device('cuda')
+                self.cuda_enabled = True
+                print(f"Device= {device}")
+        except Exception:
+            device = None
+            print("Failed to set device automatically, please try set_device() manually.")
+            self.cuda_enabled = False
 
     def setModel(self, model):
         self.model = model
@@ -286,7 +301,8 @@ class Analyzer:
                 saliency_list.append(saliency_map)
 
             for i, saliency_img in enumerate(saliency_list):
-                plt.imshow(saliency_img, cmap='gray')
+                converted_saliency = saliency_img.cpu()
+                plt.imshow(converted_saliency, cmap='gray')
                 plt.axis('off')  # Turn off the axis
                 plt.gca().set_axis_off()  # Turn off the axis lines
                 plt.tight_layout(pad=0)  # Adjust the padding to zero to remove unnecessary space
@@ -329,6 +345,160 @@ class Analyzer:
                 grad_img.save(os.path.join(model_path, f"grad_{i}.png"),
                               dpi=(30, 30))
                 grad_img.close()
+
+    def report_scoreCAM(self, model_filenames, score_start_index, score_range,
+                    target_layer='model.conv1'):
+        '''
+        creates directory and saves all gradCam images of specified layer for every model
+        over index + range
+        :return:
+        '''
+        if self.check_dataset() is False:
+            self.setDataset(self.datahandler.loadDataset(testset=True))
+
+        # iterating and saving all gradcams to folder
+        if score_range == 0:
+            score_range = 1
+
+        # Create list of figures with orignal image and grad image combined
+        score_path = os.path.join(self.save_path, 'score_cam')
+        create_directory(score_path)
+        for model_filename in model_filenames:
+            model_path = os.path.join(score_path, os.path.splitext(model_filename)[0])
+            create_directory(model_path)
+            self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
+            score_cam_list = []
+
+            for i in range(score_range):
+                batch, sample, label = self.dataset_extractor(score_start_index+i)
+                img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
+                _, score_cam = ScoreCAM().analyse(model=self.model, original_image=img,
+                                                  single_batch=batch, target_layer=target_layer)
+                score_cam_list.append(score_cam)
+
+            for i, grad_img in enumerate(score_cam_list):
+                grad_img.save(os.path.join(model_path, f"scoreCAM_{i}.png"),
+                              dpi=(30, 30))
+                grad_img.close()
+
+    def report_featureMap(self, model_filenames, feature_start_index, feature_range, target_layer):
+        '''
+        creates directory and saves all gradCam images of specified layer for every model
+        over index + range
+        :return:
+        '''
+        if self.check_dataset() is False:
+            self.setDataset(self.datahandler.loadDataset(testset=True))
+
+        # iterating and saving all gradcams to folder
+        if feature_range == 0:
+            feature_range = 1
+
+        # Create list of figures with orignal image and grad image combined
+        feature_path = os.path.join(self.save_path, 'feature_map')
+        create_directory(feature_path)
+        for model_filename in model_filenames:
+            model_path = os.path.join(feature_path, os.path.splitext(model_filename)[0])
+            create_directory(model_path)
+            self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
+            feature_map_list = []
+
+            for i in range(feature_range):
+                batch, sample, label = self.dataset_extractor(feature_start_index+i)
+                # _, score_cam = ScoreCAM().analyse(model=self.model, original_image=img,
+                #                                   single_batch=batch, target_layer=target_layer)
+                feature_map, layer_name = featureMap.extract_single_feature_map(self.model, batch, target_layer)
+                feature_map_list.append(feature_map)
+
+            def process_feature(semaphore, feature, target_layer, model_path, i):
+                with semaphore:
+                    feature_plot = featureMap.plot_single_feature_map(feature, target_layer)
+                    feature_plot.savefig(os.path.join(model_path, f"{i}_imgfeatureMap_{target_layer}.png"), dpi=100)
+                    plt.close(feature_plot)
+
+            def run_in_parallel(feature_map_list, target_layer, model_path):
+                threads = []
+                semaphore = threading.Semaphore(2)  # Maximal 5 Threads gleichzeitig
+
+                for i, feature in enumerate(feature_map_list):
+                    t = threading.Thread(target=process_feature, args=(semaphore, feature, target_layer, model_path, i))
+                    threads.append(t)
+                    t.start()
+
+                # Warte auf alle Threads, bis sie fertig sind
+                for t in threads:
+                    t.join()
+
+            run_in_parallel(feature_map_list, target_layer, model_path)
+
+            #for i, feature in enumerate(feature_map_list):
+            #    feature_plot = featureMap.plot_single_feature_map(feature, target_layer)
+            #    feature_plot.savefig(os.path.join(model_path, f"featureMap_{target_layer}_{i}.png"),
+            #                  dpi=400)
+            #    plt.close(feature_plot)
+
+    def report_featureMap_allLayer(self, model_filenames, feature_start_index, feature_range):
+        '''
+        creates directory, displays and saves all gradCam images of every convolutional layer for every model
+        over index + range
+        '''
+        if self.check_dataset() is False:
+            self.setDataset(self.datahandler.loadDataset(testset=True))
+
+        # iterating and saving all gradcams to folder
+        if feature_range == 0:
+            feature_range = 1
+
+        # Create list of figures with orignal image and grad image combined
+        feature_path = os.path.join(self.save_path, 'FeatureMap_allLayer')
+        create_directory(feature_path)
+        for model_filename in model_filenames:
+            model_path = os.path.join(feature_path, os.path.splitext(model_filename)[0])
+            create_directory(model_path)
+
+            self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
+            total_feature_map_list = []
+
+            for i in range(feature_range):
+                batch, sample, label = self.dataset_extractor(feature_start_index+i)
+                img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
+                feature_maps, layer_names = featureMap.extract_all_feature_maps(self.model, batch)
+                total_feature_map_list.append((feature_maps, layer_names))
+
+            # for i in range(feature_range):
+            #     feature_map_list.extend(self.grad_all(feature_start_index+i))
+
+            def process_feature_maps(semaphore, feature_maps_list, layer_names_list, model_path, i):
+                with semaphore:
+                    feature_figures = featureMap.plot_all_feature_maps(feature_maps_list, layer_names_list)
+                    for feature, lname in zip(feature_figures, layer_names_list):
+                        feature.savefig(os.path.join(model_path, f"{i}_img_featureMap_{lname}.png"), dpi=100)
+                        plt.close(feature)
+
+            def run_in_parallel(total_feature_map_list, model_path):
+                threads = []
+                semaphore = threading.Semaphore(2)  # Maximal 5 Threads gleichzeitig
+
+                for i, (feature_maps_list, layer_names_list) in enumerate(total_feature_map_list):
+                    t = threading.Thread(target=process_feature_maps, args=(semaphore, feature_maps_list,
+                                                                            layer_names_list, model_path, i))
+                    threads.append(t)
+                    t.start()
+
+                # Warte auf alle Threads, bis sie fertig sind
+                for t in threads:
+                    t.join()
+
+            run_in_parallel(total_feature_map_list, model_path)
+
+
+        #for i, (feature_maps_list, layer_names_list) in enumerate(total_feature_map_list):
+        #        feature_figures = featureMap.plot_all_feature_maps(feature_maps_list, layer_names_list)
+        #        for feature, lname in zip(feature_figures,layer_names_list):
+        #            #feature_plot = featureMap.plot_single_feature_map(feature, lname)
+        #            feature.savefig(os.path.join(model_path, f"{i}_img_featureMap_{lname}.png"), dpi=100)
+        #            plt.close(feature)
+
 
     def report_saliency_and_original(self, model_filenames, saliency_start_index, saliency_range):
         '''
@@ -409,6 +579,40 @@ class Analyzer:
                                  dpi=30, bbox_inches='tight', pad_inches=0, facecolor='dimgray')
                 plt.close(grad_plt)
 
+    def report_scoreCAM_and_original(self, model_filenames, score_start_index, score_range):
+        '''
+        creates directory, displays and saves all gradCam images of every convolutional layer for every model
+        over index + range
+        '''
+        if self.check_dataset() is False:
+            self.setDataset(self.datahandler.loadDataset(testset=True))
+
+        # iterating and saving all gradcams to folder
+        if score_range == 0:
+            score_range = 1
+
+        # Create list of figures with orignal image and grad image combined
+        score_path = os.path.join(self.save_path, 'Original_ScoreCAM')
+        create_directory(score_path)
+        for model_filename in model_filenames:
+            model_path = os.path.join(score_path, os.path.splitext(model_filename)[0])
+            create_directory(model_path)
+
+            self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
+            score_list = []
+
+            for i in range(score_range):
+                score_list.extend(self.scoreCam_all(score_start_index+i))
+
+            # save figures in reporting folder
+            for i, score_plt in enumerate(score_list):
+                plt.axis('off')  # Turn off the axis
+                plt.gca().set_axis_off()  # Turn off the axis lines
+                plt.tight_layout(pad=0)  # Adjust the padding to zero to remove unnecessary space
+                score_plt.savefig(os.path.join(model_path, f"original_scoreCAM_{i}.png"),
+                                 dpi=30, bbox_inches='tight', pad_inches=0, facecolor='dimgray')
+                plt.close(score_plt)
+
 
     def load_model_path_from_path(self, path):
         all_files = os.listdir(path)
@@ -479,6 +683,47 @@ class Analyzer:
                 # reset dataset if adv_dataset
                 if adv_dataset_path is not None:
                     self.dataset = None
+        elif method == 'feature_maps_all_layer' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            feature_start_index = params.get("feature_start_index", None)
+            feature_range = params.get("feature_range", None)
+
+            if feature_start_index is None or feature_range is None:
+                logger.critical(f"Params for featureMaps all Layers report are not properly injected")
+                return
+            else:
+                #self.report_grad_and_original(model_filenames, feature_start_index, feature_range)
+                self.report_featureMap_allLayer(model_filenames, feature_start_index, feature_range)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
+        elif method == 'scoreCAM_and_original' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            score_start_index = params.get("score_start_index", None)
+            score_range = params.get("score_range", None)
+
+            if score_start_index is None or score_range is None:
+                logger.critical(f"Params for scoreCAM_and_original report are not properly injected")
+                return
+            else:
+                self.report_scoreCAM_and_original(model_filenames, score_start_index, score_start_index)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
         elif method == 'grad' and params.get("enabled", False) is True:
 
             # check if adversarial attack is specified
@@ -496,6 +741,48 @@ class Analyzer:
                 return
             else:
                 self.report_grad(model_filenames, grad_start_index, grad_range, target_layer=target_layer)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
+        elif method == 'feature_map' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            feature_start_index = params.get("feature_start_index", None)
+            feature_range = params.get("feature_range", None)
+            target_layer = params.get("target_layer", None)
+
+            if feature_start_index is None or feature_range is None or target_layer is None:
+                logger.critical(f"Params for featureMap report are not properly injected")
+                return
+            else:
+                self.report_featureMap(model_filenames, feature_start_index, feature_range, target_layer=target_layer)
+
+                # reset dataset if adv_dataset
+                if adv_dataset_path is not None:
+                    self.dataset = None
+        elif method == 'score_cam' and params.get("enabled", False) is True:
+
+            # check if adversarial attack is specified
+            adv_dataset_path = params.get("adv_dataset_path", None)
+            if adv_dataset_path is not None:
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+
+            # init core params and check their status
+            score_start_index = params.get("score_start_index", None)
+            score_range = params.get("score_range", None)
+            target_layer = params.get("target_layer", None)
+
+            if score_start_index is None or score_range is None or target_layer is None:
+                logger.critical(f"Params for ScoreCAM report are not properly injected")
+                return
+            else:
+                self.report_scoreCAM(model_filenames, score_start_index, score_range, target_layer=target_layer)
 
                 # reset dataset if adv_dataset
                 if adv_dataset_path is not None:
@@ -696,7 +983,11 @@ class Analyzer:
         '''
         sample, label = self.dataset[index]
         batch = sample.unsqueeze(0)
-        return batch, sample, label
+        if self.cuda_enabled is True:
+            return batch.to('cuda'), sample.to('cuda'), label
+        else:
+            return batch, sample, label
+
 
     def test(self, model, test_loader, loss_func, **kwargs):
         '''
@@ -765,6 +1056,24 @@ class Analyzer:
 
         return plot_list
 
+    def scoreCam_all_layers(self, model, original_image, single_batch):
+        '''
+        :param model: this is the pytorch model
+        :param original_image: this is the image in PIL format
+        :param single_batch:  this is the model input as a single batch as tensor
+        :return:
+        '''
+        plot_list = []
+        for name, module in model.named_modules():
+            if isinstance(module, torch.nn.Conv2d):
+                img_tensor, score_cam = ScoreCAM().analyse(model=model, original_image=original_image,
+                                                           single_batch=single_batch, target_layer=name)
+                plt_obj = plot_original_vs_observation(img_as_tensor=img_tensor, result=score_cam,
+                                                       text=f'Score-CAM for layer: {name}')
+                plot_list.append(plt_obj)
+
+        return plot_list
+
 
     # TODO: schauen wie man das noch schöner für mehrere Models darstellen kann
     def run_single_model_test(self, test_index, test_end_index=None,
@@ -794,7 +1103,15 @@ class Analyzer:
         batch, sample, label = self.dataset_extractor(test_index)
         img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
         grad_list = self.gradCam_all_layers(self.model, original_image=img, single_batch=batch)
+
         return grad_list
+
+    def scoreCam_all(self, test_index):
+        batch, sample, label = self.dataset_extractor(test_index)
+        img = self.datahandler.preprocessBackwardsNonBatched(tensor=sample)
+        score_cam_list = self.scoreCam_all_layers(self.model, original_image=img, single_batch=batch)
+
+        return score_cam_list
 
     def eval_epsilon_distances(self, epsilon_listW, epsilon_listZ,
                                epsilon_threshold_W, epsilon_threshold_Z):

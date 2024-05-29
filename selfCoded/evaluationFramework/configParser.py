@@ -6,17 +6,35 @@ logger = logging.getLogger(__name__)
 class ConfigParser:
     def __init__(self):
         self.dataHandlerConfig = None
+        self.dataHandlerSettingsConfig = None
         self.datasetConfig = None
         self.trainerConfig = None
         self.dataloaderConfig = None
         self.snapshotConfig = None
 
-    # TODO: need to be more general
-    # TODO: if get method is called but no file is there error message that loading didn't work
+    # TODO: depreciated will be deleted
     def getDataHandlerConfig(self):
         if self.dataHandlerConfig == None:
             with open('configs/DataHandlerConfig.json', 'r') as json_file:
                 self.dataHandlerConfig = json.load(json_file)['transform']['transformParam']
+                logger.info("Transformation Parameters from DataHandlerConfig.json:")
+                logger.info(self.dataHandlerConfig)
+
+        return self.dataHandlerConfig
+
+    def getDataHandlerSettingsConfig(self):
+        if self.dataHandlerSettingsConfig == None:
+            with open('configs/DataHandlerConfig.json', 'r') as json_file:
+                self.dataHandlerSettingsConfig = json.load(json_file)['settings']
+                logger.info("Settings from DataHandlerConfig.json:")
+                logger.info(self.dataHandlerConfig)
+
+        return self.dataHandlerSettingsConfig
+
+    def getTransformerConfig(self):
+        if self.dataHandlerConfig == None:
+            with open('configs/DataHandlerConfig.json', 'r') as json_file:
+                self.dataHandlerConfig = json.load(json_file)['transform']
                 logger.info("Transformation Parameters from DataHandlerConfig.json:")
                 logger.info(self.dataHandlerConfig)
 

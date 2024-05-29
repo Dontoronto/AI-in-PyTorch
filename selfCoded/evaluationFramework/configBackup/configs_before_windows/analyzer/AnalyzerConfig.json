@@ -1,0 +1,77 @@
+{
+  "testrun": "clip_grad_1",
+  "save": true,
+  "save_path": "experiment/Alexnet/v1/full_iterations_lr0_001_u_clipGrad_1",
+  "name": "AlexNet",
+  "copy_config": true,
+  "config_path": "configs",
+  "analysis_methods": {
+    "epsilon_distance": {
+      "enabled": true
+    },
+    "pruning": {
+      "enabled": true
+    },
+    "accuracy_testset": {
+      "enabled": true,
+      "titel": "testset"
+    },
+    "accuracy_adversarial": {
+      "enabled": false,
+      "adv_titel": "adv_JSMA",
+      "orig_titel": "orig_JSMA",
+      "adv_dataset_path": "experiment/JSMA/adversarial_images",
+      "orig_dataset_path": "experiment/JSMA/original_images",
+      "batch_size": 32,
+      "shuffle": false
+    },
+    "grad_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "grad_start_index": 0,
+      "grad_range": 10
+    },
+    "grad": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "grad_start_index": 0,
+      "grad_range": 10,
+      "target_layer": "model.conv1"
+    },
+    "saliency_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 10
+    },
+    "saliency": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 10
+    },
+    "topk_accuracy": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "topk_start_index": 0,
+      "topk_range": 10
+    }
+  },
+  "changing_parameters": {
+    "main_iterations": [
+      40000, 80000, 120000, 160000, 200000, 240000
+    ],
+    "admm_iterations": [
+      200, 400, 500, 800, 1000, 2000
+    ],
+    "epoch": [
+      5, 10, 15, 20, 25
+    ],
+    "rho": [
+      2.5e-4, 5e-4, 2.5e-3, 5e-3
+    ],
+    "momentum": [
+      0.2, 0.4, 0.6, 0.8, 0.9
+    ]
+  }
+}

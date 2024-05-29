@@ -19,21 +19,36 @@ class DataHandler:
         self.std = None
         self.mean = None
         self.Configurator = Configurator
+        self.cuda_enabled = False
         self.dataset = None
         self.testset = None
 
         if self.Configurator:
-            self.setTransformer(Configurator.loadTransformer())
+            self.setTransformer(Configurator.loadTransformerNEW())
+            self.cuda_enabled = Configurator.loadDataHandlerSettigns()
+            if self.cuda_enabled is True:
+                torch.set_default_device('cuda')
 
     def setConfigurator(self, Configurator):
         logger.info("Configurator was manually set to: " + str(self.Configurator))
         self.Configurator = Configurator
 
+    def getCudaState(self):
+        return self.cuda_enabled
+
+    def enableCuda(self):
+        self.cuda_enabled = True
+        torch.set_default_device('cuda')
+
+    def disableCuda(self):
+        self.cuda_enabled = False
+        torch.set_default_device('cpu')
+
     def setTransformer(self, transformer):
         self.transform = transformer
         if isinstance(transformer, T.Compose):
             for t in transformer.transforms:
-                if isinstance(transformer, T.Normalize):
+                if isinstance(t, T.Normalize):
                     self.mean = t.mean
                     self.std = t.std
         else:

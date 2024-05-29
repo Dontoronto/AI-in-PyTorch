@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="90dc711a-a117-4371-bc8d-d9f91274e417" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/transformators/transformators.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/scoreCAM.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/featureMaps/featureMap.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/ConfigRegistry.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/adversarial_configs/AttacksConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/adversarial_configs/ProviderConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/adversarial_configs/ThreatModelConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/analyzer/AnalyzerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/examples/base_resnet/ConfigRegistry.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/examples/base_resnet/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/examples/base_resnet/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/examples/base_resnet/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/examples/base_resnet/preOptimizingTuning/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/examples/base_resnet/preOptimizingTuning/model_architecture/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/examples/lenet/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/examples/lenet/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/logging.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/preOptimizingTuning/LeNet/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_alexnetCuda/tensorBuffer_configs/TensorBufferConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/ConfigRegistry.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/adversarial_configs/AttacksConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/adversarial_configs/ProviderConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/adversarial_configs/ThreatModelConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/analyzer/AnalyzerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/examples/base_resnet/ConfigRegistry.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/examples/base_resnet/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/examples/base_resnet/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/examples/base_resnet/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/examples/base_resnet/preOptimizingTuning/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/examples/base_resnet/preOptimizingTuning/model_architecture/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/examples/lenet/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/examples/lenet/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/logging.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/preOptimizingTuning/LeNet/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/configs_before_windows/tensorBuffer_configs/TensorBufferConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/tests/etc/cudaAvailableTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/tests/etc/unbindCudaCheckTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AI-in-PyTorch.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AI-in-PyTorch.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/datasetFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/datasetFactory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/imageNetDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/imageNetDataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/defaultTrainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/defaultTrainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/mapper/analyzerMapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/mapper/analyzerMapper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/measurement/topPredictions.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/measurement/topPredictions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/plotFuncs/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/plotFuncs/plots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configParser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configurator.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configurator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2ggxAiQQCcTCq8fS8Au6D9bXt0O" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.admmTrainer.executor": "Run",
+    "Python.cudaAvailableTest.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.unbindCudaCheckTest.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "windows",
+    "last_opened_file_path": "C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/evaluationFramework/configBackup",
+    "settings.editor.selected.configurable": "preferences.keymap"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configBackup" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configBackup\configs_before_windows" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.main">
+    <configuration name="admmTrainer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI-in-PyTorch" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="cudaAvailableTest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI-in-PyTorch" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/tests/etc" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/tests/etc/cudaAvailableTest.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI-in-PyTorch" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/evaluationFramework" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="true" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="unbindCudaCheckTest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI-in-PyTorch" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/tests/etc" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/tests/etc/unbindCudaCheckTest.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+        <item itemvalue="Python.admmTrainer" />
+        <item itemvalue="Python.unbindCudaCheckTest" />
+        <item itemvalue="Python.cudaAvailableTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-5de4e687c57e-c6172f9078bd-com.jetbrains.pycharm.ds.sharedIndexes.bundled-DS-233.13135.105" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
+          <line>338</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
+          <line>433</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
+          <line>494</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/imageNetDataset.py</url>
+          <line>40</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
+          <line>1102</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py</url>
+          <line>80</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

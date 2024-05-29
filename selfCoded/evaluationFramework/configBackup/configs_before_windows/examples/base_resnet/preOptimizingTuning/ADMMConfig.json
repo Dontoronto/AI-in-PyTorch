@@ -1,0 +1,11 @@
+{
+  "trainer": {
+    "main_iterations": 160000,
+    "admm_iterations": 8000
+  },
+  "dataloader": {
+    "batch_size": 16,
+    "shuffle": true,
+    "num_workers": 2
+  }
+}

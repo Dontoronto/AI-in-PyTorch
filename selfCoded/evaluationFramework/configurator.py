@@ -3,6 +3,7 @@ import torchvision.transforms as T
 import torch
 from SharedServices.utils import singleton
 from IOComponent.datasetFactory import DatasetFactory
+from IOComponent.transformators import transformators
 
 
 import logging
@@ -17,10 +18,14 @@ class Configurator:
 
         self.ConfigParser = configParser.ConfigParser()
         self.configHandlerData = None
+        self.configTransformer = None
+        self.configDatahandlerSettings = None
         self.configDataset = None
         self.configTrainer = None
         self.configDataloader = None
+        self.cuda_enabled = False
 
+    # TODO: depreciated will be deleted
     def loadTransformer(self):
 
         self.configHandlerData = self._loadDataHandlerConfig()
@@ -80,6 +85,28 @@ class Configurator:
         logger.info(self.transform)
         return self.transform
 
+    def loadDataHandlerSettigns(self):
+
+        self.configDatahandlerSettings = self._loadDataHandlerSettingsConfig()
+
+        if self.configDatahandlerSettings.get('cuda') is True:
+            self.cuda_enabled = True
+            return True
+        else:
+            self.cuda_enabled = False
+            return False
+
+
+    def loadTransformerNEW(self):
+
+        self.configTransformer = self._loadTransformerConfig()
+
+        if self.configTransformer.get('dataset') is not None:
+            if self.configTransformer.get('dataset') == "imagenet":
+                return transformators.imagenet_transformer(image_flag=True)
+            elif self.configTransformer.get('dataset') == "mnist":
+                return transformators.mnist_transformer()
+
     def loadDataset(self, train=True):
         '''
         returns instance of a Dataset
@@ -91,6 +118,17 @@ class Configurator:
         self.configDataset["train"] = train
         return DatasetFactory.createDataset(self.configDataset)
 
+    def _loadDataHandlerSettingsConfig(self):
+        self.configDatahandlerSettings = self.ConfigParser.getDataHandlerSettingsConfig()
+        logger.info("Settings from DataHandlerConfig was loaded via ConfigParser")
+        return self.configDatahandlerSettings
+
+    def _loadTransformerConfig(self):
+        self.configTransformer = self.ConfigParser.getTransformerConfig()
+        logger.info("TransformerConfig from DataHandlerConfig was loaded via ConfigParser")
+        return self.configTransformer
+
+    # TODO: depreciated will be deleted -> use _loadTransformerConfig instead
     def _loadDataHandlerConfig(self):
         self.configHandlerData = self.ConfigParser.getDataHandlerConfig()
         logger.info("DataHandlerConfig was loaded via ConfigParser")
