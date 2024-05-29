@@ -10,6 +10,7 @@ from .utils import save_tensors_to_files, count_unique_tensors
 #import libraryReduction
 from .libraryReduction import impact_based_reduction_rate
 
+
 # TODO: noch logger schreiben damit die gröbsten Schritte geloggt werden können
 class PatternManager:
 
@@ -35,6 +36,10 @@ class PatternManager:
         and for fc: torch.Size([120, 784])
         '''
 
+        self.connectivityPruningEnabled = False
+
+        self._noReduction = False
+
         # creating pattern library
         self.pattern_library = self.create_pattern_library(elog_patterns=True)
         #self.pattern_library = self.create_pattern_library(elog_patterns=False)
@@ -42,9 +47,6 @@ class PatternManager:
         # initializes a list of available patterns with indices of pattern library
         self.available_patterns_indices = self.initialize_available_patterns()
 
-        self.connectivityPruningEnabled = False
-
-        self._noReduction = False
 
     def get_tensor_assignment(self, tensor_index):
         """
@@ -81,7 +83,7 @@ class PatternManager:
         :return: list of unique patterns for example n=9, k=4 -> 3x3 Tensors with 4 Fields set to 1 rest to 0
         '''
 
-        if elog_patterns == True:
+        if elog_patterns:
             tensor_list = initialize_elog_based_patterns()
             self._noReduction = True
         else:
@@ -132,15 +134,24 @@ class PatternManager:
             self._calc_avg_pattern_impact()
 
     def _choose_best_pattern(self, tensor):
-        min = 1000
-        min_index = None
+        max_dot_product = float('-inf')
+        max_index = None
         for i in self.available_patterns_indices:
-            frob_distance = torch.norm(torch.abs(tensor) - self.pattern_library[i], p='fro')
-            if frob_distance < min:
-                min = frob_distance
-                min_index = i
-
-        return min_index
+            pattern_tensor = self.pattern_library[i]
+            dot_product = torch.sum(tensor * pattern_tensor)
+            if dot_product > max_dot_product:
+                max_dot_product = dot_product
+                max_index = i
+        return max_index
+        # min = 1000
+        # min_index = None
+        # for i in self.available_patterns_indices:
+        #     frob_distance = torch.norm(torch.abs(tensor) - self.pattern_library[i], p='fro')
+        #     if frob_distance < min:
+        #         min = frob_distance
+        #         min_index = i
+        #
+        # return min_index
 
     # TODO: reducing impact aggregating
 

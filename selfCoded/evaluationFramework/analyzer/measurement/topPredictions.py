@@ -53,7 +53,7 @@ def getSum_top_predictions(model, single_batch, top_values):
     top_predictions = dict()
 
     top_val = float(sum(probabilities))
-    top_label = np.array(labels)
+    top_label = np.array(labels.cpu())
 
     logger.info(f"TopK prediction of first {top_values} values: {top_val}")
 

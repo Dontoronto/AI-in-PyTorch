@@ -2,7 +2,7 @@ import copy
 import csv
 import os
 
-from tqdm import tqdm
+from .utils import tqdm_progressbar
 
 from .defaultTrainer import DefaultTrainer
 from .admm_utils.utils import (create_magnitude_pruned_mask, add_tensors_inplace, subtract_tensors_inplace,
@@ -21,8 +21,6 @@ import logging
 from multiprocessing import Event
 
 logger = logging.getLogger(__name__)
-
-
 
 
 # TODO: Abhängigkeiten noch nicht fix
@@ -86,7 +84,7 @@ class ADMMTrainer(DefaultTrainer):
         # TODO: safe epsilone history for post evaluating
         self.epsilon_W = None
         self.epsilon_Z = None
-        self.threshold_warmup = 0.1                         # start calc. termination criterion with delay
+        self.threshold_warmup = 0.01                         # start calc. termination criterion with delay
         # stores old layerlist Z for termination criterion
         self.old_layer_list_z = None
         self.history_epsilon_W = []
@@ -99,11 +97,9 @@ class ADMMTrainer(DefaultTrainer):
         self.tensor_buffering_enabled = False
         self.onnx_enabled = False
 
-        # just a feature not necessary
-        self.pbar_iteration = None
-        self.pbar_epoch = None
-
         logger.debug(f"ADMM Trainer was initialized: \n {self.__dict__}")
+
+
 
 
 
@@ -466,13 +462,10 @@ class ADMMTrainer(DefaultTrainer):
                 if curr_iteration/self.main_iterations > self.threshold_warmup:
                     self.update_termination_criterion()
 
-                    # feature progress bar
-                    self.pbar_iteration.set_postfix({"Epsilon_W": self.history_epsilon_W[-1],
-                                                     "Epsilon_Z": self.history_epsilon_Z[-1]})
                 self.update_dual_layers()
 
             # feature progress bar
-            self.pbar_iteration.update(self.admm_iterations)
+            # self.pbar_iteration.update(self.admm_iterations)
 
         self.solve_admm()
         pass
@@ -497,6 +490,8 @@ class ADMMTrainer(DefaultTrainer):
         self.preTrainingChecks()
 
         dataloader = self.createDataLoader(self.dataset)
+
+
         test_loader = None
         if test is True or "retrain" in self.phase_list:
             self.prepareDataset(testset=True)
@@ -545,22 +540,19 @@ class ADMMTrainer(DefaultTrainer):
                 epo = 0
                 counter = 0
 
-                self.pbar_iteration = tqdm(total=self.main_iterations)
-
-                # TODO: here we need to implement tensor buffering initialization of multiprocessing
+                # self.pbar_iteration = tqdm(total=self.main_iterations)
+                pbar = tqdm_progressbar(self.epoch, len(dataloader), phase, self.main_iterations)
 
                 if phase == 'admm':
-                    self.pbar_iteration = tqdm(total=self.main_iterations, desc="ADMM-Phase Iteration")
                     if self.tensor_buffering_enabled is True:
                         self.handler.init_processes()
                 elif phase == 'retrain':
-                    self.pbar_iteration = tqdm(total=self.main_iterations, desc="Retrain-Phase Iteration")
-                    self.pbar_epoch = tqdm(total=self.epoch, desc="Retrain-Phase Epoch")
                     if self.tensor_buffering_enabled is True:
                         self.handler.terminate_all_processes()
 
                 self.show_pruning_layer_job()
                 logger.info(f"ADMM phase -> {phase} is starting")
+
 
                 while self.main_iterations > counter and epo < self.epoch:
                     for batch_idx, (data, target) in enumerate(dataloader):
@@ -571,6 +563,15 @@ class ADMMTrainer(DefaultTrainer):
 
                         if phase == "admm":
                             self.admm(counter)
+
+                            # feature progress bar
+                            if len(self.history_epsilon_W):
+                                pbar.set_postfix({"Wk-Zk": self.history_epsilon_W[-1],
+                                                  "Zk1-Zk": self.history_epsilon_Z[-1],
+                                                  "loss": loss.item()}, refresh=True)
+                            else:
+                                pbar.set_postfix({"loss": loss.item()}, refresh=True)
+
                             # TODO: here we need to implement tensor weight buffering
                             if self.tensor_buffering_enabled is True and counter % (self.admm_iterations) == 0:
                                 self.tensorBuffer_saving()
@@ -581,11 +582,15 @@ class ADMMTrainer(DefaultTrainer):
 
                         if phase == "retrain":
                             self.retrain(counter)
-                            self.pbar_iteration.update(1)
+                            # feature progress bar
+                            pbar.set_postfix({"loss": loss.item()})
 
                         self.optimizer.step()
 
                         counter += 1
+                        pbar.update(1)
+
+
                         if self.main_iterations == counter:
                             break
 
@@ -593,25 +598,20 @@ class ADMMTrainer(DefaultTrainer):
                         #logger.debug(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                         epo +=1
-                        self.pbar_epoch.update(1)
+                    elif test is True:
+                        self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                     else:
                         logger.debug(f'Iteration Number: {counter} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
 
-                    if test is True:
-                        self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                 # saving model
                 #torch.save(self.model.state_dict(),self.model_name + "_admm_" + phase + ".pth")
 
                 # Note: last time prune layers because optimizer tunes masked out values because of momentum etc.
-                if phase == 'admm':
-                    self.pbar_iteration.close()
-                    self.pbar_iteration = None
                 if phase == 'retrain':
-                    self.pbar_iteration.close()
-                    self.pbar_epoch.close()
-                    self.pbar_iteration = None
-                    self.pbar_epoch = None
                     self.prune_weight_layer()
+
+                pbar.close()
+                pbar = None
 
                 if self.save is True:
                     if self.save_path is not None:

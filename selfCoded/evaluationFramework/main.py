@@ -19,6 +19,8 @@ import dataHandler
 import configurator
 import analyzer.analyzer as analyzer
 
+import IOComponent.transformators.transformators as transformators
+
 from Trainer.trainerFactory import TrainerFactory
 from SharedServices.logging_config import setup_logging
 from SharedServices.modelArchitectureExtractor import ModelArchitectureExtractor
@@ -48,6 +50,8 @@ def check_filepath(path):
     filename = os.path.basename(path)
     return not filename.startswith("._")
 
+#
+
 def main():
 
     matplotlib.use('Agg')  # Use a non-interactive backend
@@ -74,15 +78,42 @@ def main():
 
 
     # AlexNet settings work
-    _weights = models.AlexNet_Weights.IMAGENET1K_V1
-    _model = models.alexnet(_weights)
+    # _weights = models.AlexNet_Weights.IMAGENET1K_V1
+    # _model = models.alexnet(_weights)
+    # _model.to('cuda')
+    # Model = modelWrapper.ModelWrapper(_model)
+    # Model.to('cuda')
+    # Model.eval()
+
+    # ResNet18 settings
+    _weights = models.ResNet18_Weights.IMAGENET1K_V1
+    _model = models.resnet18(_weights)
+    _model.to('cuda')
     Model = modelWrapper.ModelWrapper(_model)
+    Model.to('cuda')
     Model.eval()
 
 
     Configurator = configurator.Configurator()
     DataHandler = dataHandler.DataHandler(Configurator)
-    DataHandler.setTransformer(_weights.transforms())
+
+
+    try:
+        device = next(Model.parameters()).device
+        if device.type == 'cuda':
+            torch.set_default_device('cuda')
+        print(f"Device= {device}")
+    except Exception:
+        device = None
+        print("Failed to set device automatically, please try set_device() manually.")
+
+
+
+
+
+
+    #DataHandler.setTransformer(transformators.imagenet_transformer(image_flag=True))
+    # DataHandler.setTransformer(_weights.transforms())
 
 
     # ------- rest ist testing only
@@ -262,7 +293,7 @@ def main():
     Trainer.setSnapshotSettings(Configurator.loadSnapshotConfig())
     Trainer.setADMMArchitectureConfig(Configurator.loadConfigFromRegistry("admm_model_architecture"))
     Trainer.setADMMConfig(Configurator.loadConfigFromRegistry("admm_settings"))
-    Trainer.setTensorBufferConfig(Configurator.loadConfigFromRegistry("tensor_buffer"))
+    #Trainer.setTensorBufferConfig(Configurator.loadConfigFromRegistry("tensor_buffer"))
     #Trainer.train(test=False)
 
     Analyzer.setAnalyzerConfig(Configurator.loadConfigFromRegistry("analyzer"))

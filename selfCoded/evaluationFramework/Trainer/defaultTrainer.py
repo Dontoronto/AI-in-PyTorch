@@ -24,6 +24,8 @@ class DefaultTrainer(Trainer):
                  ):
         super().__init__(model, loss, optimizer)
         self.DataHandler = dataHandler
+        #self.setCudaState(self.DataHandler.getCudaState())
+
         self.epoch = epoch
         self.dataset = None
         self.testset = None
@@ -221,7 +223,7 @@ class DefaultTrainer(Trainer):
         test_loss = 0
         correct = 0
 
-        progress_bar = tqdm(test_loader, total=len(test_loader), desc="Testing Progress")
+        progress_bar = tqdm(test_loader, total=len(test_loader), desc="Testing Progress", position=0, leave=True)
 
         with torch.no_grad():
             for data, target in progress_bar:

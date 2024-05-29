@@ -10,7 +10,7 @@ class ImagenetDataset:
     val_set = None
 
     @classmethod
-    def get_dataset(cls, root, train=True, split_ratio=[0.7, 0.3], seed=42):
+    def get_dataset(cls, root, train=True, split_ratio=[0.7, 0.3], seed=42, cuda_enabled=False):
         """
         Returns the train or validation dataset based on the specified arguments.
 
@@ -38,7 +38,11 @@ class ImagenetDataset:
         )
 
         # Create the generator with the specified seed
-        generator1 = torch.Generator().manual_seed(seed)
+        if cuda_enabled is True:
+            #generator1 = torch.Generator(device=torch.get_default_device()).manual_seed(seed)
+            generator1 = torch.Generator(device=torch.device('cuda:0')).manual_seed(seed)
+        else:
+            generator1 = torch.Generator().manual_seed(seed)
 
         total_images = len(imagenet)
         sum_split_ratio = sum(split_ratio)

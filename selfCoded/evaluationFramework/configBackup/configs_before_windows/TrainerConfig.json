@@ -1,0 +1,22 @@
+{
+  "trainer": {
+    "optimizer": "Adam",
+    "loss": "CrossEntropyLoss",
+    "epoch":  5,
+    "lr": 0.001,
+    "momentum": 0.9,
+    "pre_optimization_tuning_path": true
+  },
+  "dataloader": {
+    "batch_size": 32,
+    "shuffle": true,
+    "num_workers": 1
+  },
+  "snapshot": {
+    "name": "LeNet_all_pat_clipGrad_1_0",
+    "snapshot_enabled": false,
+    "snapshot_model_path": "models/LeNet/",
+    "snapshot_model_path_raw": "models/LeNet/",
+    "recovery_epoch": 3
+  }
+}

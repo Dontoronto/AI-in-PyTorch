@@ -1,8 +1,8 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment/Alexnet/v1/full_iterations_lr0_001_u_clipGrad_1",
-  "name": "AlexNet",
+  "save_path": "experiment/LeNet/windows/test_placeholder",
+  "name": "ResNet18",
   "copy_config": true,
   "config_path": "configs",
   "analysis_methods": {
@@ -31,12 +31,38 @@
       "grad_start_index": 0,
       "grad_range": 10
     },
+    "scoreCAM_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "score_start_index": 0,
+      "score_range": 10
+    },
     "grad": {
-      "enabled": false,
+      "enabled": true,
       "adv_dataset_path": null,
       "grad_start_index": 0,
       "grad_range": 10,
-      "target_layer": "model.conv1"
+      "target_layer": "model.layer1.0.conv1"
+    },
+    "score_cam": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "score_start_index": 0,
+      "score_range": 10,
+      "target_layer": "model.layer1.0.conv1"
+    },
+    "feature_map": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "feature_start_index": 0,
+      "feature_range": 10,
+      "target_layer": "model.layer1.0.conv1"
+    },
+    "feature_maps_all_layer": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "feature_start_index": 0,
+      "feature_range": 1
     },
     "saliency_and_original": {
       "enabled": true,

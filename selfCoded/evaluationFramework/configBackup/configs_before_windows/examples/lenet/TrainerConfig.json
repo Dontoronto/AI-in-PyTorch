@@ -1,0 +1,13 @@
+{
+  "trainer": {
+    "optimizer": "Adam",
+    "loss": "CrossEntropyLoss",
+    "epoch":  10,
+    "pre_optimization_tuning_path": false
+  },
+  "dataloader": {
+    "batch_size": 64,
+    "shuffle": true,
+    "num_workers": 1
+  }
+}

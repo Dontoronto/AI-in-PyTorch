@@ -72,7 +72,8 @@ def initialize_elog_based_patterns():
     scp4_tensor = torch.tensor(scp4, dtype=torch.float32)
 
     # Erstellen einer Liste der Tensoren
-    _patterns = [scp1_tensor, scp2_tensor, scp3_tensor, scp4_tensor]
+    # _patterns = [scp1_tensor, scp2_tensor, scp3_tensor, scp4_tensor]
+    _patterns = (scp1_tensor, scp2_tensor, scp3_tensor, scp4_tensor)
 
     # Konvertieren der Liste in einen Tensor
     patterns = torch.stack(_patterns)
