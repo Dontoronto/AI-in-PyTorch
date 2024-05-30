@@ -104,6 +104,8 @@ class Configurator:
         if self.configTransformer.get('dataset') is not None:
             if self.configTransformer.get('dataset') == "imagenet":
                 return transformators.imagenet_transformer(image_flag=True)
+            if self.configTransformer.get('dataset') == "adv_imagenet":
+                return transformators.adv_imagenet_transformer()
             elif self.configTransformer.get('dataset') == "mnist":
                 return transformators.mnist_transformer()
 

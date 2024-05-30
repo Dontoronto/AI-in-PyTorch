@@ -89,13 +89,14 @@ class DataHandler:
             image = to_pil(tensorBack)
             return image
         else:
-            numpy_array = tensorBack.squeeze(0).permute((1,2,0)).numpy()
+            numpy_array = tensorBack.squeeze(0).permute((1,2,0)).cpu().numpy()
             return numpy_array
 
 
     def preprocessBackwardsBatched(self, batch):
         # TODO: evtl. müssen wir nicht image tensoren sondern auch batch tensoren zurück umwandeln. Hier
         # TODO: testen und evtl. anpassen damit automatisch erkannt wird was gefordert ist
+        # TODO: NOTE: evtl. noch * 255 einfügen aber eig. wird das erst bei den save command angehängt
         tensors = batch.clone().detach()
         image_list = list()
         for tensor in tensors:

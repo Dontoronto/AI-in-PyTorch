@@ -1,11 +1,11 @@
 [
   {
     "class": "DeepFool",
-    "init_params": {"steps": 100, "overshoot": 0.02}
+    "init_params": {"steps": 50, "overshoot": 0.01}
   },
   {
     "class": "PGD",
-    "init_params": {"eps": 0.3, "alpha": 0.02, "steps": 50}
+    "init_params": {"eps": 0.0313725490196078, "alpha": 0.007843137254902, "steps": 100}
   },
   {
     "class": "JSMA",

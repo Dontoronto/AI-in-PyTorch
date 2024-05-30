@@ -1,4 +1,4 @@
 {
   "thread_model": "L2",
-  "init_params": {"epsilon": 10}
+  "init_params": {"epsilon": 2}
 }

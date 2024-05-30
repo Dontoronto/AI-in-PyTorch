@@ -16,6 +16,16 @@ def imagenet_transformer(image_flag=True) -> T.Compose:
 
         return transformator
 
+def adv_imagenet_transformer():
+    transformator = T.Compose([
+        T.ToTensor(),
+        T.ConvertImageDtype(torch.float),
+        T.Normalize( mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+
+    return transformator
+
+
 
 def mnist_transformer() -> T.Compose:
     transformator = T.Compose([

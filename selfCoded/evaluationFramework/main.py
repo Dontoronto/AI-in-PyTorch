@@ -192,20 +192,20 @@ def main():
     Analyzer = analyzer.Analyzer(Model, DataHandler)
 
     # ================== Note: this part is for generating adversarial examples
+    DataHandler.setTransformer(transformators.adv_imagenet_transformer())
+    Analyzer.init_adversarial_environment(True)
+    Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
+    Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
+    Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
+    Analyzer.select_attacks_from_config(0, 1)
+    Analyzer.enable_adversarial_saving("experiment/adv_data/windows/ResNet18/adv_samples")
+    Analyzer.enable_original_saving("experiment/adv_data/windows/ResNet18//orig_samples")
 
-    # Analyzer.init_adversarial_environment()
-    # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
-    # Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
-    # Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
-    # Analyzer.select_attacks_from_config(2, 1)
-    # Analyzer.enable_adversarial_saving("experiment/JSMA/adversarial_images")
-    # Analyzer.enable_original_saving("experiment/JSMA/original_images")
-    #
-    # test1 = Analyzer.start_adversarial_evaluation(0, 100)
-    # print(f"First evaluation:")
-    # print(test1)
-    #
-    # return
+    test1 = Analyzer.start_adversarial_evaluation(0, 1000)
+    print(f"First evaluation:")
+    print(test1)
+
+    return
 
     # -----
 

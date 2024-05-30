@@ -200,7 +200,7 @@ class CIFAR10(Provider):
 class ImageNet(Provider):
     def __init__(self, path, shape):
         self._path = path
-        self._shape = shape
+        self._shape = tuple(shape)
 
     def provides(self, dataset):
         return isinstance(dataset, d.ImageNet) and self._shape == dataset.shape
@@ -210,7 +210,8 @@ class ImageNet(Provider):
 
     def __getitem__(self, index):
         data_path = os.path.join(self._path, 'val')
-        image_paths = sorted([os.path.join(data_path, i) for i in os.listdir(data_path)])
+        # image_paths = sorted([os.path.join(data_path, i) for i in os.listdir(data_path)])
+        image_paths = sorted([os.path.join(root, file) for root, _, files in os.walk(data_path) for file in files])
         assert len(image_paths) == 50000
         labels_path = os.path.join(self._path, 'val.txt')
         with open(labels_path) as labels_file:
