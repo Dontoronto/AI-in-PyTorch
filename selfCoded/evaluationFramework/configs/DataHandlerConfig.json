@@ -5,7 +5,7 @@
   "dataset": {
     "datasetName": "imagenet",
     "storageType": "default",
-    "root": "F:\\datasets\\imagenet\\imagenet1k\\train",
+    "root": "D:\\imagenet",
     "query": ["Volumes","PortableSSD", "Projekte", "datasets", "celeba_dataset", "IMG", "img_align_celeba"],
     "train": true,
     "download": true,

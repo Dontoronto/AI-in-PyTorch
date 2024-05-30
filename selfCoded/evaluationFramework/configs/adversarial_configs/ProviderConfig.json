@@ -1,7 +1,7 @@
 {
-  "provider": "MNIST",
+  "provider": "ImageNet",
   "init_params": {
-    "image_path": "../../dataset/mnist/MNIST/raw/t10k-images-idx3-ubyte.gz",
-    "label_path": "../../dataset/mnist/MNIST/raw/t10k-labels-idx1-ubyte.gz"
+    "path": "D:\\imagenet",
+    "shape": [224,224,3]
   }
 }

@@ -2,6 +2,7 @@ import torch
 from PIL import Image
 import os
 import shutil
+import torchvision.transforms as T
 
 from .robustml_utils.attack import Attack
 from .robustml_utils.evaluate import evaluate
@@ -38,6 +39,15 @@ class AdversarialAttacker(Attack):
         '''
 
         self._model = model
+
+        try:
+            device = next(self._model.parameters()).device
+            if device.type == 'cuda':
+                torch.set_default_device('cuda')
+                self._model.to('cuda')
+                print(f"Device= {device}")
+        except Exception:
+            print("Failed to set device automatically, please try set_device() manually.")
 
         self.transform = transform_batched_function
 
@@ -167,6 +177,7 @@ class AdversarialAttacker(Attack):
 
     def run(self, x, y, target=None):
 
+
         # #x with shape (32, 32, 3) to tensor with shape (1,3,32,32)
         x_in = self.transform(x)
 
@@ -183,7 +194,9 @@ class AdversarialAttacker(Attack):
 
         adv_images = attack(x_in, y_label)
 
+
         adv_numpy_img = self.backwards_transform_function(adv_images, numpy_original_shape_flag=True)
+
 
         if self.save_adversarial_images_flag or self.save_original_images_flag:
             self.save_labels.append(y)
@@ -222,7 +235,7 @@ def array_to_image(array, save_path):
             image = Image.fromarray((array[:,:,0] * 255).astype('uint8'), 'L')
         else:
             # Behandeln als Farbbild.
-            image = Image.fromarray(array.astype('uint8'), 'P')
+            image = Image.fromarray((array*255).astype('uint8'), 'RGB')
     else:
         raise ValueError("Array hat eine ungültige Form für ein Bild.")
     # Speichern des Bildes
@@ -271,3 +284,9 @@ def delete_folders_with_only_png(root_dir):
             else:
                 print(f"{subdir_path} wurde nicht gelöscht, da es auch Daten enthält die nicht vom Typ PNG sind.")
 
+
+def has_transform(transform, transform_type):
+    for t in transform.transforms:
+        if isinstance(t, transform_type):
+            return True
+    return False
