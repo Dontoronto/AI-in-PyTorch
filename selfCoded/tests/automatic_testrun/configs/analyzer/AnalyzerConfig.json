@@ -1,0 +1,124 @@
+{
+  "testrun": "clip_grad_1",
+  "save": true,
+  "save_path": "experiment/LeNet/windows/test_placeholder",
+  "name": "ResNet18",
+  "copy_config": true,
+  "config_path": "configs",
+  "analysis_methods": {
+    "epsilon_distance": {
+      "enabled": true
+    },
+    "pruning": {
+      "enabled": true
+    },
+    "accuracy_testset": {
+      "enabled": true,
+      "titel": "testset"
+    },
+    "accuracy_adversarial": {
+      "enabled": false,
+      "adv_titel": "adv_JSMA",
+      "orig_titel": "orig_JSMA",
+      "adv_dataset_path": "experiment/JSMA/adversarial_images",
+      "orig_dataset_path": "experiment/JSMA/original_images",
+      "batch_size": 32,
+      "shuffle": false
+    },
+    "grad_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "grad_start_index": 0,
+      "grad_range": 10
+    },
+    "scoreCAM_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "score_start_index": 0,
+      "score_range": 10
+    },
+    "grad": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "grad_start_index": 0,
+      "grad_range": 10,
+      "target_layer": "model.layer1.0.conv1"
+    },
+    "score_cam": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "score_start_index": 0,
+      "score_range": 10,
+      "target_layer": "model.layer1.0.conv1"
+    },
+    "feature_map": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "feature_start_index": 0,
+      "feature_range": 10,
+      "target_layer": "model.layer1.0.conv1"
+    },
+    "feature_maps_all_layer": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "feature_start_index": 0,
+      "feature_range": 1
+    },
+    "saliency_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 10
+    },
+    "saliency": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 10
+    },
+    "topk_accuracy": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "topk_start_index": 0,
+      "topk_range": 10
+    }
+  },
+  "changing_parameters": {
+    "main_iterations": [
+      40000,
+      80000,
+      120000,
+      160000,
+      200000,
+      240000
+    ],
+    "admm_iterations": [
+      200,
+      400,
+      500,
+      800,
+      1000,
+      2000
+    ],
+    "epoch": [
+      5,
+      10,
+      15,
+      20,
+      25
+    ],
+    "rho": [
+      0.00025,
+      0.0005,
+      0.0025,
+      0.005
+    ],
+    "momentum": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      0.9
+    ]
+  }
+}

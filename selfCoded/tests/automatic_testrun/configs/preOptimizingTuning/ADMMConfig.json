@@ -1,0 +1,23 @@
+{
+  "admm_trainer": {
+    "phase_list": [
+      "admm",
+      "retrain"
+    ],
+    "main_iterations": 100000,
+    "admm_iterations": 200,
+    "dynamic_masking": true,
+    "rho": 0.0005,
+    "gradient_threshold": 6,
+    "batch_size": 32,
+    "regularization_l2_norm_enabled": true,
+    "regularization_l_norm_decay": 5e-06,
+    "epsilon_W": 0.2,
+    "epsilon_Z": 0.2,
+    "threshold_warmup": 0.1
+  },
+  "save": true,
+  "save_path": "experiment/LeNet/windows/ResNet18",
+  "onnx_enabled": false,
+  "tensor_buffering_enabled": false
+}

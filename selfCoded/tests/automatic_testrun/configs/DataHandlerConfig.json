@@ -1,0 +1,21 @@
+{
+  "transform": {
+      "dataset": "imagenet"
+  },
+  "dataset": {
+    "datasetName": "imagenet",
+    "storageType": "default",
+    "root": "F:\\datasets\\imagenet\\imagenet1k\\train",
+    "query": ["Volumes","PortableSSD", "Projekte", "datasets", "celeba_dataset", "IMG", "img_align_celeba"],
+    "train": true,
+    "download": true,
+    "transform": true,
+    "target_transform": null,
+    "split_ratio": [1000, 100],
+    "seed": 42,
+    "cuda_enabled": true
+  },
+  "settings": {
+    "cuda": true
+  }
+}
