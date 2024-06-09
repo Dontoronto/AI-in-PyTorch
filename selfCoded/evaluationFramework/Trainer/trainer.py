@@ -23,6 +23,7 @@ class Trainer(ABC):
         self.loss = loss
         self.dataloaderConfig = None
         self.snapshotConfig = None
+        self.cuda_enabled = False
         try:
             device = next(self.model.parameters()).device
             if device.type == 'cuda':

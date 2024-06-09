@@ -51,6 +51,37 @@ class AnalyzerConfigMapper:
         else:
             logger.error(f"config_path was not able to map config: {self.config}")
 
+        adv_config = self.config.get('adv_settings', {})
+        if 'adv_save_enabled' in adv_config:
+            self.analyzer.adv_save_enabled = adv_config.get('adv_save_enabled')
+            logger.debug(f"adv_save_enabled set to {self.analyzer.adv_save_enabled}")
+        else:
+            logger.error(f"adv_save_enabled was not able to map config: {adv_config}")
+
+        if 'adv_original_save_enabled' in adv_config:
+            self.analyzer.adv_original_save_enabled = adv_config.get('adv_original_save_enabled')
+            logger.debug(f"adv_original_save_enabled set to {self.analyzer.adv_original_save_enabled}")
+        else:
+            logger.error(f"adv_original_save_enabled was not able to map config: {adv_config}")
+
+        if 'adv_attack_selection' in adv_config:
+            self.analyzer.adv_attack_selection = adv_config.get('adv_attack_selection')
+            logger.debug(f"adv_attack_selection set to {self.analyzer.adv_attack_selection}")
+        else:
+            logger.error(f"adv_attack_selection was not able to map config: {adv_config}")
+
+        if 'adv_sample_range_start' in adv_config:
+            self.analyzer.adv_sample_range_start = adv_config.get('adv_sample_range_start')
+            logger.debug(f"adv_sample_range_start set to {self.analyzer.adv_sample_range_start}")
+        else:
+            logger.error(f"adv_sample_range_start was not able to map config: {adv_config}")
+
+        if 'adv_sample_range_end' in adv_config:
+            self.analyzer.adv_sample_range_end = adv_config.get('adv_sample_range_end')
+            logger.debug(f"adv_sample_range_end set to {self.analyzer.adv_sample_range_end}")
+        else:
+            logger.error(f"adv_sample_range_end was not able to map config: {adv_config}")
+
         #if 'cuda_enabled' in self.config:
         #    self.analyzer.cuda_enabled = self.config.get('cuda_enabled')
         #    logger.debug(f"cuda_enabled set to {self.analyzer.cuda_enabled}")

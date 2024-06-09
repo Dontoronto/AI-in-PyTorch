@@ -36,61 +36,46 @@
       "enabled": true,
       "adv_dataset_path": null,
       "grad_start_index": 0,
-      "grad_range": 100
+      "grad_range": 10
     },
     "scoreCAM_and_original": {
       "enabled": true,
       "adv_dataset_path": null,
       "score_start_index": 0,
-      "score_range": 100
+      "score_range": 10
     },
     "grad": {
       "enabled": true,
       "adv_dataset_path": null,
       "grad_start_index": 0,
-<<<<<<< HEAD
-      "grad_range": 50,
-      "target_layer": "model.layer4.1.conv2"
-=======
       "grad_range": 10,
       "target_layer": "model.conv2"
->>>>>>> macbook
     },
     "score_cam": {
       "enabled": true,
       "adv_dataset_path": null,
       "score_start_index": 0,
-<<<<<<< HEAD
-      "score_range": 50,
-      "target_layer": "model.layer4.1.conv2"
-=======
       "score_range": 10,
       "target_layer": "model.conv2"
->>>>>>> macbook
     },
     "feature_map": {
       "enabled": true,
       "adv_dataset_path": null,
       "feature_start_index": 0,
-<<<<<<< HEAD
-      "feature_range": 20,
-      "target_layer": "model.layer4.1.conv2"
-=======
       "feature_range": 10,
       "target_layer": "model.conv2"
->>>>>>> macbook
     },
     "feature_maps_all_layer": {
       "enabled": true,
       "adv_dataset_path": null,
       "feature_start_index": 0,
-      "feature_range": 20
+      "feature_range": 1
     },
     "saliency_and_original": {
       "enabled": true,
       "adv_dataset_path": null,
       "saliency_start_index": 0,
-      "saliency_range": 100
+      "saliency_range": 10
     },
     "saliency": {
       "enabled": true,
@@ -102,7 +87,7 @@
       "enabled": true,
       "adv_dataset_path": null,
       "topk_start_index": 0,
-      "topk_range": 50
+      "topk_range": 10
     }
   },
   "changing_parameters": {

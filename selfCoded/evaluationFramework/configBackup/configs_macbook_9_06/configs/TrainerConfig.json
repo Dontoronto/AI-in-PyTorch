@@ -8,9 +8,9 @@
     "pre_optimization_tuning_path": true
   },
   "dataloader": {
-    "batch_size": 64,
+    "batch_size": 32,
     "shuffle": true,
-    "num_workers": 6
+    "num_workers": 4
   },
   "snapshot": {
     "name": "LeNet_all_pat_clipGrad_1_0",

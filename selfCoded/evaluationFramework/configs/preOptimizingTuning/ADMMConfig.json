@@ -14,7 +14,7 @@
     "threshold_warmup": 0.05
   },
   "save": true,
-  "save_path": "experiment/LeNet/windows/ResNet18",
+  "save_path": "experiment/LeNet/v8_post_cuda/firstTest",
   "onnx_enabled": false,
   "tensor_buffering_enabled": false
 }
