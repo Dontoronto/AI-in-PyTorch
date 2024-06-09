@@ -65,6 +65,17 @@ def main():
     # torch.onnx.export(Model.model,torch.randn(1,1,28,28),'model_opset.onnx', opset_version=11,
     #                   input_names=input_names, output_names=output_names)
 
+    # ============ Note: ResNet onnx export
+    # _model = models.resnet18()
+    # Model = modelWrapper.ModelWrapper(_model)
+    # Model.load_state_dict(torch.load("experiment/temp/ResNet_tvm_example/ResNet18.pth"))
+    # input_names = ["input"]
+    # output_names = ["output"]
+    # torch.onnx.export(Model.model,torch.randn(1,3,224,224),'experiment/temp/ResNet_tvm_example/resnet_default.onnx',
+    #                   opset_version=11, input_names=input_names, output_names=output_names)
+    #
+    # return
+
     # ================================
 
 
@@ -87,10 +98,15 @@ def main():
 
     # ResNet18 settings
     _weights = models.ResNet18_Weights.IMAGENET1K_V1
-    _model = models.resnet18(_weights)
+    _model = models.resnet18()
     _model.to('cuda')
     Model = modelWrapper.ModelWrapper(_model)
     Model.to('cuda')
+    Model.load_state_dict(torch.load("experiment/LeNet/windows"
+                                     "/ReSNet18_100kiter_800admm_fullPatt_1e5lr_5e3rho_clip12_noconn"
+                                     "/ResNet18.pth"))
+    Model.to('cuda')
+
     Model.eval()
 
 
@@ -106,6 +122,22 @@ def main():
     except Exception:
         device = None
         print("Failed to set device automatically, please try set_device() manually.")
+
+
+    # Note: delete
+    # img = DataHandler.loadImage("D:\\imagenet\\val\\n01440764\\ILSVRC2012_val_00000293.JPEG")
+    # img_tensor = DataHandler.preprocessBatched(img)
+    # img_numpy = img_tensor.numpy().astype("float32")
+    # import numpy as np
+    # print(img_numpy.shape)
+    # np.savez("experiment/temp/ResNet_tvm_example/imagenet_test", input=img_numpy)
+    #
+    # # output = Model(img_tensor)
+    # # out = output.squeeze(0).argmax().item()
+    # # print(out)
+    #
+    # return
+
 
 
 
@@ -192,20 +224,20 @@ def main():
     Analyzer = analyzer.Analyzer(Model, DataHandler)
 
     # ================== Note: this part is for generating adversarial examples
-    DataHandler.setTransformer(transformators.adv_imagenet_transformer())
-    Analyzer.init_adversarial_environment(True)
-    Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
-    Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
-    Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
-    Analyzer.select_attacks_from_config(0, 1)
-    Analyzer.enable_adversarial_saving("experiment/adv_data/windows/ResNet18/adv_samples")
-    Analyzer.enable_original_saving("experiment/adv_data/windows/ResNet18//orig_samples")
-
-    test1 = Analyzer.start_adversarial_evaluation(0, 1000)
-    print(f"First evaluation:")
-    print(test1)
-
-    return
+    # DataHandler.setTransformer(transformators.adv_imagenet_transformer())
+    # Analyzer.init_adversarial_environment(True)
+    # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
+    # Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
+    # Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
+    # Analyzer.select_attacks_from_config(0, 1)
+    # Analyzer.enable_adversarial_saving("experiment/adv_data/windows/ResNet18/adv_samples")
+    # Analyzer.enable_original_saving("experiment/adv_data/windows/ResNet18//orig_samples")
+    #
+    # test1 = Analyzer.start_adversarial_evaluation(0, 1000)
+    # print(f"First evaluation:")
+    # print(test1)
+    #
+    # return
 
     # -----
 

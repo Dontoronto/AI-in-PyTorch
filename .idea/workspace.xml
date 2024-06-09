@@ -5,22 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90dc711a-a117-4371-bc8d-d9f91274e417" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/selfCoded/tests/datasetTestsIsolated/imagenet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/ConfigRegistry.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/adversarial_configs/AttacksConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/adversarial_configs/ProviderConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/adversarial_configs/ThreatModelConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/analyzer/AnalyzerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/ConfigRegistry.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/preOptimizingTuning/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/preOptimizingTuning/model_architecture/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/lenet/DataHandlerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/lenet/TrainerConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/logging.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/preOptimizingTuning/LeNet/ADMMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/preOptimizingTuning/ResNet18/ADMModelArchitectureTest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/tensorBuffer_configs/TensorBufferConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/datasetFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/datasetFactory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/imageNetDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/imageNetDataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/transformators/transformators.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/IOComponent/transformators/transformators.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialModelWrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialModelWrapper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/provider.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/provider.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ProviderConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ProviderConfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configurator.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configurator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" afterDir="false" />
     </list>
@@ -64,10 +74,17 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "windows",
-    "last_opened_file_path": "C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/evaluationFramework/configBackup",
-    "settings.editor.selected.configurable": "preferences.keymap"
+    "last_opened_file_path": "C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/evaluationFramework/configBackup/config_windows_9_07",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings>
+        <option name="useSoftWraps" value="true" />
+      </console-settings>
+    </option>
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configBackup" />
@@ -146,6 +163,9 @@
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/evaluationFramework" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -153,8 +173,8 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" />
       <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="true" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
