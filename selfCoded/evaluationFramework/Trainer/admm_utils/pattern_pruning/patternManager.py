@@ -36,7 +36,7 @@ class PatternManager:
         and for fc: torch.Size([120, 784])
         '''
 
-        self.connectivityPruningEnabled = False
+        self.connectivityPruningEnabled = True
 
         self._noReduction = False
 

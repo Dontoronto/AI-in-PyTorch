@@ -54,6 +54,7 @@ class MNIST(Provider):
         images = np.frombuffer(images[16:], dtype=np.uint8)
         assert len(images) == 7840000
         images = images.reshape((10000, 28, 28, 1)).astype(np.float32) / 255.0
+        images = np.around(images, decimals=4)
         with gzip.open(label_path, 'rb') as f:
             labels = f.read()
         assert labels[:4] == b'\x00\x00\x08\x01'

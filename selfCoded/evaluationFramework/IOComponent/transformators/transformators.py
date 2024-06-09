@@ -30,7 +30,7 @@ def adv_imagenet_transformer():
 def mnist_transformer() -> T.Compose:
     transformator = T.Compose([
         T.ToTensor(),
-        T.ConvertImageDtype( torch.float),
+        T.ConvertImageDtype(torch.float32),
         T.Normalize(mean=[0.1307], std=[0.3081])
     ])
 

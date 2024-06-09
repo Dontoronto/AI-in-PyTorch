@@ -31,10 +31,10 @@ from torchvision.datasets import ImageFolder
 setup_logging()
 import logging
 logger = logging.getLogger(__name__)
+from torchvision.models import resnet18, ResNet18_Weights
 
 # NOTE: currently we are testing with LeNet-model
 from models.lenet import LeNet
-from torchvision import models
 
 
 def check_filepath(path):
@@ -86,26 +86,26 @@ def main():
     # Model.eval()
 
     # ResNet18 settings
-    _weights = models.ResNet18_Weights.IMAGENET1K_V1
-    _model = models.resnet18(_weights)
-    _model.to('cuda')
-    Model = modelWrapper.ModelWrapper(_model)
-    Model.to('cuda')
-    Model.eval()
-
-
-    Configurator = configurator.Configurator()
-    DataHandler = dataHandler.DataHandler(Configurator)
-
-
-    try:
-        device = next(Model.parameters()).device
-        if device.type == 'cuda':
-            torch.set_default_device('cuda')
-        print(f"Device= {device}")
-    except Exception:
-        device = None
-        print("Failed to set device automatically, please try set_device() manually.")
+    # _weights = models.ResNet18_Weights.IMAGENET1K_V1
+    # _model = models.resnet18(_weights)
+    # _model.to('cuda')
+    # Model = modelWrapper.ModelWrapper(_model)
+    # Model.to('cuda')
+    # Model.eval()
+    #
+    #
+    # Configurator = configurator.Configurator()
+    # DataHandler = dataHandler.DataHandler(Configurator)
+    #
+    #
+    # try:
+    #     device = next(Model.parameters()).device
+    #     if device.type == 'cuda':
+    #         torch.set_default_device('cuda')
+    #     print(f"Device= {device}")
+    # except Exception:
+    #     device = None
+    #     print("Failed to set device automatically, please try set_device() manually.")
 
 
 
@@ -160,15 +160,15 @@ def main():
 
     # ================= Note: this is the standard model for this thesis
     # LeNet Test
-    # _model = LeNet()
-    # Model = modelWrapper.ModelWrapper(_model)
-    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
-    # Model.eval()
-    #
-    # Configurator = configurator.Configurator()
-    # DataHandler = dataHandler.DataHandler(Configurator)
-    #
-    # DataHandler.setTransformer(Configurator.loadTransformer())
+    _model = LeNet()
+    Model = modelWrapper.ModelWrapper(_model)
+    Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    Model.eval()
+
+    Configurator = configurator.Configurator()
+    DataHandler = dataHandler.DataHandler(Configurator)
+
+    DataHandler.setTransformer(Configurator.loadTransformerNEW())
 
     # ==========================================
 
@@ -191,21 +191,26 @@ def main():
 
     Analyzer = analyzer.Analyzer(Model, DataHandler)
 
+
     # ================== Note: this part is for generating adversarial examples
-    DataHandler.setTransformer(transformators.adv_imagenet_transformer())
-    Analyzer.init_adversarial_environment(True)
-    Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
-    Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
-    Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
-    Analyzer.select_attacks_from_config(0, 1)
-    Analyzer.enable_adversarial_saving("experiment/adv_data/windows/ResNet18/adv_samples")
-    Analyzer.enable_original_saving("experiment/adv_data/windows/ResNet18//orig_samples")
-
-    test1 = Analyzer.start_adversarial_evaluation(0, 1000)
-    print(f"First evaluation:")
-    print(test1)
-
-    return
+    # Analyzer.setAnalyzerConfig(Configurator.loadConfigFromRegistry("analyzer"))
+    # DataHandler.setTransformer(transformators.mnist_transformer())
+    # Analyzer.init_adversarial_environment(False)
+    # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
+    # Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
+    # Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
+    # Analyzer.set_adv_dataset_generation_settings()
+    #
+    # #Analyzer.select_attacks_from_config(0, 1)
+    # #Analyzer.enable_adversarial_saving("experiment/adv_data/windows/ResNet18/adv_samples")
+    # #Analyzer.enable_original_saving("experiment/adv_data/windows/ResNet18//orig_samples")
+    #
+    # # test1 = Analyzer.start_adversarial_evaluation(0, 10)
+    # test1 = Analyzer.start_adversarial_evaluation_preconfigured()
+    # print(f"First evaluation:")
+    # print(test1)
+    #
+    # return
 
     # -----
 
@@ -237,19 +242,24 @@ def main():
     # =====================================================
 
     # ------------- Note: test of adv
-    # adv_dataset = DataHandler.create_imageFolder_dataset("experiment/JSMA/adversarial_images")
-    # orig_dataset = DataHandler.create_imageFolder_dataset("experiment/JSMA/original_images")
+    # Model.load_state_dict(torch.load("experiment/LeNet/v8_post_cuda/placeholder/LeNet.pth"))
+    # adv_dataset = DataHandler.create_imageFolder_dataset("experiment/adversarial_data/LeNet/DeepFool/run_1/adv_image_generation/adv_images")
+    # orig_dataset = DataHandler.create_imageFolder_dataset("experiment/adversarial_data/LeNet/DeepFool/run_1/adv_image_generation/original_images")
     # Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
     # adv_dataloader = Trainer.createCustomDataloader(adv_dataset, batch_size=32, shuffle=False)
     # orig_dataloader = Trainer.createCustomDataloader(orig_dataset, batch_size=32, shuffle=False)
     # #
+    # logger.info(f"Starting Test on default model for Original Dataset")
     # Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    # logger.info(f"Starting Test on default model for Adversarial Dataset")
     # Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
-    # #Analyzer.density_evaluation()
-    #
-    # Model.load_state_dict(torch.load("/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/selfCoded/evaluationFramework/experiment/LeNet/v7 elog vs all/clipGradientsTest/clip_grad_1/elog_800admmiter_no_connectivity/LeNet_all_pat_clipGrad_1_0_admm_retrain.pth"))
+    # # #Analyzer.density_evaluation()
+    # #
+    # Model.load_state_dict(torch.load("experiment/LeNet/v8_post_cuda/placeholder/LeNet_admm_retrain.pth"))
     # Model.eval()
+    # logger.info(f"Starting Test on retrained model for Original Dataset")
     # Analyzer.test(Model, test_loader=orig_dataloader, loss_func=Trainer.getLossFunction())
+    # logger.info(f"Starting Test on retrained model for Adversarial Dataset")
     # Analyzer.test(Model, test_loader=adv_dataloader, loss_func=Trainer.getLossFunction())
     # #Analyzer.density_evaluation()
     #

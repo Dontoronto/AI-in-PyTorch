@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from PIL import Image
 import os
@@ -61,6 +62,7 @@ class AdversarialAttacker(Attack):
         self.save_original_images_flag = False
         self.save_original_arrays = list()
         self.save_original_path = None
+        self.save_threshold_flag = False
 
         self.adversarialModel = AdversarialModelWrapper(self._model, self.transform)
 
@@ -110,6 +112,12 @@ class AdversarialAttacker(Attack):
 
     def setOriginalSavePath(self, path):
         self.save_original_path = path
+
+    def enable_threshold_saving(self):
+        self.save_threshold_flag = True
+
+    def disable_threshold_saving(self):
+        self.save_threshold_flag = False
 
 
     def selectAttacks(self, start_index: int = None, amount_of_attacks: int = None):
@@ -169,7 +177,6 @@ class AdversarialAttacker(Attack):
             save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
         if self.save_original_images_flag is True:
             save_dataset(self.save_original_arrays, self.save_labels, self.save_original_path)
-            #save_dataset(self.save_arrays_raw, self.save_labels_raw, "/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/selfCoded/evaluationFramework/saveDataRaw")
 
         return results
 
@@ -197,7 +204,6 @@ class AdversarialAttacker(Attack):
 
         adv_numpy_img = self.backwards_transform_function(adv_images, numpy_original_shape_flag=True)
 
-
         if self.save_adversarial_images_flag or self.save_original_images_flag:
             self.save_labels.append(y)
             if self.save_adversarial_images_flag:
@@ -214,6 +220,17 @@ class AdversarialAttacker(Attack):
 
 
         return adv_numpy_img
+
+    def remove_adv_image_over_threshold(self):
+        if self.save_threshold_flag is True:
+            if self.save_adversarial_images_flag or self.save_original_images_flag:
+                self.save_labels.pop()
+                if self.save_adversarial_images_flag:
+                    self.save_adversarial_arrays.pop()
+                if self.save_original_images_flag:
+                    self.save_original_arrays.pop()
+        else:
+            pass
 
 
 def array_to_image(array, save_path):

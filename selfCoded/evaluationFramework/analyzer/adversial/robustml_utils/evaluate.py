@@ -32,6 +32,7 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
         if not threat_model.check(np.copy(x), np.copy(x_adv)):
             if debug:
                 print('check failed', file=sys.stderr)
+            attack.remove_adv_image_over_threshold()
             continue
         y_adv = model.classify(np.copy(x_adv))
         if debug:
@@ -42,6 +43,8 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
         else:
             if y_adv != y:
                 success += 1
+            # else:
+            #     attack.remove_adv_image_over_threshold()
 
     success_rate = success / total
 

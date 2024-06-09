@@ -1,0 +1,4 @@
+{
+  "admm_settings": "configs/preOptimizingTuning/ADMMConfig.json",
+  "admm_model_architecture": "configs/preOptimizingTuning/ADMMModelArchitecture.json"
+}

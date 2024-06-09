@@ -69,6 +69,14 @@ class Analyzer:
         self.analysis_methods = None
         self.copy_config = False
         self.config_path = None
+
+        self.adv_save_enabled = False
+        self.adv_original_save_enabled = False
+        self.adv_attack_selection = None
+        self.adv_sample_range_start = None
+        self.adv_sample_range_end = None
+
+        self.cuda_enabled = False
         try:
             device = next(self.model.parameters()).device
             if device.type == 'cuda':
@@ -1162,6 +1170,22 @@ class Analyzer:
                                                                         save_adversarial_images,
                                                                         **kwargs)
 
+    def set_adv_dataset_generation_settings(self):
+        '''
+        adv settings loading via AnalyzerConfig.json
+        '''
+        if self.adv_save_enabled is True:
+            adv_path = os.path.join(self.save_path, "adv_image_generation/adv_images")
+            create_directory(adv_path)
+            self.enable_adversarial_saving(adv_path)
+        if self.adv_original_save_enabled is True:
+            original_path = os.path.join(self.save_path, "adv_image_generation/original_images")
+            create_directory(original_path)
+            self.enable_original_saving(original_path)
+        if self.adv_attack_selection is not None:
+            if isinstance(self.adv_attack_selection, int):
+                self.select_attacks_from_config(self.adv_attack_selection, 1)
+
     def set_threat_model_config(self, threat_model_config):
         self.adversarial_module.setThreatModel(threat_model_config)
 
@@ -1176,6 +1200,18 @@ class Analyzer:
 
     def start_adversarial_evaluation(self, start, end):
         return self.adversarial_module.evaluate(start, end)
+
+    def start_adversarial_evaluation_preconfigured(self):
+        '''
+        start mechanism if adv_configs were set via AnalyzerConfig.json
+        :return: result of true positiv classification of adv samples in between Lp norm
+        '''
+        self.adversarial_module.enable_threshold_saving()
+        if self.adv_sample_range_start is not None or self.adv_sample_range_end is not None:
+            if (isinstance(self.adv_sample_range_start, int) and isinstance(self.adv_sample_range_end, int) and
+                    self.adv_sample_range_start < self.adv_sample_range_end):
+                return self.adversarial_module.evaluate(self.adv_sample_range_start, self.adv_sample_range_end)
+
 
     def enable_adversarial_saving(self, path):
         self.adversarial_module.enableAdversarialSaveMode(True)
