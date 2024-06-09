@@ -133,8 +133,8 @@ class Trainer(ABC):
 
 def collate_fn(batch):
     images, labels = zip(*batch)
-    images = torch.stack(images).to('cuda')
-    labels = torch.tensor(labels).to('cuda')
+    images = torch.stack(images).to('cuda', non_blocking=True)
+    labels = torch.tensor(labels).to('cuda', non_blocking=True)
     return images, labels
 
 
