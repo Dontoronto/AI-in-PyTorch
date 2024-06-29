@@ -22,6 +22,7 @@ class DataHandler:
         self.cuda_enabled = False
         self.dataset = None
         self.testset = None
+        self.adv_transform = None
 
         if self.Configurator:
             self.setTransformer(Configurator.loadTransformerNEW())
@@ -56,6 +57,12 @@ class DataHandler:
             self.mean = transformer.mean
         logger.info("Preprocessing Steps will be:")
         logger.info(self.transform)
+
+    def setAdversarialTransformer(self, transformer):
+        self.adv_transform = transformer
+
+    def getAdversarialTransformer(self):
+        return self.adv_transform
 
     def getTransformer(self):
         if self.transform is not None:
@@ -132,15 +139,17 @@ class DataHandler:
         else:
             logger.warning("Failed to set Testset, Testset is not of type torch.utils.data.Dataset")
 
-    def create_imageFolder_dataset(self, path):
+    def create_imageFolder_dataset(self, path, adversarialTransformer=False):
         '''
         Creates a Dataset Object of type Dataset from structured custom Data seperated in directorys
         named according to the label
         :param path: path to the root directory where subfolders are located
         :return: Dataset object from torchvision ImageFolder
         '''
-        return ImageFolder(path, loader=pil_loader, transform=self.getTransformer())
-
+        if adversarialTransformer is False:
+            return ImageFolder(path, loader=pil_loader, transform=self.getTransformer(), allow_empty=True)
+        else:
+            return ImageFolder(path, loader=pil_loader, transform=self.getAdversarialTransformer(), allow_empty=True)
 
     #TODO: missmatch in train and test dataset when calling configurator first testset then argument train
     def loadDataset(self, testset=False):

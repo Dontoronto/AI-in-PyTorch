@@ -1,23 +1,24 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment/LeNet/v8_post_cuda/newPatternAlgo",
-  "name": "LeNet",
+  "save_path": "experiment\\LeNet\\windows\\train_admm_retrain\\second",
+  "name": "ResNet",
   "copy_config": true,
   "config_path": "configs",
   "adv_settings": {
-    "adv_save_enabled": true,
-    "adv_original_save_enabled": true,
-    "adv_attack_selection": 0,
-    "adv_sample_range_start": 0,
-    "adv_sample_range_end": 10000
+    "adv_save_enabled": false,
+    "adv_original_save_enabled": false,
+    "adv_attack_selection": 1,
+    "adv_sample_range_start": 14004,
+    "adv_sample_range_end": 14005,
+    "adv_only_success_flag": false
   },
   "analysis_methods": {
     "epsilon_distance": {
-      "enabled": true
+      "enabled": false
     },
     "pruning": {
-      "enabled": true
+      "enabled": false
     },
     "accuracy_testset": {
       "enabled": true,
@@ -25,84 +26,69 @@
     },
     "accuracy_adversarial": {
       "enabled": false,
-      "adv_titel": "adv_JSMA",
-      "orig_titel": "orig_JSMA",
-      "adv_dataset_path": "experiment/JSMA/adversarial_images",
-      "orig_dataset_path": "experiment/JSMA/original_images",
+      "adv_titel": "adv_deep",
+      "orig_titel": "orig_deep",
+      "adv_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images",
+      "orig_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images",
       "batch_size": 32,
       "shuffle": false
     },
     "grad_and_original": {
-      "enabled": true,
-      "adv_dataset_path": null,
+      "enabled": false,
+      "adv_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images",
       "grad_start_index": 0,
-      "grad_range": 100
+      "grad_range": 10
     },
     "scoreCAM_and_original": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "score_start_index": 0,
-      "score_range": 100
+      "score_range": 10
     },
     "grad": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "grad_start_index": 0,
-<<<<<<< HEAD
-      "grad_range": 50,
+      "grad_range": 1,
       "target_layer": "model.layer4.1.conv2"
-=======
-      "grad_range": 10,
-      "target_layer": "model.conv2"
->>>>>>> macbook
     },
     "score_cam": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "score_start_index": 0,
-<<<<<<< HEAD
-      "score_range": 50,
+      "score_range": 1,
       "target_layer": "model.layer4.1.conv2"
-=======
-      "score_range": 10,
-      "target_layer": "model.conv2"
->>>>>>> macbook
     },
     "feature_map": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "feature_start_index": 0,
-<<<<<<< HEAD
-      "feature_range": 20,
+      "feature_range": 1,
       "target_layer": "model.layer4.1.conv2"
-=======
-      "feature_range": 10,
-      "target_layer": "model.conv2"
->>>>>>> macbook
     },
     "feature_maps_all_layer": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "feature_start_index": 0,
-      "feature_range": 20
+      "feature_range": 1
     },
     "saliency_and_original": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "saliency_start_index": 0,
-      "saliency_range": 100
+      "saliency_range": 1
     },
     "saliency": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "saliency_start_index": 0,
-      "saliency_range": 10
+      "saliency_range": 1
     },
     "topk_accuracy": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "topk_start_index": 0,
-      "topk_range": 50
+      "topk_range": 5
     }
   },
   "changing_parameters": {

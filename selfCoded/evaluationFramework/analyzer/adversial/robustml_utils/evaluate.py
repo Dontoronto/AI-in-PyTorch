@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 
-def evaluate(model, attack, provider, start=None, end=None, deterministic=False, debug=False):
+def evaluate(model, attack, provider, start=None, end=None, deterministic=False, debug=False, only_success=False):
     '''
     Evaluate an attack on a particular model and return attack success rate.
 
@@ -41,10 +41,14 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
             if y_adv == target:
                 success += 1
         else:
+            if only_success is True:
+                if threat_model.adv_success(x, x_adv) is False:
+                    continue
             if y_adv != y:
                 success += 1
-            # else:
-            #     attack.remove_adv_image_over_threshold()
+            else:
+                if only_success is True:
+                    attack.remove_adv_image_over_threshold()
 
     success_rate = success / total
 

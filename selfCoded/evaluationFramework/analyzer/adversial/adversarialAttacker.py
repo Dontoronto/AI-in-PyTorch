@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import torch
 from PIL import Image
@@ -42,13 +44,14 @@ class AdversarialAttacker(Attack):
         self._model = model
 
         try:
-            device = next(self._model.parameters()).device
-            if device.type == 'cuda':
+            self.device = next(self._model.parameters()).device
+            if self.device.type == 'cuda':
                 torch.set_default_device('cuda')
                 self._model.to('cuda')
-                print(f"Device= {device}")
+                print(f"Device= {self.device}")
         except Exception:
             print("Failed to set device automatically, please try set_device() manually.")
+
 
         self.transform = transform_batched_function
 
@@ -74,6 +77,7 @@ class AdversarialAttacker(Attack):
         self.attack_instance = None
         self.attack_instances_list = list()
         self.attack_instance_list_names = list()
+        self.adv_only_success_flag = False
 
     def createAdversarialEvaluationModel(self):
         self.adversarialModel = AdversarialModelWrapper(self._model, self.transform)
@@ -119,6 +123,8 @@ class AdversarialAttacker(Attack):
     def disable_threshold_saving(self):
         self.save_threshold_flag = False
 
+    def set_adv_only_success_flag(self, success_falg = False):
+        self.adv_only_success_flag = success_falg
 
     def selectAttacks(self, start_index: int = None, amount_of_attacks: int = None):
 
@@ -157,26 +163,47 @@ class AdversarialAttacker(Attack):
                 print(f"Image saving Mode is not possible while using multiple attacks.")
                 print(f"Please configure AttacksConfig.json or Arguments of selectAttacks-method")
                 return
+            if self.save_original_images_flag is True:
+                delete_folders_with_only_png(self.save_original_path)
+            if self.save_adversarial_images_flag is True:
+                delete_folders_with_only_png(self.save_adversarial_path)
+
+
 
         for i in range(len(self.attack_instances_list)):
             self.attack_instance = self.attack_instances_list[i]
+            chunk_size = 100
+            chunk_start = start
+            rate = 0
+            chunks = math.ceil((end - start)/chunk_size)
 
-            rate = evaluate(
-                self.adversarialModel,
-                self,
-                self.getDatasetProvider(),
-                start,
-                end,
-                deterministic=False,
-                debug=True
-            )
-            print(f"Adversarial succeeded in l-norm with rate: {rate}")
-            results[self.attack_instance_list_names[i]] = rate
+            while chunk_start < end:
+                chunk_end = min(chunk_start + chunk_size, end)
+                rate += evaluate(
+                    self.adversarialModel,
+                    self,
+                    self.getDatasetProvider(),
+                    chunk_start,
+                    chunk_end,
+                    deterministic=False,
+                    debug=True,
+                    only_success=self.adv_only_success_flag
+                )
+                chunk_start = chunk_end
 
-        if self.save_adversarial_images_flag is True:
-            save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
-        if self.save_original_images_flag is True:
-            save_dataset(self.save_original_arrays, self.save_labels, self.save_original_path)
+                if self.save_adversarial_images_flag is True:
+                    save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
+                if self.save_original_images_flag is True:
+                    save_dataset(self.save_original_arrays, self.save_labels, self.save_original_path)
+                self.clear_image_buffers()
+
+            print(f"Adversarial succeeded in l-norm with rate: {rate/chunks}")
+            results[self.attack_instance_list_names[i]] = rate/chunks
+
+        # if self.save_adversarial_images_flag is True:
+        #     save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
+        # if self.save_original_images_flag is True:
+        #     save_dataset(self.save_original_arrays, self.save_labels, self.save_original_path)
 
         return results
 
@@ -186,7 +213,13 @@ class AdversarialAttacker(Attack):
 
 
         # #x with shape (32, 32, 3) to tensor with shape (1,3,32,32)
-        x_in = self.transform(x)
+        # x_in = self.transform(x)
+        transformator = T.Compose([
+            T.ToTensor(),
+            T.ConvertImageDtype(torch.float)
+        ])
+
+        x_in = transformator(x).unsqueeze(0)
 
 
         #y as int to tensor with shape (1),  1 -> tensor([1])
@@ -198,11 +231,21 @@ class AdversarialAttacker(Attack):
         #attack = torchattacks.PGD(self._model, eps=self._epsilon, alpha=self._alpha, steps=self._max_steps, random_start=True)
         #attack = torchattacks.DeepFool(self._model, steps=60, overshoot=1)
         attack = self.attack_instance
+        if self.adv_only_success_flag is True:
+            valid_adv_input = self._model(x_in.to(self.device)).squeeze(0).argmax().item()
+            if valid_adv_input != y:
+                return x
 
         adv_images = attack(x_in, y_label)
 
+        # if self.adv_only_success_flag is True:
+        #     valid_adv_input = self._model(adv_images).squeeze(0).argmax().item()
+        #     if valid_adv_input == y:
+        #         return x
 
-        adv_numpy_img = self.backwards_transform_function(adv_images, numpy_original_shape_flag=True)
+
+        #adv_numpy_img = self.backwards_transform_function(adv_images, numpy_original_shape_flag=True)
+        adv_numpy_img = np.transpose(adv_images.squeeze(0).cpu().numpy(),(1,2,0))
 
         if self.save_adversarial_images_flag or self.save_original_images_flag:
             self.save_labels.append(y)
@@ -231,6 +274,11 @@ class AdversarialAttacker(Attack):
                     self.save_original_arrays.pop()
         else:
             pass
+
+    def clear_image_buffers(self):
+        self.save_adversarial_arrays.clear()
+        self.save_original_arrays.clear()
+        self.save_labels.clear()
 
 
 def array_to_image(array, save_path):
@@ -267,14 +315,17 @@ def save_dataset(arrays, labels, root_dir):
     :param labels: Liste von Labels, die den Arrays entsprechen.
     :param root_dir: Wurzelverzeichnis, unter dem die Bilder gespeichert werden sollen.
     """
-    delete_folders_with_only_png(root_dir)
+    # delete_folders_with_only_png(root_dir)
     for i, (array, label) in enumerate(zip(arrays, labels)):
         # Erstellen des Ordners für das Label, wenn er nicht existiert
         label_dir = os.path.join(root_dir, str(label))
         os.makedirs(label_dir, exist_ok=True)
 
+        existing_files = os.listdir(label_dir)
+        file_count = len(existing_files)
+
         # Pfad für das Bild
-        save_path = os.path.join(label_dir, f"image_{i}.png")
+        save_path = os.path.join(label_dir, f"image_{file_count}.png")
 
         # Konvertieren und Speichern
         array_to_image(array, save_path)

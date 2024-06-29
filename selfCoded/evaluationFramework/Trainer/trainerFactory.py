@@ -67,9 +67,22 @@ class TrainerFactory:
             logger.info("Filtered OptimizerConfig: " + str(tempConfig))
             optimizer = torch.optim.SGD(model.parameters(), **tempConfig)
 
+
         if kwargs.get('pre_optimization_tuning_path') == True:
             logger.info("Creating ADMMTrainer.")
-            return ADMMTrainer(model, dataHandler, loss=loss, optimizer=optimizer, epoch=epoch)
+            trainer = ADMMTrainer(model, dataHandler, loss=loss, optimizer=optimizer, epoch=epoch)
         elif kwargs.get('pre_optimization_tuning_path') == False:
             logger.info("Creating DefaultTrainer.")
-            return DefaultTrainer(model, dataHandler, loss=loss, optimizer=optimizer, epoch=epoch)
+            trainer = DefaultTrainer(model, dataHandler, loss=loss, optimizer=optimizer, epoch=epoch)
+
+        if kwargs.get('lr_scheduler') is True:
+            params = {}
+            if isinstance(kwargs.get('lr_step_size'), int):
+                params['step_size'] = kwargs.get('lr_step_size')
+                if isinstance(kwargs.get('lr_gamma'), float):
+                    params['gamma'] = kwargs.get('lr_gamma')
+            logger.info(f"lr_scheduler was set with params {params}")
+            trainer.setLrScheduler(params)
+
+
+        return trainer

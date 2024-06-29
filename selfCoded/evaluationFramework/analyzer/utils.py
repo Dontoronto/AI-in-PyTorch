@@ -3,6 +3,7 @@ import shutil
 
 import torch
 import logging
+import torchvision.transforms as T
 
 
 logger = logging.getLogger(__name__)
@@ -48,5 +49,25 @@ def copy_directory(source_dir, destination_dir):
         logger.warning(f"Directory '{source_dir}' has been copied to '{destination_dir}'.")
     except Exception as e:
         logger.critical(f"An error occurred while copying the directory: {e}")
+
+def adjust_transformer(transformer):
+    transform_steps = []
+    crop_size = None
+
+    # Überprüfen, ob CenterCrop im Transformer enthalten ist und entferne es
+    for t in transformer.transforms:
+        if isinstance(t, T.CenterCrop):
+            crop_size = t.size
+        else:
+            transform_steps.append(t)
+
+    # Füge einen angepassten Resize hinzu, wenn CenterCrop gefunden wurde
+    if crop_size is not None:
+        transform_steps.insert(0, T.Resize(crop_size, interpolation=T.InterpolationMode("bilinear"), antialias=True))
+
+    new_transformer = T.Compose(transform_steps)
+    return new_transformer
+
+
 
 

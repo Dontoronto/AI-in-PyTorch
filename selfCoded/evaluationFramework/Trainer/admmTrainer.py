@@ -525,6 +525,7 @@ class ADMMTrainer(DefaultTrainer):
 
                     if test is True:
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
+                    self.scheduler_step()
 
                 #self.export_model(model_path=save_path)
                 if self.save is True:

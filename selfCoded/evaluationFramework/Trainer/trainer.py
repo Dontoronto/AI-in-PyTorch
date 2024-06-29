@@ -7,6 +7,7 @@ from torch import save
 import logging
 
 from torch.utils.data import DataLoader
+from torchvision.datasets import ImageFolder
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class Trainer(ABC):
         self.dataloaderConfig = None
         self.snapshotConfig = None
         self.cuda_enabled = False
+        self.lr_scheduler = None
         try:
             device = next(self.model.parameters()).device
             if device.type == 'cuda':
@@ -46,6 +48,14 @@ class Trainer(ABC):
                 torch.set_default_device('cpu')
         else:
             logger.critical("Cuda flag is not a bool value")
+
+    def setLrScheduler(self, lr_scheduler_params):
+        self.lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, **lr_scheduler_params)
+
+    def scheduler_step(self):
+        if self.lr_scheduler is not None:
+            logger.debug(f"lr_scheduler step is called")
+            self.lr_scheduler.step()
 
     @abstractmethod
     def train(self):
@@ -119,6 +129,23 @@ class Trainer(ABC):
                                   persistent_workers=True, num_workers=4, generator=generator, collate_fn=collate_fn)
             else:
                 return DataLoader(sampleDataset)
+
+    def createCustomDataloader(self, sampleDataset, **kwargs):
+        if self.getCudaState():
+            generator = torch.Generator(device='cuda')
+            logger.info(f"Creating Custom DataLoader with arguments: {kwargs}")
+            return DataLoader(sampleDataset, **kwargs,
+                               generator=generator, collate_fn=collate_fn)
+        else:
+            logger.info(f"Creating Custom DataLoader with arguments: {kwargs}")
+            return DataLoader(sampleDataset, **kwargs)
+
+    # def createImageFolderDataloader(self, path, transformer):
+    #     if self.getCudaState():
+    #         return ImageFolder(path, persistent_workers=True, prefetch_factor=2, collate_fn=collate_fn,
+    #                            loader=pil_loader, transform=transformer, allow_empty=True)
+    #     else:
+    #         return ImageFolder(path, loader=pil_loader, transform=transformer, allow_empty=True)
 
     def setDataLoaderSettings(self, kwargs: dict):
         '''

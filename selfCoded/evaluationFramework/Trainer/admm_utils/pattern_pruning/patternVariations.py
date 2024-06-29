@@ -20,18 +20,18 @@ def initialize_pattern_library(n, k):
     for comb in combinations_of_indices:
 
         # create matrix with zeros
-        matrix = torch.zeros((3, 3))
+        matrix = torch.zeros((3, 3), dtype=torch.int64)
 
         # set amount of k ones
         for idx in comb:
             # flat indices to 2d indices
             row, col = divmod(idx, 3)
-            matrix[row, col] = 1.0
+            matrix[row, col] = 1
 
         _patterns.append(matrix)
 
     # convert list to tensor of multiple tensors
-    patterns = torch.stack(_patterns)
+    patterns = torch.stack(_patterns, dim=0)
 
     return patterns
 
@@ -66,10 +66,10 @@ def initialize_elog_based_patterns():
     ]
 
     # Konvertiere die Muster in Torch-Tensoren
-    scp1_tensor = torch.tensor(scp1, dtype=torch.float32)
-    scp2_tensor = torch.tensor(scp2, dtype=torch.float32)
-    scp3_tensor = torch.tensor(scp3, dtype=torch.float32)
-    scp4_tensor = torch.tensor(scp4, dtype=torch.float32)
+    scp1_tensor = torch.tensor(scp1, dtype=torch.int64)
+    scp2_tensor = torch.tensor(scp2, dtype=torch.int64)
+    scp3_tensor = torch.tensor(scp3, dtype=torch.int64)
+    scp4_tensor = torch.tensor(scp4, dtype=torch.int64)
 
     # Erstellen einer Liste der Tensoren
     # _patterns = [scp1_tensor, scp2_tensor, scp3_tensor, scp4_tensor]

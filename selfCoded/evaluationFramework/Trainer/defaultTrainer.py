@@ -141,8 +141,9 @@ class DefaultTrainer(Trainer):
 
     def createCustomDataloader(self, sampleDataset, **kwargs):
         self.checkLabelEncoding(sampleDataset)
-        logger.info(f"Creating Custom DataLoader with arguments: {kwargs}")
-        return DataLoader(sampleDataset, **kwargs)
+        #logger.info(f"Creating Custom DataLoader with arguments: {kwargs}")
+        return super().createCustomDataloader(sampleDataset, **kwargs)
+        #return DataLoader(sampleDataset, **kwargs)
 
     def setSnapshotSettings(self, kwargs: dict):
         super().setSnapshotSettings(kwargs)
@@ -216,6 +217,7 @@ class DefaultTrainer(Trainer):
 
             if test is True:
                 self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
+            self.scheduler_step()
 
 
     def test(self, test_loader, snapshot_enabled=False,current_epoch=None):
