@@ -37,7 +37,6 @@ from torchvision.models import resnet18, ResNet18_Weights
 # NOTE: currently we are testing with LeNet-model
 from models.lenet import LeNet
 
-
 def check_filepath(path):
     """
     Überprüft, ob eine Datei mit "._" im Dateinamen beginnt.
