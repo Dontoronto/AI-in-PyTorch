@@ -1,0 +1,42 @@
+[
+    {
+        "class": "DeepFool",
+        "init_params": {
+            "steps": 1,
+            "overshoot": 14.0
+        }
+    },
+    {
+        "class": "PGD",
+        "init_params": {
+            "eps": 5.0,
+            "alpha": 0.00205,
+            "steps": 10,
+            "random_start": false
+        }
+    },
+    {
+        "class": "JSMA",
+        "init_params": {
+            "theta": 0.5,
+            "gamma": 0.0001
+        }
+    },
+    {
+        "class": "OnePixel",
+        "init_params": {
+            "pixels": 1,
+            "steps": 10,
+            "popsize": 10,
+            "inf_batch": 128
+        }
+    },
+    {
+        "class": "SparseFool",
+        "init_params": {
+            "steps": 1,
+            "lam": 3,
+            "overshoot": 0.02
+        }
+    }
+]

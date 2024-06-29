@@ -1,0 +1,132 @@
+{
+  "testrun": "clip_grad_1",
+  "save": true,
+  "save_path": "experiment\\LeNet\\windows\\train_admm_retrain\\second",
+  "name": "ResNet",
+  "copy_config": true,
+  "config_path": "configs",
+  "adv_settings": {
+    "adv_save_enabled": false,
+    "adv_original_save_enabled": false,
+    "adv_attack_selection": 1,
+    "adv_sample_range_start": 14004,
+    "adv_sample_range_end": 14005,
+    "adv_only_success_flag": false
+  },
+  "analysis_methods": {
+    "epsilon_distance": {
+      "enabled": false
+    },
+    "pruning": {
+      "enabled": false
+    },
+    "accuracy_testset": {
+      "enabled": true,
+      "titel": "testset"
+    },
+    "accuracy_adversarial": {
+      "enabled": false,
+      "adv_titel": "adv_deep",
+      "orig_titel": "orig_deep",
+      "adv_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images",
+      "orig_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images",
+      "batch_size": 32,
+      "shuffle": false
+    },
+    "grad_and_original": {
+      "enabled": false,
+      "adv_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images",
+      "grad_start_index": 0,
+      "grad_range": 10
+    },
+    "scoreCAM_and_original": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "score_start_index": 0,
+      "score_range": 10
+    },
+    "grad": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "grad_start_index": 0,
+      "grad_range": 1,
+      "target_layer": "model.layer4.1.conv2"
+    },
+    "score_cam": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "score_start_index": 0,
+      "score_range": 1,
+      "target_layer": "model.layer4.1.conv2"
+    },
+    "feature_map": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "feature_start_index": 0,
+      "feature_range": 1,
+      "target_layer": "model.layer4.1.conv2"
+    },
+    "feature_maps_all_layer": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "feature_start_index": 0,
+      "feature_range": 1
+    },
+    "saliency_and_original": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 1
+    },
+    "saliency": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 1
+    },
+    "topk_accuracy": {
+      "enabled": false,
+      "adv_dataset_path": null,
+      "topk_start_index": 0,
+      "topk_range": 5
+    }
+  },
+  "changing_parameters": {
+    "main_iterations": [
+      40000,
+      80000,
+      120000,
+      160000,
+      200000,
+      240000
+    ],
+    "admm_iterations": [
+      200,
+      400,
+      500,
+      800,
+      1000,
+      2000
+    ],
+    "epoch": [
+      5,
+      10,
+      15,
+      20,
+      25
+    ],
+    "rho": [
+      0.00025,
+      0.0005,
+      0.0025,
+      0.005
+    ],
+    "momentum": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      0.9
+    ]
+  }
+}

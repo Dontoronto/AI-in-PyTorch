@@ -1,8 +1,8 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment\\LeNet\\windows\\train_admm_retrain\\second",
-  "name": "ResNet",
+  "save_path": "experiment/LeNet/cic/second",
+  "name": "LeNet",
   "copy_config": true,
   "config_path": "configs",
   "adv_settings": {
