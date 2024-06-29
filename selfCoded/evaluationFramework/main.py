@@ -97,28 +97,28 @@ def main():
     # Model.eval()
 
     # ResNet18 settings
-    _weights = ResNet18_Weights.IMAGENET1K_V1
-    _model = resnet18()
-    #_model = resnet18(_weights)
-    _model.to('cuda')
-    Model = modelWrapper.ModelWrapper(_model)
-    Model.to('cuda')
-    Model.eval()
-
-
-    Configurator = configurator.Configurator()
-    DataHandler = dataHandler.DataHandler(Configurator)
-    DataHandler.setAdversarialTransformer(transformators.adv_imagenet_transformer())
-
-
-    try:
-        device = next(Model.parameters()).device
-        if device.type == 'cuda':
-            torch.set_default_device('cuda')
-        print(f"Device= {device}")
-    except Exception:
-        device = None
-        print("Failed to set device automatically, please try set_device() manually.")
+    # _weights = ResNet18_Weights.IMAGENET1K_V1
+    # _model = resnet18()
+    # #_model = resnet18(_weights)
+    # _model.to('cuda')
+    # Model = modelWrapper.ModelWrapper(_model)
+    # Model.to('cuda')
+    # Model.eval()
+    #
+    #
+    # Configurator = configurator.Configurator()
+    # DataHandler = dataHandler.DataHandler(Configurator)
+    # DataHandler.setAdversarialTransformer(transformators.adv_imagenet_transformer())
+    #
+    #
+    # try:
+    #     device = next(Model.parameters()).device
+    #     if device.type == 'cuda':
+    #         torch.set_default_device('cuda')
+    #     print(f"Device= {device}")
+    # except Exception:
+    #     device = None
+    #     print("Failed to set device automatically, please try set_device() manually.")
 
 
     # Note: delete
@@ -189,15 +189,15 @@ def main():
 
     # ================= Note: this is the standard model for this thesis
     # LeNet Test
-    # _model = LeNet()
-    # Model = modelWrapper.ModelWrapper(_model)
-    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
-    # Model.eval()
-    #
-    # Configurator = configurator.Configurator()
-    # DataHandler = dataHandler.DataHandler(Configurator)
-    #
-    # DataHandler.setTransformer(Configurator.loadTransformerNEW())
+    _model = LeNet()
+    Model = modelWrapper.ModelWrapper(_model)
+    #Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    Model.eval()
+
+    Configurator = configurator.Configurator()
+    DataHandler = dataHandler.DataHandler(Configurator)
+
+    DataHandler.setTransformer(Configurator.loadTransformerNEW())
 
     # ==========================================
 

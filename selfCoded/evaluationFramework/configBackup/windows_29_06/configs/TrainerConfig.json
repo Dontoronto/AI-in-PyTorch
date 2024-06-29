@@ -1,0 +1,25 @@
+{
+  "trainer": {
+    "optimizer": "Adam",
+    "loss": "CrossEntropyLoss",
+    "epoch":  10,
+    "lr": 0.1,
+    "momentum": 0.9,
+    "pre_optimization_tuning_path": true,
+    "lr_scheduler": true,
+    "lr_step_size": 1,
+    "lr_gamma": 0.1
+  },
+  "dataloader": {
+    "batch_size": 64,
+    "shuffle": true,
+    "num_workers": 6
+  },
+  "snapshot": {
+    "name": "ResNet18_train_admm_retrain",
+    "snapshot_enabled": false,
+    "snapshot_model_path": "experiment\\LeNet\\windows\\train_admm_retrain\\second",
+    "snapshot_model_path_raw": "experiment\\LeNet\\windows\\train_admm_retrain\\second",
+    "recovery_epoch": 3
+  }
+}
