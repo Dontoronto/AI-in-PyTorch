@@ -1,7 +1,7 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment/LeNet/cic/first",
+  "save_path": "experiment/LeNet/cic/second",
   "name": "LeNet",
   "copy_config": true,
   "config_path": "configs",
