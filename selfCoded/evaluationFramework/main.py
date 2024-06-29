@@ -24,6 +24,7 @@ import IOComponent.transformators.transformators as transformators
 from Trainer.trainerFactory import TrainerFactory
 from SharedServices.logging_config import setup_logging
 from SharedServices.modelArchitectureExtractor import ModelArchitectureExtractor
+from SharedServices.utils import create_missing_folders
 # from torchvision.datasets import ImageNet
 from torchvision.datasets import ImageFolder
 
@@ -97,26 +98,28 @@ def main():
     # Model.eval()
 
     # ResNet18 settings
-    # _weights = models.ResNet18_Weights.IMAGENET1K_V1
-    # _model = models.resnet18(_weights)
-    # _model.to('cuda')
-    # Model = modelWrapper.ModelWrapper(_model)
-    # Model.to('cuda')
-    # Model.eval()
-    #
-    #
-    # Configurator = configurator.Configurator()
-    # DataHandler = dataHandler.DataHandler(Configurator)
-    #
-    #
-    # try:
-    #     device = next(Model.parameters()).device
-    #     if device.type == 'cuda':
-    #         torch.set_default_device('cuda')
-    #     print(f"Device= {device}")
-    # except Exception:
-    #     device = None
-    #     print("Failed to set device automatically, please try set_device() manually.")
+    _weights = ResNet18_Weights.IMAGENET1K_V1
+    _model = resnet18()
+    #_model = resnet18(_weights)
+    _model.to('cuda')
+    Model = modelWrapper.ModelWrapper(_model)
+    Model.to('cuda')
+    Model.eval()
+
+
+    Configurator = configurator.Configurator()
+    DataHandler = dataHandler.DataHandler(Configurator)
+    DataHandler.setAdversarialTransformer(transformators.adv_imagenet_transformer())
+
+
+    try:
+        device = next(Model.parameters()).device
+        if device.type == 'cuda':
+            torch.set_default_device('cuda')
+        print(f"Device= {device}")
+    except Exception:
+        device = None
+        print("Failed to set device automatically, please try set_device() manually.")
 
 
     # Note: delete
@@ -187,15 +190,15 @@ def main():
 
     # ================= Note: this is the standard model for this thesis
     # LeNet Test
-    _model = LeNet()
-    Model = modelWrapper.ModelWrapper(_model)
-    Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
-    Model.eval()
-
-    Configurator = configurator.Configurator()
-    DataHandler = dataHandler.DataHandler(Configurator)
-
-    DataHandler.setTransformer(Configurator.loadTransformerNEW())
+    # _model = LeNet()
+    # Model = modelWrapper.ModelWrapper(_model)
+    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+    # Model.eval()
+    #
+    # Configurator = configurator.Configurator()
+    # DataHandler = dataHandler.DataHandler(Configurator)
+    #
+    # DataHandler.setTransformer(Configurator.loadTransformerNEW())
 
     # ==========================================
 
@@ -220,6 +223,7 @@ def main():
 
 
     # ================== Note: this part is for generating adversarial examples
+    # ========== Note: MNIST Adv. Generation
     # Analyzer.setAnalyzerConfig(Configurator.loadConfigFromRegistry("analyzer"))
     # DataHandler.setTransformer(transformators.mnist_transformer())
     # Analyzer.init_adversarial_environment(False)
@@ -240,7 +244,29 @@ def main():
     #
     # return
 
-    # -----
+    # ========== Note: Imagenet Adv. Generation
+    # Analyzer.setAnalyzerConfig(Configurator.loadConfigFromRegistry("analyzer"))
+    # DataHandler.setTransformer(transformators.adv_imagenet_transformer())
+    # Analyzer.init_adversarial_environment(False)
+    # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
+    # Analyzer.set_provider_config(Configurator.loadConfigFromRegistry("adversarial_provider"))
+    # Analyzer.set_attack_type_config(Configurator.loadConfigFromRegistry("adversarial_attacks"))
+    # Analyzer.set_adv_dataset_generation_settings()
+    #
+    # #Analyzer.select_attacks_from_config(0, 1)
+    # #Analyzer.enable_adversarial_saving("experiment/adv_data/windows/ResNet18/adv_samples")
+    # #Analyzer.enable_original_saving("experiment/adv_data/windows/ResNet18//orig_samples")
+    #
+    # # test1 = Analyzer.start_adversarial_evaluation(0, 10)
+    # test1 = Analyzer.start_adversarial_evaluation_preconfigured()
+    #
+    # print(f"First evaluation:")
+    # print(test1)
+    #
+    # return
+
+
+    # ========================
 
     # Analyzer.init_adversarial_environment()
     # Analyzer.set_threat_model_config(Configurator.loadConfigFromRegistry("adversarial_threat_model"))
@@ -324,7 +350,7 @@ def main():
 
     logger.critical(f"Time for algo is: {time.time()-start_time}")
 
-    # =============== Note: test AlexNet
+    # =============== Note: Run ResNet18 Tuning
 
     Trainer = TrainerFactory.createTrainer(Model, DataHandler, Configurator.loadTrainingConfig())
     Trainer.setDataLoaderSettings(Configurator.loadDataloaderConfig())
@@ -337,9 +363,12 @@ def main():
     Analyzer.setAnalyzerConfig(Configurator.loadConfigFromRegistry("analyzer"))
     Analyzer.setTrainer(Trainer)
     train_kwargs = {
-        'test': False
+        'test': True
     }
-
+    # create_missing_folders("experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images",
+    #                        1000)
+    # create_missing_folders("experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images",
+    #                        1000)
     Analyzer.startTestrun(train_kwargs)
 
 

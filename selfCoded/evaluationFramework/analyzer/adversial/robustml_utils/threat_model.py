@@ -83,6 +83,15 @@ class Lp(ThreatModel):
         print(f'{self._p}-Epsilon is: {self._epsilon + self._SLOP}', file=sys.stderr)
         return norm <= self._epsilon + self._SLOP
 
+    def adv_success(self, original, perturbed):
+        original = np.ndarray.flatten(original)
+        perturbed = np.ndarray.flatten(perturbed)
+        norm = np.linalg.norm(original - perturbed, ord=self._p)
+        if norm !=0:
+            return True
+        else:
+            return False
+
     @property
     def targeted(self):
         return self._targeted

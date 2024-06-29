@@ -82,6 +82,12 @@ class AnalyzerConfigMapper:
         else:
             logger.error(f"adv_sample_range_end was not able to map config: {adv_config}")
 
+        if 'adv_only_success_flag' in adv_config:
+            self.analyzer.adv_only_success_flag = adv_config.get('adv_only_success_flag')
+            logger.debug(f"adv_only_success_flag set to {self.analyzer.adv_only_success_flag}")
+        else:
+            logger.error(f"adv_only_success_flag was not able to map config: {adv_config}")
+
         #if 'cuda_enabled' in self.config:
         #    self.analyzer.cuda_enabled = self.config.get('cuda_enabled')
         #    logger.debug(f"cuda_enabled set to {self.analyzer.cuda_enabled}")

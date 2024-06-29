@@ -5,32 +5,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90dc711a-a117-4371-bc8d-d9f91274e417" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/ConfigRegistry.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/DataHandlerConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/TrainerConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/adversarial_configs/AttacksConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/adversarial_configs/ProviderConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/adversarial_configs/ThreatModelConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/analyzer/AnalyzerConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/ConfigRegistry.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/DataHandlerConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/TrainerConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/preOptimizingTuning/ADMMModelArchitecture.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/base_resnet/preOptimizingTuning/model_architecture/ADMMModelArchitecture.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/lenet/DataHandlerConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/examples/lenet/TrainerConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/logging.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/preOptimizingTuning/LeNet/ADMMModelArchitecture.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/preOptimizingTuning/ResNet18/ADMModelArchitectureTest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configBackup/config_windows_9_07/configs/tensorBuffer_configs/TensorBufferConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager_old.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/lenet_ADMModelArchitecture.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/testrunner_python_windows.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/tests/iterationTests/splittedStartEndRangeTest.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/SharedServices/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/SharedServices/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/libraryReduction_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/libraryReduction_old.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager_new.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations_old.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/defaultTrainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/defaultTrainer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainerFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainerFactory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialAttackFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialAttackFactory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/mapper/analyzerMapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/mapper/analyzerMapper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/resnet18_ADMModelArchitecture.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" afterDir="false" />
     </list>
@@ -73,9 +78,9 @@
     "Python.unbindCudaCheckTest.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "windows",
-    "last_opened_file_path": "C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/evaluationFramework/configBackup/config_windows_9_07",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+    "git-widget-placeholder": "windows__v2",
+    "last_opened_file_path": "C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/evaluationFramework",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
 }]]></component>
   <component name="PyConsoleOptionsProvider">
@@ -87,6 +92,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework" />
       <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configBackup" />
       <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configBackup\configs_before_windows" />
     </key>
@@ -220,22 +226,33 @@
     </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>338</line>
+          <line>347</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>433</line>
+          <line>442</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>494</line>
+          <line>503</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -245,7 +262,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>1102</line>
+          <line>1112</line>
           <option name="timeStamp" value="38" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -265,19 +282,75 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
-          <line>230</line>
+          <line>295</line>
           <option name="timeStamp" value="54" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
-          <line>237</line>
+          <line>302</line>
           <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py</url>
+          <line>101</line>
+          <option name="timeStamp" value="57" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py</url>
+          <line>239</line>
+          <option name="timeStamp" value="58" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py</url>
+          <line>30</line>
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/anaconda3/envs/NeuronalNetwork/Lib/site-packages/torchattacks/attack.py</url>
+          <line>497</line>
+          <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/anaconda3/envs/NeuronalNetwork/Lib/site-packages/torchattacks/attacks/jsma.py</url>
+          <line>189</line>
+          <option name="timeStamp" value="62" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/anaconda3/envs/NeuronalNetwork/Lib/site-packages/torchattacks/attacks/jsma.py</url>
+          <line>115</line>
+          <option name="timeStamp" value="63" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/anaconda3/envs/NeuronalNetwork/Lib/site-packages/torchattacks/attacks/jsma.py</url>
+          <line>96</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
+          <line>234</line>
+          <option name="timeStamp" value="65" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py</url>
+          <line>89</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py</url>
+          <line>88</line>
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainerFactory.py</url>
+          <line>77</line>
+          <option name="timeStamp" value="69" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="self.testset" />
+        <watch expression="target_tmp" />
       </configuration>
     </watches-manager>
   </component>

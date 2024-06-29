@@ -75,6 +75,7 @@ class Analyzer:
         self.adv_attack_selection = None
         self.adv_sample_range_start = None
         self.adv_sample_range_end = None
+        self.adv_only_success_flag = False
 
         self.cuda_enabled = False
         try:
@@ -662,8 +663,9 @@ class Analyzer:
                 logger.critical(f"Params for adversarial tests are not properly injected")
                 return
             else:
-                adv_dataset = self.datahandler.create_imageFolder_dataset(adv_path)
-                orig_dataset = self.datahandler.create_imageFolder_dataset(orig_path)
+                adv_dataset = self.datahandler.create_imageFolder_dataset(adv_path, adversarialTransformer=True)
+                #adv_dataset = self.trainer.create_imageFolder_dataset(adv_path)
+                orig_dataset = self.datahandler.create_imageFolder_dataset(orig_path, adversarialTransformer=True)
                 adv_dataloader = self.trainer.createCustomDataloader(adv_dataset,
                                                                      batch_size=batch_size, shuffle=shuffle)
                 orig_dataloader = self.trainer.createCustomDataloader(orig_dataset,
@@ -676,7 +678,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             grad_start_index = params.get("grad_start_index", None)
@@ -696,7 +698,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             feature_start_index = params.get("feature_start_index", None)
@@ -717,7 +719,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             score_start_index = params.get("score_start_index", None)
@@ -737,7 +739,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             grad_start_index = params.get("grad_start_index", None)
@@ -758,7 +760,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             feature_start_index = params.get("feature_start_index", None)
@@ -779,7 +781,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             score_start_index = params.get("score_start_index", None)
@@ -800,7 +802,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             saliency_start_index = params.get("saliency_start_index", None)
@@ -820,7 +822,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             saliency_start_index = params.get("saliency_start_index", None)
@@ -840,7 +842,7 @@ class Analyzer:
             # check if adversarial attack is specified
             adv_dataset_path = params.get("adv_dataset_path", None)
             if adv_dataset_path is not None:
-                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path)
+                self.dataset = self.datahandler.create_imageFolder_dataset(adv_dataset_path, adversarialTransformer=True)
 
             # init core params and check their status
             topk_start_index = params.get("topk_start_index", None)
@@ -1184,6 +1186,7 @@ class Analyzer:
             self.enable_original_saving(original_path)
         if self.adv_attack_selection is not None:
             if isinstance(self.adv_attack_selection, int):
+                self.adversarial_module.set_adv_only_success_flag(self.adv_only_success_flag)
                 self.select_attacks_from_config(self.adv_attack_selection, 1)
 
     def set_threat_model_config(self, threat_model_config):
