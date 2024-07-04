@@ -73,9 +73,11 @@ class Analyzer:
         self.adv_save_enabled = False
         self.adv_original_save_enabled = False
         self.adv_attack_selection = None
+        self.adv_attack_selection_range = None
         self.adv_sample_range_start = None
         self.adv_sample_range_end = None
         self.adv_only_success_flag = False
+        self.adv_shuffle = False
 
         self.cuda_enabled = False
         try:
@@ -157,6 +159,41 @@ class Analyzer:
 
         plt.close("all")
 
+    def report_adv_attack(self, model_filenames, titel='adversarial dynamic'):
+        accuracy_path = os.path.join(self.save_path, 'Adversarial_Dynamic')
+        create_directory(accuracy_path)
+
+        adv_dynamic_list = list()
+        model_name_list = list()
+
+        column_metric = ['Adversarial Success Ratio', 'Adversarial Success', 'Dataset length',
+                         'l2-norm overflow', 'No Perturbation Failure']
+
+        for model_filename in model_filenames:
+            model_name = os.path.splitext(model_filename)[0]
+            self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
+
+            dic_ratio, dic_success, dic_total, dict_above, dict_no_pert = self.start_adversarial_evaluation_preconfigured()
+
+
+            for key in dic_ratio:
+                model_attack = str(key) + ": " + str(model_name)
+                adv_dynamic_list.append([dic_ratio[key], dic_success[key], dic_total[key],
+                                         dict_above[key], dict_no_pert[key]])
+                model_name_list.append(model_attack)
+            # accuracy_list.append([percentage, correct_classified, dataset_length])
+            # model_name_list.append(model_name)
+
+        combined = list(zip(model_name_list, adv_dynamic_list))
+        combined.sort()
+        sorted_strings, sorted_values = zip(*combined)
+        model_name_list = list(sorted_strings)
+        adv_dynamic_list = list(sorted_values)
+        fig = plot_table(adv_dynamic_list, model_name_list, column_metric)
+        fig.savefig(os.path.join(accuracy_path, f"{titel}_success.png"),
+                    dpi=300, facecolor='dimgray', bbox_inches='tight')
+        plt.close(fig)
+
     def report_accuracy(self, model_filenames, test_loader, loss_func, titel='default_testset'):
         accuracy_path = os.path.join(self.save_path, 'Accuracy')
         create_directory(accuracy_path)
@@ -178,6 +215,31 @@ class Analyzer:
 
         fig = plot_table(accuracy_list, model_name_list, column_metric)
         fig.savefig(os.path.join(accuracy_path, f"{titel}_accuracy.png"),
+                    dpi=300, facecolor='dimgray', bbox_inches='tight')
+        plt.close(fig)
+
+    def report_noisy_accuracy(self, model_filenames, test_loader, loss_func, noise_ratio, mean, std, titel='noisy_testset'):
+        accuracy_path = os.path.join(self.save_path, 'NoisyAccuracy')
+        create_directory(accuracy_path)
+
+        accuracy_list = list()
+        model_name_list = list()
+
+        column_metric = ['Correct Classified Ratio', 'Correct Classified', 'Dataset length']
+
+        for model_filename in model_filenames:
+            model_name = os.path.splitext(model_filename)[0]
+            self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
+
+            correct_classified, dataset_length, percentage = self.noisy_test(self.model, test_loader=test_loader,
+                                                                       loss_func=loss_func, noise_ratio=noise_ratio,
+                                                                             mean=mean, std=std)
+
+            accuracy_list.append([percentage, correct_classified, dataset_length])
+            model_name_list.append(model_name)
+
+        fig = plot_table(accuracy_list, model_name_list, column_metric)
+        fig.savefig(os.path.join(accuracy_path, f"{titel}_{noise_ratio}_ratio_accuracy.png"),
                     dpi=300, facecolor='dimgray', bbox_inches='tight')
         plt.close(fig)
 
@@ -219,7 +281,7 @@ class Analyzer:
         plt.close(fig)
 
 
-    def report_topk_accuracy(self, model_filenames, topk_start_index, topk_range):
+    def report_topk_accuracy(self, model_filenames, topk_start_index, topk_range, topk_pred):
 
         if self.check_dataset() is False:
             self.setDataset(self.datahandler.loadDataset(testset=True))
@@ -241,7 +303,7 @@ class Analyzer:
 
             for i in range(topk_range):
                 batch, sample, label = self.dataset_extractor(topk_start_index+i)
-                topk_value, topk_index = getSum_top_predictions(self.model,batch,2)
+                topk_value, topk_index = getSum_top_predictions(self.model,batch, topk_pred)
                 #topk_list.append(getSum_top_predictions(self.model,batch,1))
                 topk_list.append(topk_value)
                 topk_pred_list.append(topk_index)
@@ -847,12 +909,13 @@ class Analyzer:
             # init core params and check their status
             topk_start_index = params.get("topk_start_index", None)
             topk_range = params.get("topk_range", None)
+            topk_pred = params.get("topk_pred", 2)
 
             if topk_start_index is None or topk_range is None:
                 logger.critical(f"Params for saliency report are not properly injected")
                 return
             else:
-                self.report_topk_accuracy(model_filenames, topk_start_index, topk_range)
+                self.report_topk_accuracy(model_filenames, topk_start_index, topk_range, topk_pred)
 
                 # reset dataset if adv_dataset
                 if adv_dataset_path is not None:
@@ -866,6 +929,25 @@ class Analyzer:
             loss = self.trainer.getLossFunction()
             loader = self.trainer.getTestLoader()
             self.report_accuracy(model_filenames, loader, loss, titel=params.get('titel', 'test'))
+        elif method == 'adversarial_success' and params.get("enabled", False) is True:
+
+            self.report_adv_attack(model_filenames, titel=params.get('titel', 'test'))
+
+        elif method == 'noisy_accuracy' and params.get("enabled", False) is True:
+
+            loss = self.trainer.getLossFunction()
+            loader = self.trainer.getTestLoader()
+
+            noise_ratio = params.get("noise_ratio", 0.2)
+            noise_steps = params.get("noise_steps", 0)
+            mean, std = self.datahandler.getNormalization_params()
+
+            noise_ratio_steps = (1 - noise_ratio) / (noise_steps+1)
+
+            for i in range(noise_steps+1):
+                noise_ratio_mod = noise_ratio + i*noise_ratio_steps
+                self.report_noisy_accuracy(model_filenames, loader, loss, noise_ratio_mod, mean, std,
+                                           titel=params.get('titel', 'test'))
 
 
 
@@ -1030,6 +1112,41 @@ class Analyzer:
 
         return correct_classified, dataset_length, percentage
 
+    def noisy_test(self, model, test_loader, loss_func, noise_ratio, mean, std,  **kwargs):
+        '''
+        test the model with testset and returns tuple of (correct classified samples, number of samples at all and
+        percentage of right classified samples
+        :param model: model to test
+        :param test_loader: dataloader of test dataset
+        :param loss_func: loss function to use
+        :return: dictionary of correct classified samples, number of samples at all and percentage of right
+                classified samples
+        '''
+        model.eval()
+        test_loss = 0
+        correct_classified = 0
+        dataset_length = len(test_loader.dataset)
+        test_loader = test_loader
+        mean_tensor = torch.tensor(mean).view(1, -1, 1, 1)
+        std_tensor = torch.tensor(std).view(1, -1, 1, 1)
+        with torch.no_grad():
+            for data, target in test_loader:
+                noise_overlay = (torch.randn_like(data) - mean_tensor) /std_tensor * noise_ratio
+                data += noise_overlay
+                output = model(data)
+                test_loss += loss_func(output, target).item()
+                pred = output.argmax(dim=1, keepdim=True)
+                correct_classified += pred.eq(target.view_as(pred)).sum().item()
+        test_loss /= dataset_length
+
+        percentage = 100. * correct_classified / dataset_length
+
+        logger.info(f'\nTest set: Average loss: {test_loss:.4f},'
+                    f' Accuracy: {correct_classified}/{dataset_length}'
+                    f' ({percentage:.0f}%)')
+
+        return correct_classified, dataset_length, percentage
+
     def evaluate(self, model, img, single_batch, target_layer):
         img_tensor, grad_cam = GradCAM().analyse(model=model, original_image=img,
                           single_batch=single_batch, target_layer=target_layer)
@@ -1176,6 +1293,7 @@ class Analyzer:
         '''
         adv settings loading via AnalyzerConfig.json
         '''
+        self.adversarial_module.setAdvShuffle(self.adv_shuffle)
         if self.adv_save_enabled is True:
             adv_path = os.path.join(self.save_path, "adv_image_generation/adv_images")
             create_directory(adv_path)
@@ -1187,7 +1305,13 @@ class Analyzer:
         if self.adv_attack_selection is not None:
             if isinstance(self.adv_attack_selection, int):
                 self.adversarial_module.set_adv_only_success_flag(self.adv_only_success_flag)
-                self.select_attacks_from_config(self.adv_attack_selection, 1)
+                if (self.adv_attack_selection_range is not None and
+                        self.adv_original_save_enabled is False and
+                        self.adv_save_enabled is False):
+                    self.select_attacks_from_config(self.adv_attack_selection,
+                                                    self.adv_attack_selection_range)
+                else:
+                    self.select_attacks_from_config(self.adv_attack_selection, 1)
 
     def set_threat_model_config(self, threat_model_config):
         self.adversarial_module.setThreatModel(threat_model_config)
@@ -1203,6 +1327,10 @@ class Analyzer:
 
     def start_adversarial_evaluation(self, start, end):
         return self.adversarial_module.evaluate(start, end)
+
+    def getSingleAttack(self, model, attack_name, **kwargs):
+        return self.adversarial_module.getSingleAttack(model, attack_name, **kwargs)
+
 
     def start_adversarial_evaluation_preconfigured(self):
         '''

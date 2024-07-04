@@ -75,7 +75,10 @@ def plot_single_feature_map(feature_maps, layer_name):
     fig, axes = plt.subplots(num_rows, num_columns, figsize=(15, num_rows * 2))
     fig.suptitle(f'Feature maps of layer: {layer_name}')
     for i in range(num_kernels):
-        ax = axes[i // num_columns, i % num_columns]
+        if num_rows > 1:
+            ax = axes[i // num_columns, i % num_columns]
+        else:
+            ax = axes[i % num_columns]
         ax.imshow(feature_maps[0, i].cpu().numpy(), cmap='viridis')
         ax.axis('off')
     current_figure = plt.gcf()

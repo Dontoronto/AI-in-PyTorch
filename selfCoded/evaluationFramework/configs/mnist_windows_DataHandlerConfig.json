@@ -1,11 +1,11 @@
 {
   "transform": {
-      "dataset": "imagenet"
+      "dataset": "mnist"
   },
   "dataset": {
-    "datasetName": "imagenet",
+    "datasetName": "mnist",
     "storageType": "default",
-    "root": "D:\\imagenet",
+    "root": "D:\\mnist",
     "query": ["Volumes","PortableSSD", "Projekte", "datasets", "celeba_dataset", "IMG", "img_align_celeba"],
     "train": true,
     "download": false,

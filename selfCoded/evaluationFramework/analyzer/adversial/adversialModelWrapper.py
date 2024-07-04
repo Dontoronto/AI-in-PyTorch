@@ -27,11 +27,18 @@ class AdversarialModelWrapper:
 
         self.transform = transform_function
 
+    def set_transformer(self, transformer):
+        self.transform = transformer
+
+
     def classify(self, x):
         '''
         Returns the label for the input x (as a Python integer).
         '''
+
         x_in = self.transform(x).detach()
+        if len(x_in.shape) < 4:
+            x_in = x_in.unsqueeze(0)
         if self.cuda_enabled:
             x_in = x_in.to('cuda')
         prediction = self._model(x_in).squeeze(0)

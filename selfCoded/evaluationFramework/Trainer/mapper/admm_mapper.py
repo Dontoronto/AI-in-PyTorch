@@ -67,6 +67,36 @@ class ADMMConfigMapper:
         logger.info(f"threshold_warmup set to {self.trainer.threshold_warmup} of "
                     f"type {type(self.trainer.threshold_warmup)}")
 
+        # ======================== here are the pruning types mapped
+
+        self.trainer.unstructured_magnitude_pruning_enabled = admm_config.get('unstructured_magnitude_pruning_enabled',
+                                                                self.trainer.unstructured_magnitude_pruning_enabled)
+        logger.info(f"unstructured_magnitude_pruning_enabled set to "
+                    f"{self.trainer.unstructured_magnitude_pruning_enabled} of type "
+                    f"{type(self.trainer.unstructured_magnitude_pruning_enabled)}")
+
+        self.trainer.pattern_pruning_all_patterns_enabled = admm_config.get('pattern_pruning_all_patterns_enabled',
+                                                                self.trainer.pattern_pruning_all_patterns_enabled)
+        logger.info(f"pattern_pruning_all_patterns_enabled set to "
+                    f"{self.trainer.pattern_pruning_all_patterns_enabled} of type "
+                    f"{type(self.trainer.pattern_pruning_all_patterns_enabled)}")
+
+        self.trainer.pattern_pruning_elog_patterns_enabled = admm_config.get('pattern_pruning_elog_patterns_enabled',
+                                                                self.trainer.pattern_pruning_elog_patterns_enabled)
+        logger.info(f"pattern_pruning_elog_patterns_enabled set to "
+                    f"{self.trainer.pattern_pruning_elog_patterns_enabled} of "
+                    f"type {type(self.trainer.pattern_pruning_elog_patterns_enabled)}")
+
+        self.trainer.connectivity_pruning_enabled = admm_config.get('connectivity_pruning_enabled',
+                                                                             self.trainer.connectivity_pruning_enabled)
+        logger.info(f"connectivity_pruning_enabled set to "
+                    f"{self.trainer.connectivity_pruning_enabled} of "
+                    f"type {type(self.trainer.connectivity_pruning_enabled)}")
+
+        # =========================================
+
+
+
         # ===================== Here is starting another structure (changes maybe in the future)
 
         # For model saving configurations

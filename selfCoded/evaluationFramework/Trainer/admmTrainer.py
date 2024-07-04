@@ -91,20 +91,45 @@ class ADMMTrainer(DefaultTrainer):
         self.history_epsilon_Z = []
         self.early_termination_flag = False
 
-        self.patternManager = PatternManager()
+        #self.patternManager = PatternManager()
+        self.unstructured_magnitude_pruning_enabled = False
+        self.pattern_pruning_all_patterns_enabled = False
+        self.pattern_pruning_elog_patterns_enabled = False
+        self.connectivity_pruning_enabled = False
         #self.patternManager.setConnectivityPruning(True)
 
         self.tensor_buffering_enabled = False
         self.onnx_enabled = False
 
+        # TODO: not set in configs
+        self.adv_attacker = None
+        self.adv_enabled = False
+        self.adv_fraction = None
+        self.adv_test_enabled = None
+
         logger.debug(f"ADMM Trainer was initialized: \n {self.__dict__}")
 
 
+    def checkPruningTypes(self):
+        if self.pattern_pruning_elog_patterns_enabled and self.pattern_pruning_all_patterns_enabled:
+            logger.critical(f"two pattern pruning types are selected, please deactivate one in ADMMConfig.json")
+            return
 
+        if self.pattern_pruning_elog_patterns_enabled != self.pattern_pruning_all_patterns_enabled:
+            logger.debug("Pattern Manager was initialized. Pattern Pruning was enabled in ADMMConfig.json")
+            if self.pattern_pruning_elog_patterns_enabled is True:
+                self.patternManager = PatternManager(pattern_library='elog')
+            else:
+                self.patternManager = PatternManager(pattern_library='all')
+
+            if self.connectivity_pruning_enabled is True:
+                logger.debug("Connectivity Pruning was enabled")
+                self.patternManager.setConnectivityPruning(True)
 
 
     def setADMMConfig(self, kwargs):
         ADMMConfigMapper(self, kwargs)
+        self.checkPruningTypes()
 
     def setADMMArchitectureConfig(self, kwargs):
         ADMMArchitectureConfigMapper(self, kwargs)
@@ -117,6 +142,12 @@ class ADMMTrainer(DefaultTrainer):
 
     def getEpsilonResults(self):
         return self.getHistoryEpsilonW(), self.getHistoryEpsilonZ(), self.epsilon_W, self.epsilon_Z
+
+    def setAdversarialTraining(self, adv_attacker, adv_fraction, adv_test_enabled = False):
+        self.adv_attacker = adv_attacker
+        self.adv_fraction = adv_fraction
+        self.adv_enabled = True
+        self.adv_test_enabled = adv_test_enabled
 
     # def getTestLoader(self):
     #     return super(ADMMTrainer, self).getTestLoader()
@@ -209,22 +240,26 @@ class ADMMTrainer(DefaultTrainer):
         # isinstance(module, Conv2d)
         # isinstance(module, Linear)
         # [pattern_library[i] if i is not None else torch.zeros(3, 3) for i in group_indices]
-        conv_list = [layerZ.Z for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
-        conv_layer_pruning_ratio_list = [layerZ.sparsity for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
-        fc_list = [layerZ for layerZ in self.list_Z if isinstance(layerZ.module, Linear)]
         self.list_masks = []
-        if firstTime is True:
-            self.patternManager.assign_patterns_to_tensors(conv_list, conv_layer_pruning_ratio_list)
-            self.list_masks = self.patternManager.get_pattern_masks()
-            self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
+        if self.pattern_pruning_all_patterns_enabled or self.pattern_pruning_elog_patterns_enabled:
+            conv_list = [layerZ.Z for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
+            conv_layer_pruning_ratio_list = [layerZ.sparsity for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
+            fc_list = [layerZ for layerZ in self.list_Z if isinstance(layerZ.module, Linear)]
+            #self.list_masks = []
+            if firstTime is True:
+                self.patternManager.assign_patterns_to_tensors(conv_list, conv_layer_pruning_ratio_list)
+                self.list_masks = self.patternManager.get_pattern_masks()
+                self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
+            else:
+                #self.patternManager.reduce_available_patterns(2)
+                self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=4,
+                                                               pruning_ratio_list=conv_layer_pruning_ratio_list)
+                self.list_masks = self.patternManager.get_pattern_masks()
+                self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
+            # self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
+            #logger.info(f"Pruning mask was created")
         else:
-            #self.patternManager.reduce_available_patterns(2)
-            self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=4,
-                                                           pruning_ratio_list=conv_layer_pruning_ratio_list)
-            self.list_masks = self.patternManager.get_pattern_masks()
-            self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
-        # self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
-        #logger.info(f"Pruning mask was created")
+            self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z])
 
     def clip_gradients(self):
         if self.gradient_threshold is not None:
@@ -527,6 +562,8 @@ class ADMMTrainer(DefaultTrainer):
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
                     self.scheduler_step()
 
+                self.reset_scheduler()
+
                 #self.export_model(model_path=save_path)
                 if self.save is True:
                     if self.save_path is not None:
@@ -557,6 +594,13 @@ class ADMMTrainer(DefaultTrainer):
 
                 while self.main_iterations > counter and epo < self.epoch:
                     for batch_idx, (data, target) in enumerate(dataloader):
+
+                        if self.adv_enabled is True: #and phase == "retrain":
+                            num_adversarial_samples = int(self.adv_fraction * data.size(0))
+                            adv_data = self.adv_attacker(data[:num_adversarial_samples], target[:num_adversarial_samples])
+                            data = torch.cat([adv_data, data[num_adversarial_samples:]], dim=0)
+                            pass
+
                         self.optimizer.zero_grad()
                         output = self.model(data)
                         loss = self.loss(output, target)
@@ -595,9 +639,12 @@ class ADMMTrainer(DefaultTrainer):
                         if self.main_iterations == counter:
                             break
 
+                    self.scheduler_step()
+
                     if phase == "retrain":
                         #logger.debug(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
-                        self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
+                        if test is True:
+                            self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                         epo +=1
                     elif test is True:
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
@@ -610,9 +657,10 @@ class ADMMTrainer(DefaultTrainer):
                 # Note: last time prune layers because optimizer tunes masked out values because of momentum etc.
                 if phase == 'retrain':
                     self.prune_weight_layer()
+                    #self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
 
                 pbar.close()
-                pbar = None
+                self.reset_scheduler()
 
                 if self.save is True:
                     if self.save_path is not None:

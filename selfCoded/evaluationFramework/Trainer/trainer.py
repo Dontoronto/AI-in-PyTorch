@@ -26,6 +26,7 @@ class Trainer(ABC):
         self.snapshotConfig = None
         self.cuda_enabled = False
         self.lr_scheduler = None
+        self.lr_scheduler_params = None
         try:
             device = next(self.model.parameters()).device
             if device.type == 'cuda':
@@ -51,11 +52,17 @@ class Trainer(ABC):
 
     def setLrScheduler(self, lr_scheduler_params):
         self.lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, **lr_scheduler_params)
+        self.lr_scheduler_params = lr_scheduler_params
 
     def scheduler_step(self):
         if self.lr_scheduler is not None:
             logger.debug(f"lr_scheduler step is called")
             self.lr_scheduler.step()
+
+    def reset_scheduler(self):
+        if self.lr_scheduler is not None:
+            logger.debug(f"lr_scheduler will be resetted")
+            self.lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, **self.lr_scheduler_params)
 
     @abstractmethod
     def train(self):

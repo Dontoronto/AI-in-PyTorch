@@ -1,17 +1,19 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment/LeNet/cic/second",
-  "name": "LeNet",
+  "save_path": "experiment\\LeNet\\cic\\ResNet\\adv_retraining_v1",
+  "name": "ResNet",
   "copy_config": true,
   "config_path": "configs",
   "adv_settings": {
     "adv_save_enabled": false,
     "adv_original_save_enabled": false,
-    "adv_attack_selection": 1,
-    "adv_sample_range_start": 14004,
-    "adv_sample_range_end": 14005,
-    "adv_only_success_flag": false
+    "adv_attack_selection": 0,
+    "adv_attack_selection_range": 3,
+    "adv_sample_range_start": 0,
+    "adv_sample_range_end": 10,
+    "adv_only_success_flag": true,
+    "adv_shuffle": true
   },
   "analysis_methods": {
     "epsilon_distance": {
@@ -24,6 +26,16 @@
       "enabled": true,
       "titel": "testset"
     },
+    "noisy_accuracy": {
+      "enabled": false,
+      "titel": "NoisyAccuracy",
+      "noise_ratio": 0.2,
+      "noise_steps": 4
+    },
+    "adversarial_success": {
+      "enabled": true,
+      "titel": "adversarial dynamic"
+    },
     "accuracy_adversarial": {
       "enabled": false,
       "adv_titel": "adv_deep",
@@ -35,7 +47,7 @@
     },
     "grad_and_original": {
       "enabled": false,
-      "adv_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images",
+      "adv_dataset_path": null,
       "grad_start_index": 0,
       "grad_range": 10
     },
@@ -70,25 +82,26 @@
       "enabled": false,
       "adv_dataset_path": null,
       "feature_start_index": 0,
-      "feature_range": 1
+      "feature_range": 10
     },
     "saliency_and_original": {
       "enabled": false,
       "adv_dataset_path": null,
       "saliency_start_index": 0,
-      "saliency_range": 1
+      "saliency_range": 10
     },
     "saliency": {
       "enabled": false,
       "adv_dataset_path": null,
       "saliency_start_index": 0,
-      "saliency_range": 1
+      "saliency_range": 10
     },
     "topk_accuracy": {
       "enabled": false,
       "adv_dataset_path": null,
       "topk_start_index": 0,
-      "topk_range": 5
+      "topk_range": 5,
+      "topk_pred": 1
     }
   },
   "changing_parameters": {

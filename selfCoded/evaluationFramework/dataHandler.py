@@ -37,6 +37,9 @@ class DataHandler:
     def getCudaState(self):
         return self.cuda_enabled
 
+    def getNormalization_params(self):
+        return self.mean, self.std
+
     def enableCuda(self):
         self.cuda_enabled = True
         torch.set_default_device('cuda')
