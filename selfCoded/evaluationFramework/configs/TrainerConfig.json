@@ -2,16 +2,16 @@
   "trainer": {
     "optimizer": "Adam",
     "loss": "CrossEntropyLoss",
-    "epoch":  1,
+    "epoch":  10,
     "lr": 0.00001,
     "momentum": 0.9,
     "pre_optimization_tuning_path": true,
-    "lr_scheduler": false,
+    "lr_scheduler": true,
     "lr_step_size": 5,
-    "lr_gamma": 0.7
+    "lr_gamma": 0.1
   },
   "dataloader": {
-    "batch_size": 32,
+    "batch_size": 64,
     "shuffle": true,
     "num_workers": 6
   },

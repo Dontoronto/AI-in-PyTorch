@@ -95,6 +95,20 @@ class ADMMConfigMapper:
 
         # =========================================
 
+        # ===================== LOADING PRUNING MASK
+
+        self.trainer.pruning_mask_loading_enabled = admm_config.get('load_pruning_mask',
+                                                                             self.trainer.pruning_mask_loading_enabled)
+        logger.info(f"pruning_mask_loading_enabled set to "
+                    f"{self.trainer.pruning_mask_loading_enabled} of "
+                    f"type {type(self.trainer.pruning_mask_loading_enabled)}")
+
+        self.trainer.pruning_mask_loading_path = admm_config.get('pruning_mask_path',
+                                                                    self.trainer.pruning_mask_loading_path)
+        logger.info(f"pruning_mask_loading_path set to "
+                    f"{self.trainer.pruning_mask_loading_path} of "
+                    f"type {type(self.trainer.pruning_mask_loading_path)}")
+
 
 
         # ===================== Here is starting another structure (changes maybe in the future)

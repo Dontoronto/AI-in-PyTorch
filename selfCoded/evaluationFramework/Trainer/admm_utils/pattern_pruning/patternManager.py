@@ -243,9 +243,13 @@ class PatternManager:
         return [convert_to_single_tensor(self.tensor_assignments[layer_idx],
                                          self.pattern_library) for layer_idx in range(len(self.tensor_assignments))]
 
-    def update_pattern_assignments(self, tensor_list, min_amount_indices=12, pruning_ratio_list=None):
+    def update_pattern_assignments(self, tensor_list, min_amount_indices=12, pruning_ratio_list=None, admm_iter=None):
         # Führt die erforderlichen Methoden nacheinander aus, um die Musterzuweisungen zu aktualisieren
         if self._noReduction == False:
+            if admm_iter is not None:
+                reduction_iterations = ((126-min_amount_indices) // admm_iter) + 1
+                for i in range(reduction_iterations-1):
+                    self.reduce_available_patterns(min_amount_indices=min_amount_indices)  # Reduziert die Liste der verfügbaren Muster
             self.reduce_available_patterns(min_amount_indices=min_amount_indices)  # Reduziert die Liste der verfügbaren Muster
         self.assign_patterns_to_tensors(tensor_list, pruning_ratio_list)  # Weist Muster den Tensoren erneut zu
 

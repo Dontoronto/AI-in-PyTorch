@@ -7,6 +7,7 @@ from .utils import tqdm_progressbar
 from .defaultTrainer import DefaultTrainer
 from .admm_utils.utils import (create_magnitude_pruned_mask, add_tensors_inplace, subtract_tensors_inplace,
                                scale_and_add_tensors_inplace)
+from .admm_utils.maskLoader import load_pruning_mask_csv
 from .admm_utils.layerInfo import ADMMVariable
 from .mapper.admm_mapper import ADMMConfigMapper, ADMMArchitectureConfigMapper
 from .admm_utils.multiProcessHandler import MultiProcessHandler
@@ -92,11 +93,16 @@ class ADMMTrainer(DefaultTrainer):
         self.early_termination_flag = False
 
         #self.patternManager = PatternManager()
+        self.patternManager = None
         self.unstructured_magnitude_pruning_enabled = False
         self.pattern_pruning_all_patterns_enabled = False
         self.pattern_pruning_elog_patterns_enabled = False
         self.connectivity_pruning_enabled = False
         #self.patternManager.setConnectivityPruning(True)
+
+        #loading existing pruning mask
+        self.pruning_mask_loading_enabled = False
+        self.pruning_mask_loading_path = None
 
         self.tensor_buffering_enabled = False
         self.onnx_enabled = False
@@ -175,31 +181,12 @@ class ADMMTrainer(DefaultTrainer):
         self.model_name = name
 
 
-
-    # TODO: needs to be deleted at the end
-    def testZCopy(self):
-        for module_name, module in self.model.named_modules():
-            if module_name == "model.conv1":
-                weight_copy = copy.deepcopy(module.weight.data)
-                #logger.critical(self.list_W[0].W)
-                #self.list_W[0].module.weight.data += 0.1
-                self.list_W[0].W += 0.1
-                logger.critical(f"Model-Layer{torch.unique(module.weight.data - self.list_W[0].W)}")
-                logger.critical(f"Deepcopy-Layer{torch.unique(weight_copy - self.list_W[0].W)}")
-                logger.critical(f"Layer Shape: {self.list_W[0].W.shape}")
-                logger.critical(f"Difference Model-Layer: {(module.weight.data - self.list_W[0].W).sum()}")
-                logger.critical(f"Difference Deepcopy-Layer: {(weight_copy - self.list_W[0].W).sum()}")
-        for module_name, param in self.model.named_parameters():
-            if module_name == "model.conv1.weight":
-                #logger.critical(self.list_W[0].W)
-                grad_copy = copy.deepcopy(param.grad)
-                #self.list_W[0].module.weight.data += 0.1
-                self.list_W[0].dW += 0.1
-                logger.critical(f"Model-Layer{torch.unique(param.grad - self.list_W[0].dW)}")
-                logger.critical(f"Deepcopy-Layer{torch.unique(grad_copy - self.list_W[0].dW)}")
-                logger.critical(f"Layer Shape: {self.list_W[0].dW.shape}")
-                logger.critical(f"Difference Model-Layer: {(param.grad - self.list_W[0].dW).sum()}")
-                logger.critical(f"Difference Deepcopy-Layer: {(grad_copy - self.list_W[0].dW).sum()}")
+    def load_pruning_mask(self):
+        if os.path.exists(self.pruning_mask_loading_path):
+            self.list_masks = load_pruning_mask_csv(self.pruning_mask_loading_path)
+            if self.cuda_enabled is True:
+                for i in range(len(self.list_masks)):
+                    self.list_masks[i].to('cuda')
 
     def show_pruning_layer_job(self):
         '''
@@ -253,7 +240,8 @@ class ADMMTrainer(DefaultTrainer):
             else:
                 #self.patternManager.reduce_available_patterns(2)
                 self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=4,
-                                                               pruning_ratio_list=conv_layer_pruning_ratio_list)
+                                                               pruning_ratio_list=conv_layer_pruning_ratio_list,
+                                                               admm_iter=self.main_iterations//self.admm_iterations)
                 self.list_masks = self.patternManager.get_pattern_masks()
                 self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
             # self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
@@ -510,7 +498,10 @@ class ADMMTrainer(DefaultTrainer):
         self.normalize_gradients()
         self.regularize_gradients()
         if curr_iteration == 0 and "admm" not in self.phase_list:
-            self.initialize_pruning_mask_layer_list(True)
+            if self.pruning_mask_loading_enabled is True:
+                self.load_pruning_mask()
+            else:
+                self.initialize_pruning_mask_layer_list(True)
             #self.list_masks = self.patternManager.get_pattern_masks()
         self.prune_weight_layer()
 
@@ -657,7 +648,7 @@ class ADMMTrainer(DefaultTrainer):
                 # Note: last time prune layers because optimizer tunes masked out values because of momentum etc.
                 if phase == 'retrain':
                     self.prune_weight_layer()
-                    #self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
+                    self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
 
                 pbar.close()
                 self.reset_scheduler()
@@ -671,6 +662,10 @@ class ADMMTrainer(DefaultTrainer):
                     else:
                         self.export_model(model_path=model_filename, onnx=self.onnx_enabled)
                         self.export_tensor_list_csv(f'{phase}_mask_tensor.csv', self.list_masks)
+
+        if self.getCudaState() is True:
+            del self.list_Z, self.list_U, self.list_W, self.old_layer_list_z, self.list_masks, self.patternManager
+            torch.cuda.empty_cache()
 
         # if self.tensor_buffering_enabled is True:
         #     self.handler.terminate_all_processes()

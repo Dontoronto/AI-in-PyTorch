@@ -5,37 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90dc711a-a117-4371-bc8d-d9f91274e417" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager_old.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/lenet_ADMModelArchitecture.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/testrunner_python_windows.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfCoded/tests/iterationTests/splittedStartEndRangeTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/maskLoader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/tests/maskReloadTest/admm_mask_tensor.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/tests/maskReloadTest/boolTest.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/tests/maskReloadTest/maskLoadingTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/tests/maskReloadTest/retrain_mask_tensor.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/SharedServices/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/SharedServices/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/libraryReduction_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/libraryReduction_old.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager_new.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternVariations_old.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/defaultTrainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/defaultTrainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainerFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainerFactory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialAttackFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialAttackFactory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/mapper/admm_mapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/mapper/admm_mapper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/mapper/analyzerMapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/mapper/analyzerMapper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/resnet18_ADMModelArchitecture.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/dataHandler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" afterDir="false" />
     </list>
@@ -69,20 +55,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.admmTrainer.executor": "Run",
-    "Python.cudaAvailableTest.executor": "Run",
-    "Python.imagenet.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.unbindCudaCheckTest.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "windows__v2",
-    "last_opened_file_path": "C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/evaluationFramework",
-    "settings.editor.selected.configurable": "preferences.keymap"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.admmTrainer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.cudaAvailableTest.executor&quot;: &quot;Run&quot;,
+    &quot;Python.imagenet.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.maskLoadingTest.executor&quot;: &quot;Run&quot;,
+    &quot;Python.unbindCudaCheckTest.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;windows__v3&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/tests/maskReloadTest&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings>
@@ -92,9 +79,14 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework" />
-      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configBackup" />
-      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configBackup\configs_before_windows" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\tests\maskReloadTest" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\analyzer\activationMaps" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\analyzer\adversial" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configs" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configs\adversarial_configs" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\analyzer\adversial\utils" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
@@ -112,28 +104,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="cudaAvailableTest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="AI-in-PyTorch" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/tests/etc" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/tests/etc/cudaAvailableTest.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -186,6 +156,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="maskLoadingTest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI-in-PyTorch" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/tests/maskReloadTest" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/tests/maskReloadTest/maskLoadingTest.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="unbindCudaCheckTest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AI-in-PyTorch" />
       <option name="ENV_FILES" value="" />
@@ -211,10 +203,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.maskLoadingTest" />
         <item itemvalue="Python.imagenet" />
         <item itemvalue="Python.admmTrainer" />
         <item itemvalue="Python.unbindCudaCheckTest" />
-        <item itemvalue="Python.cudaAvailableTest" />
       </list>
     </recent_temporary>
   </component>
@@ -242,17 +234,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>347</line>
+          <line>548</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>442</line>
+          <line>643</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>503</line>
+          <line>704</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -261,89 +253,64 @@
           <option name="timeStamp" value="34" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>1112</line>
-          <option name="timeStamp" value="38" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py</url>
-          <line>495</line>
-          <option name="timeStamp" value="40" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialModelWrapper.py</url>
-          <line>35</line>
-          <option name="timeStamp" value="52" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialModelWrapper.py</url>
-          <line>33</line>
-          <option name="timeStamp" value="53" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
-          <line>295</line>
+          <line>343</line>
           <option name="timeStamp" value="54" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
-          <line>302</line>
+          <line>350</line>
           <option name="timeStamp" value="55" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py</url>
-          <line>101</line>
-          <option name="timeStamp" value="57" />
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/featureMaps/featureMap.py</url>
+          <line>26</line>
+          <option name="timeStamp" value="71" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admm_utils/pattern_pruning/patternManager.py</url>
-          <line>239</line>
-          <option name="timeStamp" value="58" />
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
+          <line>372</line>
+          <option name="timeStamp" value="85" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py</url>
-          <line>30</line>
-          <option name="timeStamp" value="60" />
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
+          <line>1289</line>
+          <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/anaconda3/envs/NeuronalNetwork/Lib/site-packages/torchattacks/attack.py</url>
-          <line>497</line>
-          <option name="timeStamp" value="61" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/anaconda3/envs/NeuronalNetwork/Lib/site-packages/torchattacks/attacks/jsma.py</url>
-          <line>189</line>
-          <option name="timeStamp" value="62" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/anaconda3/envs/NeuronalNetwork/Lib/site-packages/torchattacks/attacks/jsma.py</url>
-          <line>115</line>
-          <option name="timeStamp" value="63" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/anaconda3/envs/NeuronalNetwork/Lib/site-packages/torchattacks/attacks/jsma.py</url>
-          <line>96</line>
-          <option name="timeStamp" value="64" />
+          <url>file://$PROJECT_DIR$/selfCoded/tests/robustml_testing/properConfiguration/robustModel.py</url>
+          <line>43</line>
+          <option name="timeStamp" value="87" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
-          <line>234</line>
-          <option name="timeStamp" value="65" />
+          <line>278</line>
+          <option name="timeStamp" value="89" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py</url>
-          <line>89</line>
-          <option name="timeStamp" value="67" />
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
+          <line>1082</line>
+          <option name="timeStamp" value="90" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py</url>
-          <line>88</line>
-          <option name="timeStamp" value="68" />
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py</url>
+          <line>424</line>
+          <option name="timeStamp" value="96" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainerFactory.py</url>
-          <line>77</line>
-          <option name="timeStamp" value="69" />
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py</url>
+          <line>376</line>
+          <option name="timeStamp" value="97" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/tests/maskReloadTest/maskLoadingTest.py</url>
+          <line>54</line>
+          <option name="timeStamp" value="112" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py</url>
+          <line>499</line>
+          <option name="timeStamp" value="115" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

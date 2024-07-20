@@ -101,6 +101,8 @@ def main():
     _model = resnet18(_weights)
     _model.to('cuda')
     Model = modelWrapper.ModelWrapper(_model)
+    # Model.load_state_dict(torch.load(os.path.join("experiment\\LeNet\\cic\\ResNet\\"
+    #                                               "elog_adv_double_v2_cic", "admm_checkpoint.pth")))
     Model.to('cuda')
     Model.eval()
 
@@ -425,7 +427,7 @@ def main():
     Trainer.setAdversarialTraining(atk, 0.2)
 
     train_kwargs = {
-        'test': False
+        'test': True
     }
     # # create_missing_folders("experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images",
     # #                        1000)

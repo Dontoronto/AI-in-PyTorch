@@ -19,6 +19,7 @@ from .activationMaps.saliencyMap import SaliencyMap
 from .featureMaps.gradCam import GradCAM
 from .featureMaps import featureMap
 from .activationMaps.scoreCAM import ScoreCAM
+from .activationMaps import cic
 
 from .measurement.sparseMeasurement import pruningCounter
 from .measurement.topPredictions import show_top_predictions, getSum_top_predictions
@@ -32,7 +33,7 @@ from .plotFuncs.plots import (plot_original_vs_observation, plot_model_compariso
 
 from .evaluationMapsStrategy import EvaluationMapsStrategy
 
-from .utils import weight_export, copy_directory, create_directory
+from .utils import weight_export, copy_directory, create_directory, subsample
 
 from .adversial import adversarialAttacker
 
@@ -217,6 +218,144 @@ class Analyzer:
         fig.savefig(os.path.join(accuracy_path, f"{titel}_accuracy.png"),
                     dpi=300, facecolor='dimgray', bbox_inches='tight')
         plt.close(fig)
+
+    def report_cic(self, model_filenames, test_loader):
+        cic_path = os.path.join(self.save_path, "CIC")
+        create_directory(cic_path)
+
+        model_name_list = list()
+        positive_list = list()
+        negative_list = list()
+        filter_sum_pos = list()
+        filter_sum_neg = list()
+
+        for model_filename in model_filenames:
+            model_name = os.path.splitext(model_filename)[0]
+            self.model.load_state_dict(
+                torch.load(os.path.join(self.save_path, model_filename))
+            )
+
+            conv_layer_names_list, _filter_sum_pos, _filter_sum_neg, positive_scores, negative_scores = (
+                cic.get_cic(
+                    self.model,
+                    test_loader
+                )
+            )
+
+            # conv_layer_names_list, positive_scores, negative_scores = (
+            #     cic.get_all_layers_cic(
+            #         self.model,
+            #         test_loader
+            #     )
+            # )
+
+            positive_list.append(positive_scores)
+            negative_list.append(negative_scores)
+            model_name_list.append(model_name)
+
+            # _, _filter_sum_pos, _filter_sum_neg = cic.get_all_single_layers_cic(
+            #     self.model, input_shape, batch_size, test_loader
+            # )
+
+            filter_sum_pos.append(_filter_sum_pos)
+            filter_sum_neg.append(_filter_sum_neg)
+
+        # TODO: noch die einzelnen layerplots einfügen vllt noch gleich in der oberen schleife sammeln
+        # TODO: evtl. auch eigene schleife weil hier layer gesammelt werden
+
+        new_list_pos = cic.combine_single_value_tensors(positive_list)
+
+        fig = cic.plot_cic_scatter_single_layer(
+            model_name_list, new_list_pos, titel="CIC-Layers Plot: Positive Influence"
+        )
+
+        fig.savefig(
+            os.path.join(cic_path, f"cic_positive_architecture.png"),
+            dpi=300,
+            facecolor="dimgray",
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+        plt.close('all')
+
+        pos = cic.display_table(model_name_list, new_list_pos, conv_layer_names_list)
+        pos_norm = cic.display_table_norm(
+            model_name_list, new_list_pos, conv_layer_names_list
+        )
+        cic.display_safe_table_new(pos, cic_path, f"cic_positive_architecture")
+        cic.display_safe_table_new(pos_norm, cic_path, "cic_positive_architecture_norm")
+
+        new_list_neg = cic.combine_single_value_tensors(negative_list)
+
+        fig = cic.plot_cic_scatter_single_layer(
+            model_name_list, new_list_neg, titel="CIC-Layers Plot: Negative Influence"
+        )
+
+        fig.savefig(
+            os.path.join(cic_path, f"cic_negative_architecture.png"),
+            dpi=300,
+            facecolor="dimgray",
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+        plt.close('all')
+
+        neg = cic.display_table(model_name_list, new_list_neg, conv_layer_names_list)
+        neg_norm = cic.display_table_norm(
+            model_name_list, new_list_neg, conv_layer_names_list
+        )
+        cic.display_safe_table_new(neg, cic_path, f"cic_neg_architecture")
+        cic.display_safe_table_new(neg_norm, cic_path, "cic_neg_architecture_norm")
+
+        filter_list_pos = cic.combine_tensors(filter_sum_pos)
+
+        for layer_tensor, layer_name in zip(filter_list_pos, conv_layer_names_list):
+            fig = cic.plot_cic_scatter_single_layer(
+                model_name_list,
+                layer_tensor,
+                titel=f"CIC-{layer_name}-Layer Plot: Positive Influence",
+            )
+
+            fig.savefig(
+                os.path.join(cic_path, f"cic_pos_{layer_name}_plot.png"),
+                dpi=300,
+                facecolor="dimgray",
+                bbox_inches="tight",
+            )
+            plt.close(fig)
+            plt.close('all')
+
+            pos_filter = cic.display_table(model_name_list, layer_tensor)
+            pos_norm_filter = cic.display_table_norm(model_name_list, layer_tensor)
+            cic.display_safe_table_new(pos_filter, cic_path, f"cic_pos_{layer_name}")
+            cic.display_safe_table_new(
+                pos_norm_filter, cic_path, f"cic_pos_norm_{layer_name}"
+            )
+
+        filter_list_neg = cic.combine_tensors(filter_sum_neg)
+
+        for layer_tensor, layer_name in zip(filter_list_neg, conv_layer_names_list):
+            fig = cic.plot_cic_scatter_single_layer(
+                model_name_list,
+                layer_tensor,
+                titel=f"CIC-{layer_name}-Layer Plot: Negative Influence",
+            )
+
+            fig.savefig(
+                os.path.join(cic_path, f"cic_neg_{layer_name}_plot.png"),
+                dpi=300,
+                facecolor="dimgray",
+                bbox_inches="tight",
+            )
+            plt.close(fig)
+            plt.close('all')
+
+            neg_filter = cic.display_table(model_name_list, layer_tensor)
+            neg_norm_filter = cic.display_table_norm(model_name_list, layer_tensor)
+            cic.display_safe_table_new(neg_filter, cic_path, f"cic_neg_{layer_name}")
+            cic.display_safe_table_new(
+                neg_norm_filter, cic_path, f"cic_neg_norm_{layer_name}"
+            )
 
     def report_noisy_accuracy(self, model_filenames, test_loader, loss_func, noise_ratio, mean, std, titel='noisy_testset'):
         accuracy_path = os.path.join(self.save_path, 'NoisyAccuracy')
@@ -929,6 +1068,24 @@ class Analyzer:
             loss = self.trainer.getLossFunction()
             loader = self.trainer.getTestLoader()
             self.report_accuracy(model_filenames, loader, loss, titel=params.get('titel', 'test'))
+        elif method == 'cic_test' and params.get("enabled", False) is True:
+
+            # init core params and check their status
+            num_samples = params.get("num_samples", None)
+            batch_size = params.get("batch_size", None)
+
+            if num_samples is None or batch_size is None:
+                logger.critical(f"Params for cic test are not properly injected")
+                return
+            else:
+                loader = subsample(self.datahandler.loadDataset(testset=True), num_samples, batch_size,
+                                            self.cuda_enabled)
+                self.report_cic(model_filenames, loader)
+                if self.cuda_enabled is True:
+                    del loader
+                    torch.cuda.empty_cache()
+                    plt.close('all')
+
         elif method == 'adversarial_success' and params.get("enabled", False) is True:
 
             self.report_adv_attack(model_filenames, titel=params.get('titel', 'test'))
