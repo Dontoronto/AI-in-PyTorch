@@ -1,0 +1,14 @@
+Cuda Compatibility Matrix:
+-https://docs.nvidia.com/deeplearning/cudnn/latest/reference/support-matrix.html
+
+cuDNN download:
+- https://developer.nvidia.com/cudnn-downloads?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exe_local
+
+cuda toolkit 12.4:
+- https://developer.nvidia.com/cuda-12-4-0-download-archive
+
+( driver is needed?- https://www.nvidia.com/Download/index.aspx)
+
+
+pytorch install command:
+- conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia

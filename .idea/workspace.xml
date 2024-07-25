@@ -6,22 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="90dc711a-a117-4371-bc8d-d9f91274e417" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/admmTrainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/Trainer/trainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/scoreCAM.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/scoreCAM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialModelWrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialModelWrapper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/featureMaps/gradCam.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/featureMaps/gradCam.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/measurement/distributionDensity.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/measurement/distributionDensity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/measurement/topPredictions.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/measurement/topPredictions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
