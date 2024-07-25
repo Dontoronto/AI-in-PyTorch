@@ -419,7 +419,7 @@ def get_cic(model, test_loader, perturbation_function=None):
     values_pos = []
     values_neg = []
 
-    conv_layer_names_list = get_conv_layer_names(model)
+    conv_layer_names_list = get_conv_layer_names(model)[:3]
 
     for layername in conv_layer_names_list:
         pos, neg = get_single_layer_cic(
@@ -585,6 +585,60 @@ def display_table_norm(object_names, data_points, layer_names=None):
     print(df)
     return df
 
+# ========= Note: this function can be tested to create inverted neg. cic out of absolute values
+def display_table_combi_norm(object_names, data_points, datapoints_neg, layer_names=None):
+    # Convert the data_points tensor to a NumPy array
+    data_points_np = data_points.numpy()
+    datapoints_neg_np = datapoints_neg.numpy()
+
+    # Create a DataFrame
+    df = pd.DataFrame(np.copy(data_points_np.T), columns=object_names)
+    if layer_names is not None:
+        df.insert(0, 'Layer', layer_names)
+        df.iloc[:, 1:] = df.iloc[:, 1:].apply(lambda row: normalize_row(row), axis=1)
+    else:
+        df.iloc[:, :] = df.iloc[:, :].apply(lambda row: normalize_row(row), axis=1)
+
+    df_neg = pd.DataFrame(np.copy(datapoints_neg_np.T), columns=object_names)
+    if layer_names is not None:
+        df_neg.insert(0, 'Layer', layer_names)
+        df_neg.iloc[:, 1:] = df_neg.iloc[:, 1:].apply(lambda row: normalize_row(row), axis=1)
+    else:
+        df_neg.iloc[:, :] = df_neg.iloc[:, :].apply(lambda row: normalize_row(row), axis=1)
+
+    # Invert the normalized negative values
+    #df_neg_inverted = 1 - df_neg
+
+    print(f"first positive values")
+    print(df)
+    print(f"negative values")
+    print(df_neg)
+
+    if layer_names is not None:
+        # Invert the normalized negative values
+        df_neg_inverted = df_neg.copy()
+        df_neg_inverted.iloc[:, 1:] = 1 - df_neg.iloc[:, 1:]
+        print(f"negative inverted values")
+        print(df_neg_inverted)
+        # Combine the normalized positive values and inverted normalized negative values by averaging
+        combined_values = (df.iloc[:, 1:] + df_neg_inverted.iloc[:, 1:]) / 2
+        combined_df = pd.DataFrame(combined_values, columns=object_names)
+    else:
+        df_neg_inverted = 1 - df_neg
+        # Combine the normalized positive values and inverted normalized negative values by averaging
+        combined_df = (df.iloc[:, :] + df_neg_inverted.iloc[:, :]) / 2
+
+
+    # Set pandas display options for better readability
+    pd.set_option('display.max_columns', None)  # Show all columns
+    pd.set_option('display.width', 1000)  # Set display width
+    pd.set_option('display.colheader_justify', 'center')  # Center column headers
+    pd.set_option('display.precision', 3)  # Set precision for floating point numbers
+
+    # Display the DataFrame
+    print(combined_df)
+    return combined_df
+
 
 def normalize_row(row):
     """Normalize values in the row such that:
@@ -593,12 +647,13 @@ def normalize_row(row):
     """
     if (row < 0).any():
         min_val = row.min()
-        max_val = 0
-        row = row / abs(min_val)  # Normalize negative values to the range -1 to 0
-    elif (row > 0).any():
-        min_val = 0
         max_val = row.max()
-        row = row / max_val  # Normalize positive values to the range 0 to 1
+        row = (row + max_val) / min_val-max_val  # Normalize negative values to the range -1 to 0
+    elif (row > 0).any():
+        min_val = row.min()
+        max_val = row.max()
+        # Normalize negative values to the range -1 to 0
+        row = (row - min_val) / (max_val - min_val)
 
     return row
 

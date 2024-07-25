@@ -141,7 +141,7 @@ class Trainer(ABC):
         if self.getCudaState():
             generator = torch.Generator(device='cuda')
             logger.info(f"Creating Custom DataLoader with arguments: {kwargs}")
-            return DataLoader(sampleDataset, **kwargs,
+            return DataLoader(sampleDataset, **kwargs, persistent_workers=True, prefetch_factor=2,
                                generator=generator, collate_fn=collate_fn)
         else:
             logger.info(f"Creating Custom DataLoader with arguments: {kwargs}")

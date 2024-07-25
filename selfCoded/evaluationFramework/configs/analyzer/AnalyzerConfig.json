@@ -1,7 +1,7 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment\\LeNet\\cic\\ResNet\\unstruct_default_double_v2_cic",
+  "save_path": "experiment\\LeNet\\cic\\ResNet\\elog_conn_default_double_v2_cic",
   "name": "ResNet",
   "copy_config": true,
   "config_path": "configs",
@@ -17,28 +17,28 @@
   },
   "analysis_methods": {
     "epsilon_distance": {
-      "enabled": true
+      "enabled": false
     },
     "pruning": {
       "enabled": true
     },
     "accuracy_testset": {
-      "enabled": true,
+      "enabled": false,
       "titel": "testset"
     },
     "cic_test": {
-      "enabled": true,
+      "enabled": false,
       "num_samples": 1,
       "batch_size": 16
     },
     "noisy_accuracy": {
-      "enabled": true,
+      "enabled": false,
       "titel": "NoisyAccuracy",
       "noise_ratio": 0.2,
       "noise_steps": 4
     },
     "adversarial_success": {
-      "enabled": true,
+      "enabled": false,
       "titel": "adversarial dynamic"
     },
     "accuracy_adversarial": {
@@ -51,13 +51,13 @@
       "shuffle": false
     },
     "grad_and_original": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "grad_start_index": 799,
       "grad_range": 10
     },
     "scoreCAM_and_original": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "score_start_index": 0,
       "score_range": 1
@@ -84,13 +84,13 @@
       "target_layer": "model.layer4.1.conv2"
     },
     "feature_maps_all_layer": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "feature_start_index": 799,
       "feature_range": 10
     },
     "saliency_and_original": {
-      "enabled": true,
+      "enabled": false,
       "adv_dataset_path": null,
       "saliency_start_index": 799,
       "saliency_range": 10

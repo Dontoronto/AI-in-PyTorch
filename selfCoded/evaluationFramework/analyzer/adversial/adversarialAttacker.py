@@ -183,6 +183,7 @@ class AdversarialAttacker(Attack):
         result_success = dict()
         result_above_threshold = dict()
         result_no_perturbation = dict()
+        result_topk = dict()
 
         if self.save_original_images_flag or self.save_adversarial_images_flag:
             if len(self.attack_instances_list) > 1:
@@ -213,11 +214,12 @@ class AdversarialAttacker(Attack):
             res_success = 0
             res_above_thresh = 0
             res_no_perturb = 0
+            res_topk = [0, 0, 0, 0]
             chunks = math.ceil((end - start)/chunk_size)
 
             while chunk_start < end:
                 chunk_end = min(chunk_start + chunk_size, end)
-                success, total, above_thresh, no_perturb = evaluate(
+                success, total, above_thresh, no_perturb, topk_correct = evaluate(
                     self.adversarialModel,
                     self,
                     self.getDatasetProvider(),
@@ -233,6 +235,10 @@ class AdversarialAttacker(Attack):
                 res_above_thresh += above_thresh
                 res_no_perturb += no_perturb
                 chunk_start = chunk_end
+                #topk = [x + y for x, y in zip(topk, topk_correct)]
+                for j in range(len(topk_correct)):
+                    res_topk[j] += topk_correct[j]
+                # topk = [correct / total * 100 for correct in topk_correct]
 
                 if self.save_adversarial_images_flag is True:
                     save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
@@ -248,13 +254,14 @@ class AdversarialAttacker(Attack):
             result_total[self.attack_instance_list_names[i]] = res_total
             result_above_threshold[self.attack_instance_list_names[i]] = res_above_thresh
             result_no_perturbation[self.attack_instance_list_names[i]] = res_no_perturb
+            result_topk[self.attack_instance_list_names[i]] = [correct / res_total * 100 for correct in res_topk]
 
         # if self.save_adversarial_images_flag is True:
         #     save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
         # if self.save_original_images_flag is True:
         #     save_dataset(self.save_original_arrays, self.save_labels, self.save_original_path)
 
-        return result_ratio, result_success, result_total, result_above_threshold, result_no_perturbation
+        return result_ratio, result_success, result_total, result_above_threshold, result_no_perturbation, result_topk
 
 
 

@@ -22,8 +22,9 @@ from .activationMaps.scoreCAM import ScoreCAM
 from .activationMaps import cic
 
 from .measurement.sparseMeasurement import pruningCounter
-from .measurement.topPredictions import show_top_predictions, getSum_top_predictions
-from .measurement.distributionDensity import calculate_distribution_density, plot_distribution_density
+from .measurement.topPredictions import show_top_predictions, getSum_top_predictions, calculate_topk_accuracy
+from .measurement.distributionDensity import (calculate_distribution_density, plot_distribution_density,
+                                              calculate_optimal_density_range)
 
 from .plotFuncs.plots import (plot_original_vs_observation, plot_model_comparison,
                               plot_model_comparison_with_table, model_comparison_table,
@@ -125,11 +126,14 @@ class Analyzer:
     def setTrainer(self, trainer_obj):
         self.trainer = trainer_obj
 
-    def startTestrun(self, kwargs):
+    def startTestrun(self, kwargs, run_training=True):
 
         self.adapt_trainer_configs_to_analyzer()
 
-        self.trainer.train(**kwargs)
+        if run_training is True:
+            self.trainer.train(**kwargs)
+        else:
+            pass
 
         model_filenames = self.load_model_path_from_path(self.save_path)
 
@@ -165,16 +169,19 @@ class Analyzer:
         create_directory(accuracy_path)
 
         adv_dynamic_list = list()
+        adv_topk_dynamic_list = list()
         model_name_list = list()
 
         column_metric = ['Adversarial Success Ratio', 'Adversarial Success', 'Dataset length',
                          'l2-norm overflow', 'No Perturbation Failure']
 
+        adv_topk_column_metric = ['Adversarial Success Ratio', 'Top1', 'Top2', 'Top3', 'Top5', 'Dataset length']
+
         for model_filename in model_filenames:
             model_name = os.path.splitext(model_filename)[0]
             self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
 
-            dic_ratio, dic_success, dic_total, dict_above, dict_no_pert = self.start_adversarial_evaluation_preconfigured()
+            dic_ratio, dic_success, dic_total, dict_above, dict_no_pert, dict_topk = self.start_adversarial_evaluation_preconfigured()
 
 
             for key in dic_ratio:
@@ -182,16 +189,27 @@ class Analyzer:
                 adv_dynamic_list.append([dic_ratio[key], dic_success[key], dic_total[key],
                                          dict_above[key], dict_no_pert[key]])
                 model_name_list.append(model_attack)
+                adv_topk_dynamic_list.append([dic_ratio[key], *dict_topk[key], dic_total[key]])
             # accuracy_list.append([percentage, correct_classified, dataset_length])
             # model_name_list.append(model_name)
 
         combined = list(zip(model_name_list, adv_dynamic_list))
         combined.sort()
         sorted_strings, sorted_values = zip(*combined)
-        model_name_list = list(sorted_strings)
-        adv_dynamic_list = list(sorted_values)
-        fig = plot_table(adv_dynamic_list, model_name_list, column_metric)
+        model_name_list_sorted = list(sorted_strings)
+        adv_dynamic_list_sorted = list(sorted_values)
+        fig = plot_table(adv_dynamic_list_sorted, model_name_list_sorted, column_metric)
         fig.savefig(os.path.join(accuracy_path, f"{titel}_success.png"),
+                    dpi=300, facecolor='dimgray', bbox_inches='tight')
+        plt.close(fig)
+
+        combined = list(zip(model_name_list, adv_topk_dynamic_list))
+        combined.sort()
+        sorted_strings, sorted_values = zip(*combined)
+        model_name_list_sorted = list(sorted_strings)
+        adv_topk_dynamic_list_sorted = list(sorted_values)
+        fig = plot_table(adv_topk_dynamic_list_sorted, model_name_list_sorted, adv_topk_column_metric)
+        fig.savefig(os.path.join(accuracy_path, f"{titel}_topk.png"),
                     dpi=300, facecolor='dimgray', bbox_inches='tight')
         plt.close(fig)
 
@@ -200,22 +218,30 @@ class Analyzer:
         create_directory(accuracy_path)
 
         accuracy_list = list()
+        topk_accuracy_list = list()
         model_name_list = list()
 
         column_metric = ['Correct Classified Ratio', 'Correct Classified', 'Dataset length']
+        topk_column_metric = ['Top1', 'Top2', 'Top3', 'Top5', 'Dataset length']
 
         for model_filename in model_filenames:
             model_name = os.path.splitext(model_filename)[0]
             self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
 
-            correct_classified, dataset_length, percentage = self.test(self.model, test_loader=test_loader,
+            correct_classified, dataset_length, percentage, topk = self.test(self.model, test_loader=test_loader,
                                                                        loss_func=loss_func)
 
             accuracy_list.append([percentage, correct_classified, dataset_length])
+            topk_accuracy_list.append([*topk,dataset_length])
             model_name_list.append(model_name)
 
         fig = plot_table(accuracy_list, model_name_list, column_metric)
         fig.savefig(os.path.join(accuracy_path, f"{titel}_accuracy.png"),
+                    dpi=300, facecolor='dimgray', bbox_inches='tight')
+        plt.close(fig)
+
+        fig = plot_table(topk_accuracy_list, model_name_list, topk_column_metric)
+        fig.savefig(os.path.join(accuracy_path, f"{titel}_topk_accuracy.png"),
                     dpi=300, facecolor='dimgray', bbox_inches='tight')
         plt.close(fig)
 
@@ -307,6 +333,11 @@ class Analyzer:
         cic.display_safe_table_new(neg, cic_path, f"cic_neg_architecture")
         cic.display_safe_table_new(neg_norm, cic_path, "cic_neg_architecture_norm")
 
+        inverted_comb_norm = cic.display_table_combi_norm(model_name_list, new_list_pos, new_list_neg,
+                                                          conv_layer_names_list)
+        cic.display_safe_table_new(inverted_comb_norm, cic_path, f"cic_inverted_combi_norm")
+
+
         filter_list_pos = cic.combine_tensors(filter_sum_pos)
 
         for layer_tensor, layer_name in zip(filter_list_pos, conv_layer_names_list):
@@ -362,23 +393,31 @@ class Analyzer:
         create_directory(accuracy_path)
 
         accuracy_list = list()
+        topk_accuracy_list = list()
         model_name_list = list()
 
         column_metric = ['Correct Classified Ratio', 'Correct Classified', 'Dataset length']
+        topk_column_metric = ['Top1', 'Top2', 'Top3', 'Top5', 'Dataset length']
 
         for model_filename in model_filenames:
             model_name = os.path.splitext(model_filename)[0]
             self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
 
-            correct_classified, dataset_length, percentage = self.noisy_test(self.model, test_loader=test_loader,
+            correct_classified, dataset_length, percentage, topk = self.noisy_test(self.model, test_loader=test_loader,
                                                                        loss_func=loss_func, noise_ratio=noise_ratio,
                                                                              mean=mean, std=std)
 
             accuracy_list.append([percentage, correct_classified, dataset_length])
+            topk_accuracy_list.append([*topk,dataset_length])
             model_name_list.append(model_name)
 
         fig = plot_table(accuracy_list, model_name_list, column_metric)
         fig.savefig(os.path.join(accuracy_path, f"{titel}_{noise_ratio}_ratio_accuracy.png"),
+                    dpi=300, facecolor='dimgray', bbox_inches='tight')
+        plt.close(fig)
+
+        fig = plot_table(topk_accuracy_list, model_name_list, topk_column_metric)
+        fig.savefig(os.path.join(accuracy_path, f"{titel}_topk_{noise_ratio}_ratio_accuracy.png"),
                     dpi=300, facecolor='dimgray', bbox_inches='tight')
         plt.close(fig)
 
@@ -390,6 +429,7 @@ class Analyzer:
         create_directory(pruning_path)
 
         pruning_stats_list = list()
+        density_range = (0,0)
 
         for model_filename in model_filenames:
             model_name = os.path.splitext(model_filename)[0]
@@ -403,6 +443,14 @@ class Analyzer:
             fig.savefig(os.path.join(pruning_path, f"{model_name}_pruning_state.png"),
                         dpi=300, facecolor='dimgray', bbox_inches='tight')
             plt.close(fig)
+
+            # fig_density = self.density_evaluation(bins=450,log_scale=True)
+            # fig_density.savefig(os.path.join(pruning_path, f"{model_name}_density_histogram.png"),
+            #             dpi=300, facecolor='white', bbox_inches='tight')
+            # plt.close(fig_density)
+            density_range_measure = calculate_optimal_density_range(self.model)
+            if density_range_measure[1] > density_range[1]:
+                density_range = density_range_measure
 
             total_zero_params = sum(weight_stats[0])
             total_model_params = sum(weight_stats[1])
@@ -418,6 +466,20 @@ class Analyzer:
         fig.savefig(os.path.join(pruning_path, f"model_pruning_ratio.png"),
                     dpi=300, facecolor='dimgray', bbox_inches='tight')
         plt.close(fig)
+
+        for model_filename in model_filenames:
+            model_name = os.path.splitext(model_filename)[0]
+            self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
+
+            if density_range[0] == 0:
+                density_range = None
+
+            fig_density = self.density_evaluation(density_range=density_range , log_scale=False)
+            fig_density.savefig(os.path.join(pruning_path, f"{model_name}_density_histogram.png"),
+                        dpi=300, facecolor='white', bbox_inches='tight')
+            plt.close(fig_density)
+
+
 
 
     def report_topk_accuracy(self, model_filenames, topk_start_index, topk_range, topk_pred):
@@ -847,7 +909,13 @@ class Analyzer:
         if method == 'epsilon_distance' and params.get("enabled", False) is True:
 
             histW, histZ, thrshW, thrshZ = self.trainer.getEpsilonResults()
-            return self.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
+            # return self.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
+            # Check if any value is None
+            if histW is None or histZ is None or thrshW is None or thrshZ is None:
+                # Handle the case where any of the values is None, if necessary
+                pass
+            else:
+                return self.eval_epsilon_distances(histW, histZ, thrshW, thrshZ)
         elif method == 'accuracy_adversarial' and params.get("enabled", False) is True:
 
             # init vars
@@ -1251,6 +1319,8 @@ class Analyzer:
         model.eval()
         test_loss = 0
         correct_classified = 0
+        topk_correct = [0, 0, 0, 0]
+        ks = [1, 2, 3, 5]
         dataset_length = len(test_loader.dataset)
         test_loader = test_loader
         with torch.no_grad():
@@ -1259,15 +1329,23 @@ class Analyzer:
                 test_loss += loss_func(output, target).item()
                 pred = output.argmax(dim=1, keepdim=True)
                 correct_classified += pred.eq(target.view_as(pred)).sum().item()
+
+                for i, k in enumerate(ks):
+                    topk_correct[i] += calculate_topk_accuracy(output, target, k)
+
         test_loss /= dataset_length
 
         percentage = 100. * correct_classified / dataset_length
+        topk_accuracy = [correct / dataset_length * 100 for correct in topk_correct]
 
         logger.info(f'\nTest set: Average loss: {test_loss:.4f},'
                     f' Accuracy: {correct_classified}/{dataset_length}'
                     f' ({percentage:.0f}%)')
 
-        return correct_classified, dataset_length, percentage
+        for i, k in enumerate(ks):
+            logger.info(f"Top-{k} Accuracy: {topk_accuracy[i]:.2f}%")
+
+        return correct_classified, dataset_length, percentage, topk_accuracy
 
     def noisy_test(self, model, test_loader, loss_func, noise_ratio, mean, std,  **kwargs):
         '''
@@ -1282,27 +1360,37 @@ class Analyzer:
         model.eval()
         test_loss = 0
         correct_classified = 0
+        topk_correct = [0, 0, 0, 0]
+        ks = [1, 2, 3, 5]
         dataset_length = len(test_loader.dataset)
         test_loader = test_loader
         mean_tensor = torch.tensor(mean).view(1, -1, 1, 1)
         std_tensor = torch.tensor(std).view(1, -1, 1, 1)
         with torch.no_grad():
             for data, target in test_loader:
-                noise_overlay = (torch.randn_like(data) - mean_tensor) /std_tensor * noise_ratio
+                noise_overlay = (torch.randn_like(data) - mean_tensor) / std_tensor * noise_ratio
                 data += noise_overlay
                 output = model(data)
                 test_loss += loss_func(output, target).item()
                 pred = output.argmax(dim=1, keepdim=True)
                 correct_classified += pred.eq(target.view_as(pred)).sum().item()
+
+                for i, k in enumerate(ks):
+                    topk_correct[i] += calculate_topk_accuracy(output, target, k)
+
         test_loss /= dataset_length
 
         percentage = 100. * correct_classified / dataset_length
+        topk_accuracy = [correct / dataset_length * 100 for correct in topk_correct]
 
         logger.info(f'\nTest set: Average loss: {test_loss:.4f},'
                     f' Accuracy: {correct_classified}/{dataset_length}'
                     f' ({percentage:.0f}%)')
 
-        return correct_classified, dataset_length, percentage
+        for i, k in enumerate(ks):
+            logger.info(f"Top-{k} Accuracy: {topk_accuracy[i]:.2f}%")
+
+        return correct_classified, dataset_length, percentage, topk_accuracy
 
     def evaluate(self, model, img, single_batch, target_layer):
         img_tensor, grad_cam = GradCAM().analyse(model=model, original_image=img,
@@ -1512,7 +1600,7 @@ class Analyzer:
     # -----------------------------
 
     # ------------ Density Analysis
-    def density_evaluation(self, bins=100, density_range=None, log_scale=False):
+    def density_evaluation(self, bins=None, density_range=None, log_scale=False):
         '''
         Berechnet und stellt das Verteilungsdiagramm der Modellgewichte dar
 
@@ -1521,7 +1609,8 @@ class Analyzer:
         - log_scale (bool): Wenn True, wird die y-Achse logarithmisch skaliert.
         '''
         density, bin_edges = calculate_distribution_density(self.model, bins, density_range)
-        plot_distribution_density(density, bin_edges, log_scale)
+        fig_density = plot_distribution_density(density, bin_edges, log_scale)
+        return fig_density
 
     # -----------------------------
 

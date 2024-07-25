@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 import random
+import torch
 
 def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
              debug=False, only_success=False, index_list=None):
@@ -25,6 +26,8 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
     total = 0
     above_threshold = 0
     no_perturbation_failure = 0
+    topk_correct = [0, 0, 0, 0]  # top-1, top-2, top-3, top-5 correct counters
+    ks = [1, 2, 3, 5]  # Define the k values
     if index_list is None:
         indices = generate_indices(start, end)
     else:
@@ -38,6 +41,11 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
         if targeted:
             target = choose_target(i, y, provider.labels, deterministic)
         x_adv = attack.run(np.copy(x), y, target)
+        prediction = model.predict(np.copy(x_adv))
+        for i, k in enumerate(ks):
+            _, topk_indices = torch.topk(prediction, k)
+            if y in topk_indices.tolist():
+                topk_correct[i] += 1
         if not threat_model.check(np.copy(x), np.copy(x_adv)):
             if debug:
                 print('check failed', file=sys.stderr)
@@ -55,6 +63,7 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
                 if threat_model.adv_success(x, x_adv) is False:
                     if y_adv != y:
                         no_perturbation_failure += 1
+                        attack.remove_adv_image_over_threshold()
                     continue
             if y_adv != y:
                 success += 1
@@ -64,7 +73,8 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
 
     success_rate = success / total
 
-    return success, total, above_threshold, no_perturbation_failure
+
+    return success, total, above_threshold, no_perturbation_failure, topk_correct
 
 def choose_target(index, true_label, num_labels, deterministic=False):
     if deterministic:

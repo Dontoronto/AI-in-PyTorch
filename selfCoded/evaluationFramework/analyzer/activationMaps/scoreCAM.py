@@ -24,10 +24,19 @@ class ScoreCAM(EvaluationMapsStrategy):
         if target_layer is None:
             return
 
-        image = original_image.copy()
-        image = image.convert(mode='RGB')
-        image = T.Compose([T.ToTensor()])(image)
-        img = T.Compose([T.ToTensor()])(original_image.copy())
+        # image = original_image.copy()
+        # image = image.convert(mode='RGB')
+        # image = T.Compose([T.ToTensor()])(image)
+        # img = T.Compose([T.ToTensor()])(original_image.copy())
+
+        # Define the transformation pipeline once
+        transform = T.Compose([T.ToTensor()])
+
+        # Convert and transform the original image once
+        image = transform(original_image.convert('RGB'))
+
+        # Apply the same transformation to the original image copy for img
+        img = transform(original_image.copy().convert('RGB'))
 
         with torch.no_grad():
             cam_extractor = _ScoreCAM(model, target_layer=target_layer)

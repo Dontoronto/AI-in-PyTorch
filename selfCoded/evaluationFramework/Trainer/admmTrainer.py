@@ -20,6 +20,7 @@ from torch.nn.utils import clip_grad_norm_
 from multiprocessing import Process, Queue
 import logging
 from multiprocessing import Event
+from torch.utils.tensorboard import SummaryWriter
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ class ADMMTrainer(DefaultTrainer):
                  epoch=1
                  ):
         super().__init__(model, dataHandler, loss, optimizer, epoch)
+
 
         # Variables for ADMM config
         self.admmConfig = None
@@ -112,6 +114,7 @@ class ADMMTrainer(DefaultTrainer):
         self.adv_enabled = False
         self.adv_fraction = None
         self.adv_test_enabled = None
+        self.tensorboard_writer = None
 
         logger.debug(f"ADMM Trainer was initialized: \n {self.__dict__}")
 
@@ -143,11 +146,22 @@ class ADMMTrainer(DefaultTrainer):
     def getHistoryEpsilonW(self):
         return self.history_epsilon_W
 
+    def getEpsilonResults(self):
+        # Check if attributes exist, otherwise return None
+        epsilon_W = getattr(self, 'epsilon_W', None)
+        epsilon_Z = getattr(self, 'epsilon_Z', None)
+
+        # Check if history lists are empty
+        history_epsilon_W = self.getHistoryEpsilonW() if self.getHistoryEpsilonW() else None
+        history_epsilon_Z = self.getHistoryEpsilonZ() if self.getHistoryEpsilonZ() else None
+
+        return history_epsilon_W, history_epsilon_Z, epsilon_W, epsilon_Z
+
     def getHistoryEpsilonZ(self):
         return self.history_epsilon_Z
 
-    def getEpsilonResults(self):
-        return self.getHistoryEpsilonW(), self.getHistoryEpsilonZ(), self.epsilon_W, self.epsilon_Z
+    # def getEpsilonResults(self):
+    #     return self.getHistoryEpsilonW(), self.getHistoryEpsilonZ(), self.epsilon_W, self.epsilon_Z
 
     def setAdversarialTraining(self, adv_attacker, adv_fraction, adv_test_enabled = False):
         self.adv_attacker = adv_attacker
@@ -472,6 +486,11 @@ class ADMMTrainer(DefaultTrainer):
         self.regularize_gradients()
         if curr_iteration % self.admm_iterations == 0:
 
+            if self.tensorboard_writer is not None:
+            # Logge die Histogramme der Modellgewichte
+                for name, param in self.model.named_parameters():
+                    self.tensorboard_writer.add_histogram(name, param, curr_iteration)
+
             # TODO: abbruch testen
             self.store_old_AuxVariable()
             self.project_aux_layers()
@@ -503,12 +522,16 @@ class ADMMTrainer(DefaultTrainer):
             else:
                 self.initialize_pruning_mask_layer_list(True)
             #self.list_masks = self.patternManager.get_pattern_masks()
+        elif curr_iteration % self.admm_iterations == 0:
+            if self.tensorboard_writer is not None:
+                for name, param in self.model.named_parameters():
+                    self.tensorboard_writer.add_histogram(name, param, self.main_iterations + curr_iteration)
         self.prune_weight_layer()
 
 
     # TODO: methode umschreiben so dass epoch nichtmehr gebraucht wird für admm
     # TODO: symbiose von ADMM und retraining
-    def train(self, test=False):
+    def train(self, test=False, tensorboard=False):
 
         logger.info(f"Current Trainer Tasks: {self.phase_list}")
 
@@ -565,6 +588,10 @@ class ADMMTrainer(DefaultTrainer):
                     #torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
 
             else:
+
+                if tensorboard is True and self.tensorboard_writer is None:
+                    self.tensorboard_writer = SummaryWriter(os.path.join(self.save_path,"tensorboard", phase))
+
                 self.initialize_dualvar_auxvar()
                 epo = 0
                 counter = 0
@@ -662,6 +689,10 @@ class ADMMTrainer(DefaultTrainer):
                     else:
                         self.export_model(model_path=model_filename, onnx=self.onnx_enabled)
                         self.export_tensor_list_csv(f'{phase}_mask_tensor.csv', self.list_masks)
+
+        if tensorboard is True and self.tensorboard_writer is not None:
+            self.tensorboard_writer.close()
+            del self.tensorboard_writer
 
         if self.getCudaState() is True:
             del self.list_Z, self.list_U, self.list_W, self.old_layer_list_z, self.list_masks, self.patternManager

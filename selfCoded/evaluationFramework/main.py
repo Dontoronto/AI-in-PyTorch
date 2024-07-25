@@ -424,17 +424,18 @@ def main():
     Analyzer.setTrainer(Trainer)
 
     atk = Analyzer.getSingleAttack(Model, "PGD" , eps=1.0, alpha=2/255, steps=10, random_start=False)
-    Trainer.setAdversarialTraining(atk, 0.2)
+    #Trainer.setAdversarialTraining(atk, 0.2)
 
     train_kwargs = {
-        'test': True
+        'test': True,
+        'tensorboard': True
     }
     # # create_missing_folders("experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images",
     # #                        1000)
     # # create_missing_folders("experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images",
     # #                        1000)
 
-    Analyzer.startTestrun(train_kwargs)
+    Analyzer.startTestrun(train_kwargs, run_training=False)
 
 
     # copy_directory("configs",

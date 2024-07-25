@@ -44,3 +44,18 @@ class AdversarialModelWrapper:
         prediction = self._model(x_in).squeeze(0)
         class_id = prediction.argmax().item()
         return class_id
+
+    def predict(self, x):
+        '''
+        Returns the label for the input x (as a Python integer).
+        '''
+
+        x_in = self.transform(x).detach()
+        if len(x_in.shape) < 4:
+            x_in = x_in.unsqueeze(0)
+        if self.cuda_enabled:
+            x_in = x_in.to('cuda')
+        self._model.eval()
+        with torch.no_grad():
+            prediction = self._model(x_in).squeeze(0)
+        return prediction
