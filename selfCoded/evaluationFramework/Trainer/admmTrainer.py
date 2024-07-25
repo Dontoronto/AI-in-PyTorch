@@ -7,6 +7,7 @@ from .utils import tqdm_progressbar
 from .defaultTrainer import DefaultTrainer
 from .admm_utils.utils import (create_magnitude_pruned_mask, add_tensors_inplace, subtract_tensors_inplace,
                                scale_and_add_tensors_inplace)
+from .admm_utils.maskLoader import load_pruning_mask_csv
 from .admm_utils.layerInfo import ADMMVariable
 from .mapper.admm_mapper import ADMMConfigMapper, ADMMArchitectureConfigMapper
 from .admm_utils.multiProcessHandler import MultiProcessHandler
@@ -19,6 +20,7 @@ from torch.nn.utils import clip_grad_norm_
 from multiprocessing import Process, Queue
 import logging
 from multiprocessing import Event
+from torch.utils.tensorboard import SummaryWriter
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +38,7 @@ class ADMMTrainer(DefaultTrainer):
                  epoch=1
                  ):
         super().__init__(model, dataHandler, loss, optimizer, epoch)
+
 
         # Variables for ADMM config
         self.admmConfig = None
@@ -91,20 +94,51 @@ class ADMMTrainer(DefaultTrainer):
         self.history_epsilon_Z = []
         self.early_termination_flag = False
 
-        self.patternManager = PatternManager()
+        #self.patternManager = PatternManager()
+        self.patternManager = None
+        self.unstructured_magnitude_pruning_enabled = False
+        self.pattern_pruning_all_patterns_enabled = False
+        self.pattern_pruning_elog_patterns_enabled = False
+        self.connectivity_pruning_enabled = False
         #self.patternManager.setConnectivityPruning(True)
+
+        #loading existing pruning mask
+        self.pruning_mask_loading_enabled = False
+        self.pruning_mask_loading_path = None
 
         self.tensor_buffering_enabled = False
         self.onnx_enabled = False
 
+        # TODO: not set in configs
+        self.adv_attacker = None
+        self.adv_enabled = False
+        self.adv_fraction = None
+        self.adv_test_enabled = None
+        self.tensorboard_writer = None
+
         logger.debug(f"ADMM Trainer was initialized: \n {self.__dict__}")
 
 
+    def checkPruningTypes(self):
+        if self.pattern_pruning_elog_patterns_enabled and self.pattern_pruning_all_patterns_enabled:
+            logger.critical(f"two pattern pruning types are selected, please deactivate one in ADMMConfig.json")
+            return
 
+        if self.pattern_pruning_elog_patterns_enabled != self.pattern_pruning_all_patterns_enabled:
+            logger.debug("Pattern Manager was initialized. Pattern Pruning was enabled in ADMMConfig.json")
+            if self.pattern_pruning_elog_patterns_enabled is True:
+                self.patternManager = PatternManager(pattern_library='elog')
+            else:
+                self.patternManager = PatternManager(pattern_library='all')
+
+            if self.connectivity_pruning_enabled is True:
+                logger.debug("Connectivity Pruning was enabled")
+                self.patternManager.setConnectivityPruning(True)
 
 
     def setADMMConfig(self, kwargs):
         ADMMConfigMapper(self, kwargs)
+        self.checkPruningTypes()
 
     def setADMMArchitectureConfig(self, kwargs):
         ADMMArchitectureConfigMapper(self, kwargs)
@@ -112,11 +146,28 @@ class ADMMTrainer(DefaultTrainer):
     def getHistoryEpsilonW(self):
         return self.history_epsilon_W
 
+    def getEpsilonResults(self):
+        # Check if attributes exist, otherwise return None
+        epsilon_W = getattr(self, 'epsilon_W', None)
+        epsilon_Z = getattr(self, 'epsilon_Z', None)
+
+        # Check if history lists are empty
+        history_epsilon_W = self.getHistoryEpsilonW() if self.getHistoryEpsilonW() else None
+        history_epsilon_Z = self.getHistoryEpsilonZ() if self.getHistoryEpsilonZ() else None
+
+        return history_epsilon_W, history_epsilon_Z, epsilon_W, epsilon_Z
+
     def getHistoryEpsilonZ(self):
         return self.history_epsilon_Z
 
-    def getEpsilonResults(self):
-        return self.getHistoryEpsilonW(), self.getHistoryEpsilonZ(), self.epsilon_W, self.epsilon_Z
+    # def getEpsilonResults(self):
+    #     return self.getHistoryEpsilonW(), self.getHistoryEpsilonZ(), self.epsilon_W, self.epsilon_Z
+
+    def setAdversarialTraining(self, adv_attacker, adv_fraction, adv_test_enabled = False):
+        self.adv_attacker = adv_attacker
+        self.adv_fraction = adv_fraction
+        self.adv_enabled = True
+        self.adv_test_enabled = adv_test_enabled
 
     # def getTestLoader(self):
     #     return super(ADMMTrainer, self).getTestLoader()
@@ -144,31 +195,12 @@ class ADMMTrainer(DefaultTrainer):
         self.model_name = name
 
 
-
-    # TODO: needs to be deleted at the end
-    def testZCopy(self):
-        for module_name, module in self.model.named_modules():
-            if module_name == "model.conv1":
-                weight_copy = copy.deepcopy(module.weight.data)
-                #logger.critical(self.list_W[0].W)
-                #self.list_W[0].module.weight.data += 0.1
-                self.list_W[0].W += 0.1
-                logger.critical(f"Model-Layer{torch.unique(module.weight.data - self.list_W[0].W)}")
-                logger.critical(f"Deepcopy-Layer{torch.unique(weight_copy - self.list_W[0].W)}")
-                logger.critical(f"Layer Shape: {self.list_W[0].W.shape}")
-                logger.critical(f"Difference Model-Layer: {(module.weight.data - self.list_W[0].W).sum()}")
-                logger.critical(f"Difference Deepcopy-Layer: {(weight_copy - self.list_W[0].W).sum()}")
-        for module_name, param in self.model.named_parameters():
-            if module_name == "model.conv1.weight":
-                #logger.critical(self.list_W[0].W)
-                grad_copy = copy.deepcopy(param.grad)
-                #self.list_W[0].module.weight.data += 0.1
-                self.list_W[0].dW += 0.1
-                logger.critical(f"Model-Layer{torch.unique(param.grad - self.list_W[0].dW)}")
-                logger.critical(f"Deepcopy-Layer{torch.unique(grad_copy - self.list_W[0].dW)}")
-                logger.critical(f"Layer Shape: {self.list_W[0].dW.shape}")
-                logger.critical(f"Difference Model-Layer: {(param.grad - self.list_W[0].dW).sum()}")
-                logger.critical(f"Difference Deepcopy-Layer: {(grad_copy - self.list_W[0].dW).sum()}")
+    def load_pruning_mask(self):
+        if os.path.exists(self.pruning_mask_loading_path):
+            self.list_masks = load_pruning_mask_csv(self.pruning_mask_loading_path)
+            if self.cuda_enabled is True:
+                for i in range(len(self.list_masks)):
+                    self.list_masks[i].to('cuda')
 
     def show_pruning_layer_job(self):
         '''
@@ -209,22 +241,27 @@ class ADMMTrainer(DefaultTrainer):
         # isinstance(module, Conv2d)
         # isinstance(module, Linear)
         # [pattern_library[i] if i is not None else torch.zeros(3, 3) for i in group_indices]
-        conv_list = [layerZ.Z for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
-        conv_layer_pruning_ratio_list = [layerZ.sparsity for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
-        fc_list = [layerZ for layerZ in self.list_Z if isinstance(layerZ.module, Linear)]
         self.list_masks = []
-        if firstTime is True:
-            self.patternManager.assign_patterns_to_tensors(conv_list, conv_layer_pruning_ratio_list)
-            self.list_masks = self.patternManager.get_pattern_masks()
-            self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
+        if self.pattern_pruning_all_patterns_enabled or self.pattern_pruning_elog_patterns_enabled:
+            conv_list = [layerZ.Z for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
+            conv_layer_pruning_ratio_list = [layerZ.sparsity for layerZ in self.list_Z if isinstance(layerZ.module, Conv2d)]
+            fc_list = [layerZ for layerZ in self.list_Z if isinstance(layerZ.module, Linear)]
+            #self.list_masks = []
+            if firstTime is True:
+                self.patternManager.assign_patterns_to_tensors(conv_list, conv_layer_pruning_ratio_list)
+                self.list_masks = self.patternManager.get_pattern_masks()
+                self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
+            else:
+                #self.patternManager.reduce_available_patterns(2)
+                self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=4,
+                                                               pruning_ratio_list=conv_layer_pruning_ratio_list,
+                                                               admm_iter=self.main_iterations//self.admm_iterations)
+                self.list_masks = self.patternManager.get_pattern_masks()
+                self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
+            # self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
+            #logger.info(f"Pruning mask was created")
         else:
-            #self.patternManager.reduce_available_patterns(2)
-            self.patternManager.update_pattern_assignments(conv_list, min_amount_indices=4,
-                                                           pruning_ratio_list=conv_layer_pruning_ratio_list)
-            self.list_masks = self.patternManager.get_pattern_masks()
-            self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in fc_list])
-        # self.list_masks = [create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z]
-        #logger.info(f"Pruning mask was created")
+            self.list_masks.extend([create_magnitude_pruned_mask(layerZ.Z, layerZ.sparsity) for layerZ in self.list_Z])
 
     def clip_gradients(self):
         if self.gradient_threshold is not None:
@@ -449,6 +486,11 @@ class ADMMTrainer(DefaultTrainer):
         self.regularize_gradients()
         if curr_iteration % self.admm_iterations == 0:
 
+            if self.tensorboard_writer is not None:
+            # Logge die Histogramme der Modellgewichte
+                for name, param in self.model.named_parameters():
+                    self.tensorboard_writer.add_histogram(name, param, curr_iteration)
+
             # TODO: abbruch testen
             self.store_old_AuxVariable()
             self.project_aux_layers()
@@ -475,14 +517,21 @@ class ADMMTrainer(DefaultTrainer):
         self.normalize_gradients()
         self.regularize_gradients()
         if curr_iteration == 0 and "admm" not in self.phase_list:
-            self.initialize_pruning_mask_layer_list(True)
+            if self.pruning_mask_loading_enabled is True:
+                self.load_pruning_mask()
+            else:
+                self.initialize_pruning_mask_layer_list(True)
             #self.list_masks = self.patternManager.get_pattern_masks()
+        elif curr_iteration % self.admm_iterations == 0:
+            if self.tensorboard_writer is not None:
+                for name, param in self.model.named_parameters():
+                    self.tensorboard_writer.add_histogram(name, param, self.main_iterations + curr_iteration)
         self.prune_weight_layer()
 
 
     # TODO: methode umschreiben so dass epoch nichtmehr gebraucht wird für admm
     # TODO: symbiose von ADMM und retraining
-    def train(self, test=False):
+    def train(self, test=False, tensorboard=False):
 
         logger.info(f"Current Trainer Tasks: {self.phase_list}")
 
@@ -527,6 +576,8 @@ class ADMMTrainer(DefaultTrainer):
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled, current_epoch=epo)
                     self.scheduler_step()
 
+                self.reset_scheduler()
+
                 #self.export_model(model_path=save_path)
                 if self.save is True:
                     if self.save_path is not None:
@@ -537,6 +588,10 @@ class ADMMTrainer(DefaultTrainer):
                     #torch.save(self.model.state_dict(), self.model_name + "_admm_" + phase + ".pth")
 
             else:
+
+                if tensorboard is True and self.tensorboard_writer is None:
+                    self.tensorboard_writer = SummaryWriter(os.path.join(self.save_path,"tensorboard", phase))
+
                 self.initialize_dualvar_auxvar()
                 epo = 0
                 counter = 0
@@ -557,6 +612,13 @@ class ADMMTrainer(DefaultTrainer):
 
                 while self.main_iterations > counter and epo < self.epoch:
                     for batch_idx, (data, target) in enumerate(dataloader):
+
+                        if self.adv_enabled is True: #and phase == "retrain":
+                            num_adversarial_samples = int(self.adv_fraction * data.size(0))
+                            adv_data = self.adv_attacker(data[:num_adversarial_samples], target[:num_adversarial_samples])
+                            data = torch.cat([adv_data, data[num_adversarial_samples:]], dim=0)
+                            pass
+
                         self.optimizer.zero_grad()
                         output = self.model(data)
                         loss = self.loss(output, target)
@@ -595,9 +657,12 @@ class ADMMTrainer(DefaultTrainer):
                         if self.main_iterations == counter:
                             break
 
+                    self.scheduler_step()
+
                     if phase == "retrain":
                         #logger.debug(f'Retrain Epoch: {epo} [{batch_idx * len(data)}/{len(dataloader.dataset)} ({100. * batch_idx / len(dataloader):.0f}%)]\tLoss: {loss.item():.6f}')
-                        self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
+                        if test is True:
+                            self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
                         epo +=1
                     elif test is True:
                         self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
@@ -610,9 +675,10 @@ class ADMMTrainer(DefaultTrainer):
                 # Note: last time prune layers because optimizer tunes masked out values because of momentum etc.
                 if phase == 'retrain':
                     self.prune_weight_layer()
+                    self.test(test_loader, snapshot_enabled=self.snapshot_enabled)
 
                 pbar.close()
-                pbar = None
+                self.reset_scheduler()
 
                 if self.save is True:
                     if self.save_path is not None:
@@ -623,6 +689,14 @@ class ADMMTrainer(DefaultTrainer):
                     else:
                         self.export_model(model_path=model_filename, onnx=self.onnx_enabled)
                         self.export_tensor_list_csv(f'{phase}_mask_tensor.csv', self.list_masks)
+
+        if tensorboard is True and self.tensorboard_writer is not None:
+            self.tensorboard_writer.close()
+            del self.tensorboard_writer
+
+        if self.getCudaState() is True:
+            del self.list_Z, self.list_U, self.list_W, self.old_layer_list_z, self.list_masks, self.patternManager
+            torch.cuda.empty_cache()
 
         # if self.tensor_buffering_enabled is True:
         #     self.handler.terminate_all_processes()

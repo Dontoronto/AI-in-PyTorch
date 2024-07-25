@@ -70,6 +70,12 @@ class AnalyzerConfigMapper:
         else:
             logger.error(f"adv_attack_selection was not able to map config: {adv_config}")
 
+        if 'adv_attack_selection_range' in adv_config:
+            self.analyzer.adv_attack_selection_range = adv_config.get('adv_attack_selection_range')
+            logger.debug(f"adv_attack_selection_range set to {self.analyzer.adv_attack_selection_range}")
+        else:
+            logger.error(f"adv_attack_selection_range was not able to map config: {adv_config}")
+
         if 'adv_sample_range_start' in adv_config:
             self.analyzer.adv_sample_range_start = adv_config.get('adv_sample_range_start')
             logger.debug(f"adv_sample_range_start set to {self.analyzer.adv_sample_range_start}")
@@ -87,6 +93,12 @@ class AnalyzerConfigMapper:
             logger.debug(f"adv_only_success_flag set to {self.analyzer.adv_only_success_flag}")
         else:
             logger.error(f"adv_only_success_flag was not able to map config: {adv_config}")
+
+        if 'adv_shuffle' in adv_config:
+            self.analyzer.adv_shuffle = adv_config.get('adv_shuffle')
+            logger.debug(f"adv_shuffle set to {self.analyzer.adv_shuffle}")
+        else:
+            logger.error(f"adv_shuffle was not able to map config: {adv_config}")
 
         #if 'cuda_enabled' in self.config:
         #    self.analyzer.cuda_enabled = self.config.get('cuda_enabled')

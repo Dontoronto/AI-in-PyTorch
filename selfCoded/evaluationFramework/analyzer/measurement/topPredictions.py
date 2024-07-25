@@ -1,5 +1,6 @@
 import numpy as np
-from torch import topk, sum
+from torch import topk
+from torch import sum as torch_sum
 
 import logging
 
@@ -50,11 +51,16 @@ def getSum_top_predictions(model, single_batch, top_values):
     # Convert to percentages
     probabilities = probabilities #* 100
 
-    top_predictions = dict()
+    #top_predictions = dict()
 
-    top_val = float(sum(probabilities))
+    top_val = float(torch_sum(probabilities))
     top_label = np.array(labels.cpu())
 
     logger.info(f"TopK prediction of first {top_values} values: {top_val}")
 
     return top_val, top_label #round(top_val,4)
+
+# Calculate top-K accuracy
+def calculate_topk_accuracy(output, target, k):
+    _, topk_pred = topk(output, k, dim=1)
+    return sum([1 for i in range(len(target)) if target[i] in topk_pred[i]])

@@ -1,0 +1,7 @@
+{
+  "provider": "MNIST",
+  "init_params": {
+    "image_path": "D:\\mnist\\MNIST\\raw\\t10k-images-idx3-ubyte.gz",
+    "label_path": "D:\\mnist\\MNIST\\raw\\t10k-labels-idx1-ubyte.gz"
+  }
+}

@@ -30,7 +30,7 @@ class PatternManager:
     abs_impact_patterns = []
     avg_impact_patterns = []
 
-    def __init__(self):
+    def __init__(self, pattern_library='all'):
         '''
         Example shapes of weights torch.Size([6, 1, 3, 3]) or torch.Size([16, 6, 3, 3])
         and for fc: torch.Size([120, 784])
@@ -41,7 +41,10 @@ class PatternManager:
         self._noReduction = False
 
         # creating pattern library
-        self.pattern_library = self.create_pattern_library(elog_patterns=True)
+        if pattern_library == 'elog':
+            self.pattern_library = self.create_pattern_library(elog_patterns=True)
+        else:
+            self.pattern_library = self.create_pattern_library(elog_patterns=False)
         #self.pattern_library = self.create_pattern_library(elog_patterns=False)
 
         # initializes a list of available patterns with indices of pattern library in list format
@@ -240,9 +243,13 @@ class PatternManager:
         return [convert_to_single_tensor(self.tensor_assignments[layer_idx],
                                          self.pattern_library) for layer_idx in range(len(self.tensor_assignments))]
 
-    def update_pattern_assignments(self, tensor_list, min_amount_indices=12, pruning_ratio_list=None):
+    def update_pattern_assignments(self, tensor_list, min_amount_indices=12, pruning_ratio_list=None, admm_iter=None):
         # Führt die erforderlichen Methoden nacheinander aus, um die Musterzuweisungen zu aktualisieren
         if self._noReduction == False:
+            if admm_iter is not None:
+                reduction_iterations = ((126-min_amount_indices) // admm_iter) + 1
+                for i in range(reduction_iterations-1):
+                    self.reduce_available_patterns(min_amount_indices=min_amount_indices)  # Reduziert die Liste der verfügbaren Muster
             self.reduce_available_patterns(min_amount_indices=min_amount_indices)  # Reduziert die Liste der verfügbaren Muster
         self.assign_patterns_to_tensors(tensor_list, pruning_ratio_list)  # Weist Muster den Tensoren erneut zu
 

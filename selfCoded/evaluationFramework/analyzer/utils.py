@@ -4,6 +4,8 @@ import shutil
 import torch
 import logging
 import torchvision.transforms as T
+from torch.utils.data import DataLoader, Subset
+import random
 
 
 logger = logging.getLogger(__name__)
@@ -67,6 +69,47 @@ def adjust_transformer(transformer):
 
     new_transformer = T.Compose(transform_steps)
     return new_transformer
+
+def subsample(dataset, num_samples_per_class, batch_size, cuda_enabled=False):
+
+
+    # # Klassenindizes sammeln
+    # class_indices = {}
+    # for idx, class_idx in enumerate(dataset.targets):
+    #     if class_idx not in class_indices:
+    #         class_indices[class_idx] = []
+    #     class_indices[class_idx].append(idx)
+
+
+    # Klassenindizes sammeln
+    class_indices = {}
+    for idx, target in enumerate(dataset.targets):
+        if isinstance(target, torch.Tensor):
+            target = target.item()  # Konvertiere von Tensor zu int
+        if target not in class_indices:
+            class_indices[target] = []
+        class_indices[target].append(idx)
+
+    # Stichprobe pro Klasse ziehen
+    selected_indices = []
+    for class_idx, indices in class_indices.items():
+        sampled_indices = random.sample(indices, min(num_samples_per_class, len(indices)))
+        selected_indices.extend(sampled_indices)
+
+    # Subset-Dataset und DataLoader erstellen
+    subset_dataset = Subset(dataset, selected_indices)
+    if cuda_enabled is True:
+        subset_loader = DataLoader(subset_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+    else:
+        subset_loader = DataLoader(subset_dataset, batch_size=batch_size, shuffle=False)
+
+    return subset_loader
+
+def collate_fn(batch):
+    images, labels = zip(*batch)
+    images = torch.stack(images).to('cuda')
+    labels = torch.tensor(labels).to('cuda')
+    return images, labels
 
 
 

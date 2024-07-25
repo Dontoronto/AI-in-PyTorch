@@ -1,11 +1,11 @@
 {
   "transform": {
-      "dataset": "mnist"
+      "dataset": "imagenet"
   },
   "dataset": {
-    "datasetName": "mnist",
+    "datasetName": "imagenet",
     "storageType": "default",
-    "root": "/Users/dominik/Documents/jupyter/Neuronale Netze programmieren Buch/AI in PyTorch/dataset/mnist/",
+    "root": "D:\\imagenet",
     "query": ["Volumes","PortableSSD", "Projekte", "datasets", "celeba_dataset", "IMG", "img_align_celeba"],
     "train": true,
     "download": false,
@@ -13,9 +13,9 @@
     "target_transform": null,
     "split_ratio": [1000, 100],
     "seed": 42,
-    "cuda_enabled": false
+    "cuda_enabled": true
   },
   "settings": {
-    "cuda": false
+    "cuda": true
   }
 }
