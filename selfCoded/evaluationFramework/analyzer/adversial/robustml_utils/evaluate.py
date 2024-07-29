@@ -34,7 +34,7 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
         indices = index_list
 
     for i in indices:
-        print('evaluating %d of [%d, %d)' % (i, start, end), file=sys.stderr)
+        print('evaluating %d of [%d, %d)' % (i, start, end))
         total += 1
         x, y = provider[i]
         target = None
@@ -48,13 +48,13 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
                 topk_correct[i] += 1
         if not threat_model.check(np.copy(x), np.copy(x_adv)):
             if debug:
-                print('check failed', file=sys.stderr)
+                print('check failed')
             above_threshold += 1
             attack.remove_adv_image_over_threshold()
             continue
         y_adv = model.classify(np.copy(x_adv))
         if debug:
-            print('true = %d, adv = %d' % (y, y_adv), file=sys.stderr)
+            print('true = %d, adv = %d' % (y, y_adv))
         if targeted:
             if y_adv == target:
                 success += 1

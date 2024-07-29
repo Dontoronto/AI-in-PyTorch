@@ -1,28 +1,28 @@
-2024-07-25 13:50:22,057-modelWrapper-INFO-ModelWrapper was initialized:
-2024-07-25 13:50:22,058-dataHandler-INFO-Datahandler initialized:
-2024-07-25 13:50:22,058-configParser-INFO-Transformation Parameters from DataHandlerConfig.json::
-2024-07-25 13:50:22,058-configParser-INFO-{'dataset': 'imagenet'}:
-2024-07-25 13:50:22,058-configurator-INFO-TransformerConfig from DataHandlerConfig was loaded via ConfigParser:
-2024-07-25 13:50:22,059-dataHandler-INFO-Preprocessing Steps will be::
-2024-07-25 13:50:22,059-dataHandler-INFO-Compose(
+2024-07-29 17:47:30,451-modelWrapper-INFO-ModelWrapper was initialized:
+2024-07-29 17:47:30,453-dataHandler-INFO-Datahandler initialized:
+2024-07-29 17:47:30,456-configParser-INFO-Transformation Parameters from DataHandlerConfig.json::
+2024-07-29 17:47:30,456-configParser-INFO-{'dataset': 'imagenet'}:
+2024-07-29 17:47:30,456-configurator-INFO-TransformerConfig from DataHandlerConfig was loaded via ConfigParser:
+2024-07-29 17:47:30,456-dataHandler-INFO-Preprocessing Steps will be::
+2024-07-29 17:47:30,457-dataHandler-INFO-Compose(
     Resize(size=256, interpolation=bilinear, max_size=None, antialias=True)
     CenterCrop(size=(224, 224))
     ToTensor()
     ConvertImageDtype()
     Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ):
-2024-07-25 13:50:22,059-configParser-INFO-Settings from DataHandlerConfig.json::
-2024-07-25 13:50:22,059-configParser-INFO-{'dataset': 'imagenet'}:
-2024-07-25 13:50:22,060-configurator-INFO-Settings from DataHandlerConfig was loaded via ConfigParser:
-2024-07-25 13:50:22,060-__main__-CRITICAL-Time for algo is: 0.0:
-2024-07-25 13:50:22,061-configParser-INFO-Trainer Configs from TrainerConfig.json::
-2024-07-25 13:50:22,061-configParser-INFO-{'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 10, 'lr': 1e-05, 'momentum': 0.9, 'pre_optimization_tuning_path': True, 'lr_scheduler': True, 'lr_step_size': 5, 'lr_gamma': 0.1}:
-2024-07-25 13:50:22,061-configurator-INFO-TrainerConfig settings was loaded via ConfigParser:
-2024-07-25 13:50:22,061-Trainer.trainerFactory-INFO-Filtered OptimizerConfig: {'lr': 1e-05}:
-2024-07-25 13:50:22,062-Trainer.trainerFactory-INFO-Creating ADMMTrainer.:
-2024-07-25 13:50:22,062-Trainer.defaultTrainer-INFO-Trainer was configured:
-2024-07-25 13:50:22,062-Trainer.defaultTrainer-INFO-Epochs: 10:
-2024-07-25 13:50:22,063-Trainer.defaultTrainer-INFO-Optimizer: Adam (
+2024-07-29 17:47:30,457-configParser-INFO-Settings from DataHandlerConfig.json::
+2024-07-29 17:47:30,457-configParser-INFO-{'dataset': 'imagenet'}:
+2024-07-29 17:47:30,457-configurator-INFO-Settings from DataHandlerConfig was loaded via ConfigParser:
+2024-07-29 17:47:30,458-__main__-CRITICAL-Time for algo is: 0.0010004043579101562:
+2024-07-29 17:47:30,461-configParser-INFO-Trainer Configs from TrainerConfig.json::
+2024-07-29 17:47:30,461-configParser-INFO-{'optimizer': 'Adam', 'loss': 'CrossEntropyLoss', 'epoch': 10, 'lr': 1e-05, 'momentum': 0.9, 'pre_optimization_tuning_path': True, 'lr_scheduler': True, 'lr_step_size': 5, 'lr_gamma': 0.1}:
+2024-07-29 17:47:30,461-configurator-INFO-TrainerConfig settings was loaded via ConfigParser:
+2024-07-29 17:47:30,461-Trainer.trainerFactory-INFO-Filtered OptimizerConfig: {'lr': 1e-05}:
+2024-07-29 17:47:30,462-Trainer.trainerFactory-INFO-Creating ADMMTrainer.:
+2024-07-29 17:47:30,462-Trainer.defaultTrainer-INFO-Trainer was configured:
+2024-07-29 17:47:30,462-Trainer.defaultTrainer-INFO-Epochs: 10:
+2024-07-29 17:47:30,462-Trainer.defaultTrainer-INFO-Optimizer: Adam (
 Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
@@ -35,192 +35,157 @@ Parameter Group 0
     maximize: False
     weight_decay: 0
 ):
-2024-07-25 13:50:22,063-Trainer.defaultTrainer-INFO-Lossfunction: CrossEntropyLoss():
-2024-07-25 13:50:22,063-Trainer.defaultTrainer-INFO-DataHandler: <dataHandler.DataHandler object at 0x0000028A61BFBEE0>:
-2024-07-25 13:50:22,064-Trainer.trainerFactory-INFO-lr_scheduler was set with params {'step_size': 5, 'gamma': 0.1}:
-2024-07-25 13:50:22,064-configParser-INFO-Dataloader Configs from TrainerConfig.json::
-2024-07-25 13:50:22,064-configParser-INFO-{'batch_size': 64, 'shuffle': True, 'num_workers': 6}:
-2024-07-25 13:50:22,065-configurator-INFO-Dataloader settings was loaded via ConfigParser:
-2024-07-25 13:50:22,065-configParser-INFO-Snapshot Configs from TrainerConfig.json::
-2024-07-25 13:50:22,065-configParser-INFO-{'name': 'ResNet18_train_admm_retrain', 'snapshot_enabled': False, 'snapshot_model_path': 'experiment\\LeNet\\windows\\train_admm_retrain\\second', 'snapshot_model_path_raw': 'experiment\\LeNet\\windows\\train_admm_retrain\\second', 'recovery_epoch': 3}:
-2024-07-25 13:50:22,065-configurator-INFO-Snapshot settings was loaded via ConfigParser:
-2024-07-25 13:50:22,065-Trainer.defaultTrainer-INFO-Recovery Epoch was set to : False:
-2024-07-25 13:50:22,066-Trainer.defaultTrainer-INFO-Model file prefix was set to : ResNet18_train_admm_retrain:
-2024-07-25 13:50:22,066-Trainer.defaultTrainer-INFO-Snapshot model path was set to : experiment\LeNet\windows\train_admm_retrain\second:
-2024-07-25 13:50:22,066-Trainer.defaultTrainer-INFO-Snapshot model path was set to : experiment\LeNet\windows\train_admm_retrain\second:
-2024-07-25 13:50:22,066-Trainer.defaultTrainer-INFO-Recovery Epoch was set to : 3:
-2024-07-25 13:50:22,066-configParser-INFO-Loaded admm_model_architecture from ConfigRegistry.json:
-2024-07-25 13:50:22,066-configParser-INFO-Loaded admm_model_architecture has path: configs/preOptimizingTuning/ADMModelArchitecture.json:
-2024-07-25 13:50:22,067-configParser-INFO-Loaded admm_model_architecture:
-2024-07-25 13:50:22,067-configurator-INFO-Loaded admm_model_architecture from Registry:
-2024-07-25 13:50:22,067-Trainer.mapper.admm_mapper-INFO-ADMM Architecture Config was loaded into ADMMTrainer:
-2024-07-25 13:50:22,069-configParser-INFO-Loaded admm_settings from ConfigRegistry.json:
-2024-07-25 13:50:22,069-configParser-INFO-Loaded admm_settings has path: configs/preOptimizingTuning/ADMMConfig.json:
-2024-07-25 13:50:22,070-configParser-INFO-Loaded admm_settings:
-2024-07-25 13:50:22,070-configurator-INFO-Loaded admm_settings from Registry:
-2024-07-25 13:50:22,070-Trainer.mapper.admm_mapper-INFO-ADMM Config was loaded into ADMMTrainer:
-2024-07-25 13:50:22,070-Trainer.mapper.admm_mapper-INFO-main_iterations set to 170000 of type <class 'int'>:
-2024-07-25 13:50:22,070-Trainer.mapper.admm_mapper-INFO-admm_iterations set to 2500 of type <class 'int'>:
-2024-07-25 13:50:22,070-Trainer.mapper.admm_mapper-INFO-dynamic masking set to True of type <class 'bool'>:
-2024-07-25 13:50:22,071-Trainer.mapper.admm_mapper-INFO-rho set to 0.0005 of type <class 'float'>:
-2024-07-25 13:50:22,071-Trainer.mapper.admm_mapper-INFO-gradient_threshold set to 24 of type <class 'int'>:
-2024-07-25 13:50:22,071-Trainer.mapper.admm_mapper-INFO-batch_size_norm_coeff set to 0.015625 of type <class 'float'>:
-2024-07-25 13:50:22,071-Trainer.mapper.admm_mapper-INFO-regularization_l2_norm_enabled set to True of type <class 'bool'>:
-2024-07-25 13:50:22,071-Trainer.mapper.admm_mapper-INFO-regularization_l_norm_decay set to 5e-06 of type <class 'float'>:
-2024-07-25 13:50:22,071-Trainer.mapper.admm_mapper-INFO-Phase list set to ['admm', 'retrain'] of type <class 'list'>:
-2024-07-25 13:50:22,072-Trainer.mapper.admm_mapper-INFO-epsilon_W set to 1.5 of type <class 'float'>:
-2024-07-25 13:50:22,072-Trainer.mapper.admm_mapper-INFO-epsilon_Z set to 1.5 of type <class 'float'>:
-2024-07-25 13:50:22,072-Trainer.mapper.admm_mapper-INFO-threshold_warmup set to 0.05 of type <class 'float'>:
-2024-07-25 13:50:22,072-Trainer.mapper.admm_mapper-INFO-unstructured_magnitude_pruning_enabled set to False of type <class 'bool'>:
-2024-07-25 13:50:22,072-Trainer.mapper.admm_mapper-INFO-pattern_pruning_all_patterns_enabled set to False of type <class 'bool'>:
-2024-07-25 13:50:22,072-Trainer.mapper.admm_mapper-INFO-pattern_pruning_elog_patterns_enabled set to True of type <class 'bool'>:
-2024-07-25 13:50:22,073-Trainer.mapper.admm_mapper-INFO-connectivity_pruning_enabled set to True of type <class 'bool'>:
-2024-07-25 13:50:22,073-Trainer.mapper.admm_mapper-INFO-pruning_mask_loading_enabled set to False of type <class 'bool'>:
-2024-07-25 13:50:22,073-Trainer.mapper.admm_mapper-INFO-pruning_mask_loading_path set to experiment\LeNet\cic\ResNet\elog_adv_double_v2_cic\admm_checkpoints_mask.csv of type <class 'str'>:
-2024-07-25 13:50:22,073-Trainer.mapper.admm_mapper-WARNING-save set to True of type <class 'bool'>:
-2024-07-25 13:50:22,073-Trainer.mapper.admm_mapper-WARNING-safe_path was set to experiment\LeNet\windows\train_admm_retrain\first of type <class 'str'>:
-2024-07-25 13:50:22,073-Trainer.mapper.admm_mapper-WARNING-onnx_enabled set to False of type <class 'bool'>:
-2024-07-25 13:50:22,074-Trainer.mapper.admm_mapper-WARNING-tensor_buffering_enabled set to False of type <class 'bool'>:
-2024-07-25 13:50:22,099-configParser-INFO-Loaded analyzer from ConfigRegistry.json:
-2024-07-25 13:50:22,100-configParser-INFO-Loaded analyzer has path: configs/analyzer/AnalyzerConfig.json:
-2024-07-25 13:50:22,100-configParser-INFO-Loaded analyzer:
-2024-07-25 13:50:22,100-configurator-INFO-Loaded analyzer from Registry:
-2024-07-25 13:50:22,100-analyzer.mapper.analyzerMapper-INFO-Analyzer config was loaded into Analyzer: {'testrun': 'clip_grad_1', 'save': True, 'save_path': 'experiment\\LeNet\\cic\\ResNet\\elog_conn_default_double_v2_cic', 'name': 'ResNet', 'copy_config': True, 'config_path': 'configs', 'adv_settings': {'adv_save_enabled': False, 'adv_original_save_enabled': False, 'adv_attack_selection': 0, 'adv_attack_selection_range': 3, 'adv_sample_range_start': 0, 'adv_sample_range_end': 200, 'adv_only_success_flag': True, 'adv_shuffle': True}, 'analysis_methods': {'epsilon_distance': {'enabled': False}, 'pruning': {'enabled': True}, 'accuracy_testset': {'enabled': False, 'titel': 'testset'}, 'cic_test': {'enabled': False, 'num_samples': 1, 'batch_size': 16}, 'noisy_accuracy': {'enabled': False, 'titel': 'NoisyAccuracy', 'noise_ratio': 0.2, 'noise_steps': 4}, 'adversarial_success': {'enabled': False, 'titel': 'adversarial dynamic'}, 'accuracy_adversarial': {'enabled': False, 'adv_titel': 'adv_deep', 'orig_titel': 'orig_deep', 'adv_dataset_path': 'experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images', 'orig_dataset_path': 'experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images', 'batch_size': 32, 'shuffle': False}, 'grad_and_original': {'enabled': False, 'adv_dataset_path': None, 'grad_start_index': 799, 'grad_range': 10}, 'scoreCAM_and_original': {'enabled': False, 'adv_dataset_path': None, 'score_start_index': 0, 'score_range': 1}, 'grad': {'enabled': False, 'adv_dataset_path': None, 'grad_start_index': 0, 'grad_range': 1, 'target_layer': 'model.layer4.1.conv2'}, 'score_cam': {'enabled': False, 'adv_dataset_path': None, 'score_start_index': 0, 'score_range': 1, 'target_layer': 'model.layer4.1.conv2'}, 'feature_map': {'enabled': False, 'adv_dataset_path': None, 'feature_start_index': 0, 'feature_range': 1, 'target_layer': 'model.layer4.1.conv2'}, 'feature_maps_all_layer': {'enabled': False, 'adv_dataset_path': None, 'feature_start_index': 799, 'feature_range': 10}, 'saliency_and_original': {'enabled': False, 'adv_dataset_path': None, 'saliency_start_index': 799, 'saliency_range': 10}, 'saliency': {'enabled': False, 'adv_dataset_path': None, 'saliency_start_index': 0, 'saliency_range': 10}, 'topk_accuracy': {'enabled': False, 'adv_dataset_path': None, 'topk_start_index': 799, 'topk_range': 40, 'topk_pred': 3}}, 'changing_parameters': {'main_iterations': [40000, 80000, 120000, 160000, 200000, 240000], 'admm_iterations': [200, 400, 500, 800, 1000, 2000], 'epoch': [5, 10, 15, 20, 25], 'rho': [0.00025, 0.0005, 0.0025, 0.005], 'momentum': [0.2, 0.4, 0.6, 0.8, 0.9]}}:
-2024-07-25 13:50:22,104-configParser-INFO-Loaded adversarial_threat_model from ConfigRegistry.json:
-2024-07-25 13:50:22,104-configParser-INFO-Loaded adversarial_threat_model has path: configs/adversarial_configs/ThreatModelConfig.json:
-2024-07-25 13:50:22,104-configParser-INFO-Loaded adversarial_threat_model:
-2024-07-25 13:50:22,104-configurator-INFO-Loaded adversarial_threat_model from Registry:
-2024-07-25 13:50:22,104-configParser-INFO-Loaded adversarial_provider from ConfigRegistry.json:
-2024-07-25 13:50:22,105-configParser-INFO-Loaded adversarial_provider has path: configs/adversarial_configs/ProviderConfig.json:
-2024-07-25 13:50:22,105-configParser-INFO-Loaded adversarial_provider:
-2024-07-25 13:50:22,105-configurator-INFO-Loaded adversarial_provider from Registry:
-2024-07-25 13:50:22,105-configParser-INFO-Loaded adversarial_attacks from ConfigRegistry.json:
-2024-07-25 13:50:22,105-configParser-INFO-Loaded adversarial_attacks has path: configs/adversarial_configs/AttacksConfig.json:
-2024-07-25 13:50:22,106-configParser-INFO-Loaded adversarial_attacks:
-2024-07-25 13:50:22,106-configurator-INFO-Loaded adversarial_attacks from Registry:
-2024-07-25 13:50:22,106-Trainer.admmTrainer-WARNING-TensorBuffering is not activated:
-2024-07-25 13:50:22,107-analyzer.utils-CRITICAL-could not create directory at experiment\LeNet\cic\ResNet\elog_conn_default_double_v2_cic\PruningStats:
-2024-07-25 13:50:22,166-analyzer.measurement.sparseMeasurement-INFO-Module: model.conv1, Zero weights: 0/9408 (0.00%):
-2024-07-25 13:50:22,167-analyzer.measurement.sparseMeasurement-INFO-Module: model.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:22,167-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.conv1, Zero weights: 0/36864 (0.00%):
-2024-07-25 13:50:22,168-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:22,168-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.conv2, Zero weights: 0/36864 (0.00%):
-2024-07-25 13:50:22,169-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.bn2, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:22,169-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.conv1, Zero weights: 0/36864 (0.00%):
-2024-07-25 13:50:22,170-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:22,170-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.conv2, Zero weights: 0/36864 (0.00%):
-2024-07-25 13:50:22,170-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.bn2, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:22,170-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.conv1, Zero weights: 0/73728 (0.00%):
-2024-07-25 13:50:22,171-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.bn1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:22,171-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.conv2, Zero weights: 0/147456 (0.00%):
-2024-07-25 13:50:22,171-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.bn2, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:22,172-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.downsample.0, Zero weights: 0/8192 (0.00%):
-2024-07-25 13:50:22,172-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.downsample.1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:22,172-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.conv1, Zero weights: 0/147456 (0.00%):
-2024-07-25 13:50:22,172-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.bn1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:22,173-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.conv2, Zero weights: 0/147456 (0.00%):
-2024-07-25 13:50:22,173-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.bn2, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:22,173-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.conv1, Zero weights: 0/294912 (0.00%):
-2024-07-25 13:50:22,174-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.bn1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:22,174-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.conv2, Zero weights: 0/589824 (0.00%):
-2024-07-25 13:50:22,174-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.bn2, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:22,175-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.downsample.0, Zero weights: 0/32768 (0.00%):
-2024-07-25 13:50:22,175-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.downsample.1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:22,175-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.conv1, Zero weights: 0/589824 (0.00%):
-2024-07-25 13:50:22,176-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.bn1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:22,176-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.conv2, Zero weights: 0/589824 (0.00%):
-2024-07-25 13:50:22,176-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.bn2, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:22,177-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.conv1, Zero weights: 0/1179648 (0.00%):
-2024-07-25 13:50:22,177-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.bn1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:22,177-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.conv2, Zero weights: 0/2359296 (0.00%):
-2024-07-25 13:50:22,178-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.bn2, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:22,178-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.downsample.0, Zero weights: 0/131072 (0.00%):
-2024-07-25 13:50:22,178-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.downsample.1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:22,179-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.conv1, Zero weights: 0/2359296 (0.00%):
-2024-07-25 13:50:22,179-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.bn1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:22,180-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.conv2, Zero weights: 0/2359296 (0.00%):
-2024-07-25 13:50:22,180-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.bn2, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:22,180-analyzer.measurement.sparseMeasurement-INFO-Module: model.fc, Zero weights: 0/512000 (0.00%):
-2024-07-25 13:50:23,972-analyzer.measurement.sparseMeasurement-INFO-Module: model.conv1, Zero weights: 0/9408 (0.00%):
-2024-07-25 13:50:23,972-analyzer.measurement.sparseMeasurement-INFO-Module: model.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:23,973-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.conv1, Zero weights: 0/36864 (0.00%):
-2024-07-25 13:50:23,973-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:23,973-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.conv2, Zero weights: 0/36864 (0.00%):
-2024-07-25 13:50:23,973-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.bn2, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:23,974-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.conv1, Zero weights: 0/36864 (0.00%):
-2024-07-25 13:50:23,974-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:23,975-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.conv2, Zero weights: 0/36864 (0.00%):
-2024-07-25 13:50:23,975-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.bn2, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:23,975-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.conv1, Zero weights: 0/73728 (0.00%):
-2024-07-25 13:50:23,976-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.bn1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:23,976-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.conv2, Zero weights: 0/147456 (0.00%):
-2024-07-25 13:50:23,977-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.bn2, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:23,977-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.downsample.0, Zero weights: 0/8192 (0.00%):
-2024-07-25 13:50:23,977-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.downsample.1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:23,978-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.conv1, Zero weights: 0/147456 (0.00%):
-2024-07-25 13:50:23,978-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.bn1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:23,978-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.conv2, Zero weights: 0/147456 (0.00%):
-2024-07-25 13:50:23,979-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.bn2, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:23,979-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.conv1, Zero weights: 0/294912 (0.00%):
-2024-07-25 13:50:23,979-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.bn1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:23,980-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.conv2, Zero weights: 0/589824 (0.00%):
-2024-07-25 13:50:23,980-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.bn2, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:23,981-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.downsample.0, Zero weights: 0/32768 (0.00%):
-2024-07-25 13:50:23,981-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.downsample.1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:23,981-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.conv1, Zero weights: 0/589824 (0.00%):
-2024-07-25 13:50:23,982-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.bn1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:23,982-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.conv2, Zero weights: 0/589824 (0.00%):
-2024-07-25 13:50:23,982-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.bn2, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:23,983-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.conv1, Zero weights: 0/1179648 (0.00%):
-2024-07-25 13:50:23,983-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.bn1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:23,983-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.conv2, Zero weights: 0/2359296 (0.00%):
-2024-07-25 13:50:23,984-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.bn2, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:23,984-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.downsample.0, Zero weights: 0/131072 (0.00%):
-2024-07-25 13:50:23,985-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.downsample.1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:23,985-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.conv1, Zero weights: 0/2359296 (0.00%):
-2024-07-25 13:50:23,985-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.bn1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:23,986-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.conv2, Zero weights: 0/2359296 (0.00%):
-2024-07-25 13:50:23,986-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.bn2, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:23,986-analyzer.measurement.sparseMeasurement-INFO-Module: model.fc, Zero weights: 0/512000 (0.00%):
-2024-07-25 13:50:25,792-analyzer.measurement.sparseMeasurement-INFO-Module: model.conv1, Zero weights: 0/9408 (0.00%):
-2024-07-25 13:50:25,793-analyzer.measurement.sparseMeasurement-INFO-Module: model.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:25,793-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.conv1, Zero weights: 28672/36864 (77.78%):
-2024-07-25 13:50:25,793-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:25,794-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.conv2, Zero weights: 28672/36864 (77.78%):
-2024-07-25 13:50:25,794-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.0.bn2, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:25,794-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.conv1, Zero weights: 28672/36864 (77.78%):
-2024-07-25 13:50:25,795-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.bn1, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:25,795-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.conv2, Zero weights: 28672/36864 (77.78%):
-2024-07-25 13:50:25,795-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer1.1.bn2, Zero weights: 0/64 (0.00%):
-2024-07-25 13:50:25,796-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.conv1, Zero weights: 57344/73728 (77.78%):
-2024-07-25 13:50:25,796-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.bn1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:25,796-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.conv2, Zero weights: 114688/147456 (77.78%):
-2024-07-25 13:50:25,797-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.bn2, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:25,797-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.downsample.0, Zero weights: 0/8192 (0.00%):
-2024-07-25 13:50:25,797-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.0.downsample.1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:25,798-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.conv1, Zero weights: 114688/147456 (77.78%):
-2024-07-25 13:50:25,798-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.bn1, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:25,798-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.conv2, Zero weights: 114688/147456 (77.78%):
-2024-07-25 13:50:25,799-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer2.1.bn2, Zero weights: 0/128 (0.00%):
-2024-07-25 13:50:25,799-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.conv1, Zero weights: 229376/294912 (77.78%):
-2024-07-25 13:50:25,799-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.bn1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:25,800-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.conv2, Zero weights: 458752/589824 (77.78%):
-2024-07-25 13:50:25,800-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.bn2, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:25,800-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.downsample.0, Zero weights: 0/32768 (0.00%):
-2024-07-25 13:50:25,801-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.0.downsample.1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:25,801-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.conv1, Zero weights: 458752/589824 (77.78%):
-2024-07-25 13:50:25,801-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.bn1, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:25,802-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.conv2, Zero weights: 458752/589824 (77.78%):
-2024-07-25 13:50:25,802-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer3.1.bn2, Zero weights: 0/256 (0.00%):
-2024-07-25 13:50:25,803-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.conv1, Zero weights: 917504/1179648 (77.78%):
-2024-07-25 13:50:25,803-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.bn1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:25,804-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.conv2, Zero weights: 1835008/2359296 (77.78%):
-2024-07-25 13:50:25,804-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.bn2, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:25,804-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.downsample.0, Zero weights: 0/131072 (0.00%):
-2024-07-25 13:50:25,805-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.0.downsample.1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:25,805-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.conv1, Zero weights: 1835008/2359296 (77.78%):
-2024-07-25 13:50:25,805-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.bn1, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:25,806-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.conv2, Zero weights: 1835008/2359296 (77.78%):
-2024-07-25 13:50:25,806-analyzer.measurement.sparseMeasurement-INFO-Module: model.layer4.1.bn2, Zero weights: 0/512 (0.00%):
-2024-07-25 13:50:25,806-analyzer.measurement.sparseMeasurement-INFO-Module: model.fc, Zero weights: 0/512000 (0.00%):
-2024-07-25 13:50:33,015-analyzer.utils-WARNING-Destination directory 'experiment\LeNet\cic\ResNet\elog_conn_default_double_v2_cic\configs' already exists.:
+2024-07-29 17:47:30,463-Trainer.defaultTrainer-INFO-Lossfunction: CrossEntropyLoss():
+2024-07-29 17:47:30,463-Trainer.defaultTrainer-INFO-DataHandler: <dataHandler.DataHandler object at 0x0000027585EEBE80>:
+2024-07-29 17:47:30,464-Trainer.trainerFactory-INFO-lr_scheduler was set with params {'step_size': 5, 'gamma': 0.1}:
+2024-07-29 17:47:30,464-configParser-INFO-Dataloader Configs from TrainerConfig.json::
+2024-07-29 17:47:30,464-configParser-INFO-{'batch_size': 64, 'shuffle': True, 'num_workers': 6}:
+2024-07-29 17:47:30,464-configurator-INFO-Dataloader settings was loaded via ConfigParser:
+2024-07-29 17:47:30,465-configParser-INFO-Snapshot Configs from TrainerConfig.json::
+2024-07-29 17:47:30,465-configParser-INFO-{'name': 'ResNet18_train_admm_retrain', 'snapshot_enabled': False, 'snapshot_model_path': 'experiment\\LeNet\\windows\\train_admm_retrain\\second', 'snapshot_model_path_raw': 'experiment\\LeNet\\windows\\train_admm_retrain\\second', 'recovery_epoch': 3}:
+2024-07-29 17:47:30,465-configurator-INFO-Snapshot settings was loaded via ConfigParser:
+2024-07-29 17:47:30,465-Trainer.defaultTrainer-INFO-Recovery Epoch was set to : False:
+2024-07-29 17:47:30,466-Trainer.defaultTrainer-INFO-Model file prefix was set to : ResNet18_train_admm_retrain:
+2024-07-29 17:47:30,466-Trainer.defaultTrainer-INFO-Snapshot model path was set to : experiment\LeNet\windows\train_admm_retrain\second:
+2024-07-29 17:47:30,466-Trainer.defaultTrainer-INFO-Snapshot model path was set to : experiment\LeNet\windows\train_admm_retrain\second:
+2024-07-29 17:47:30,466-Trainer.defaultTrainer-INFO-Recovery Epoch was set to : 3:
+2024-07-29 17:47:30,469-configParser-INFO-Loaded admm_model_architecture from ConfigRegistry.json:
+2024-07-29 17:47:30,469-configParser-INFO-Loaded admm_model_architecture has path: configs/preOptimizingTuning/ADMModelArchitecture.json:
+2024-07-29 17:47:30,470-configParser-INFO-Loaded admm_model_architecture:
+2024-07-29 17:47:30,471-configurator-INFO-Loaded admm_model_architecture from Registry:
+2024-07-29 17:47:30,471-Trainer.mapper.admm_mapper-INFO-ADMM Architecture Config was loaded into ADMMTrainer:
+2024-07-29 17:47:30,474-configParser-INFO-Loaded admm_settings from ConfigRegistry.json:
+2024-07-29 17:47:30,474-configParser-INFO-Loaded admm_settings has path: configs/preOptimizingTuning/ADMMConfig.json:
+2024-07-29 17:47:30,474-configParser-INFO-Loaded admm_settings:
+2024-07-29 17:47:30,474-configurator-INFO-Loaded admm_settings from Registry:
+2024-07-29 17:47:30,475-Trainer.mapper.admm_mapper-INFO-ADMM Config was loaded into ADMMTrainer:
+2024-07-29 17:47:30,475-Trainer.mapper.admm_mapper-INFO-main_iterations set to 170000 of type <class 'int'>:
+2024-07-29 17:47:30,475-Trainer.mapper.admm_mapper-INFO-admm_iterations set to 2500 of type <class 'int'>:
+2024-07-29 17:47:30,475-Trainer.mapper.admm_mapper-INFO-dynamic masking set to True of type <class 'bool'>:
+2024-07-29 17:47:30,476-Trainer.mapper.admm_mapper-INFO-rho set to 0.0005 of type <class 'float'>:
+2024-07-29 17:47:30,476-Trainer.mapper.admm_mapper-INFO-gradient_threshold set to 24 of type <class 'int'>:
+2024-07-29 17:47:30,476-Trainer.mapper.admm_mapper-INFO-batch_size_norm_coeff set to 0.015625 of type <class 'float'>:
+2024-07-29 17:47:30,476-Trainer.mapper.admm_mapper-INFO-regularization_l2_norm_enabled set to True of type <class 'bool'>:
+2024-07-29 17:47:30,476-Trainer.mapper.admm_mapper-INFO-regularization_l_norm_decay set to 5e-06 of type <class 'float'>:
+2024-07-29 17:47:30,476-Trainer.mapper.admm_mapper-INFO-Phase list set to ['admm', 'retrain'] of type <class 'list'>:
+2024-07-29 17:47:30,477-Trainer.mapper.admm_mapper-INFO-epsilon_W set to 1.5 of type <class 'float'>:
+2024-07-29 17:47:30,477-Trainer.mapper.admm_mapper-INFO-epsilon_Z set to 1.5 of type <class 'float'>:
+2024-07-29 17:47:30,477-Trainer.mapper.admm_mapper-INFO-threshold_warmup set to 0.05 of type <class 'float'>:
+2024-07-29 17:47:30,477-Trainer.mapper.admm_mapper-INFO-unstructured_magnitude_pruning_enabled set to False of type <class 'bool'>:
+2024-07-29 17:47:30,477-Trainer.mapper.admm_mapper-INFO-pattern_pruning_all_patterns_enabled set to True of type <class 'bool'>:
+2024-07-29 17:47:30,477-Trainer.mapper.admm_mapper-INFO-pattern_pruning_elog_patterns_enabled set to False of type <class 'bool'>:
+2024-07-29 17:47:30,478-Trainer.mapper.admm_mapper-INFO-connectivity_pruning_enabled set to True of type <class 'bool'>:
+2024-07-29 17:47:30,478-Trainer.mapper.admm_mapper-INFO-pruning_mask_loading_enabled set to False of type <class 'bool'>:
+2024-07-29 17:47:30,478-Trainer.mapper.admm_mapper-INFO-pruning_mask_loading_path set to experiment\LeNet\cic\ResNet\elog_adv_double_v2_cic\admm_checkpoints_mask.csv of type <class 'str'>:
+2024-07-29 17:47:30,478-Trainer.mapper.admm_mapper-WARNING-save set to True of type <class 'bool'>:
+2024-07-29 17:47:30,478-Trainer.mapper.admm_mapper-WARNING-safe_path was set to experiment\LeNet\windows\train_admm_retrain\first of type <class 'str'>:
+2024-07-29 17:47:30,478-Trainer.mapper.admm_mapper-WARNING-onnx_enabled set to False of type <class 'bool'>:
+2024-07-29 17:47:30,479-Trainer.mapper.admm_mapper-WARNING-tensor_buffering_enabled set to False of type <class 'bool'>:
+2024-07-29 17:47:30,601-configParser-INFO-Loaded analyzer from ConfigRegistry.json:
+2024-07-29 17:47:30,601-configParser-INFO-Loaded analyzer has path: configs/analyzer/AnalyzerConfig.json:
+2024-07-29 17:47:30,602-configParser-INFO-Loaded analyzer:
+2024-07-29 17:47:30,602-configurator-INFO-Loaded analyzer from Registry:
+2024-07-29 17:47:30,602-analyzer.mapper.analyzerMapper-INFO-Analyzer config was loaded into Analyzer: {'testrun': 'clip_grad_1', 'save': True, 'save_path': 'experiment\\LeNet\\cic\\ResNet\\test_finishing', 'name': 'ResNet', 'copy_config': True, 'config_path': 'configs', 'adv_settings': {'adv_save_enabled': False, 'adv_original_save_enabled': False, 'adv_attack_selection': 0, 'adv_attack_selection_range': 3, 'adv_sample_range_start': 0, 'adv_sample_range_end': 100, 'adv_only_success_flag': True, 'adv_shuffle': True, 'generate_indices_list': True, 'indices_list_path': 'configs\\adversarial_configs\\indices_list'}, 'analysis_methods': {'epsilon_distance': {'enabled': False}, 'pruning': {'enabled': False}, 'accuracy_testset': {'enabled': False, 'titel': 'testset'}, 'cic_test': {'enabled': False, 'num_samples': 1, 'batch_size': 16}, 'noisy_accuracy': {'enabled': False, 'titel': 'NoisyAccuracy', 'noise_ratio': 0.2, 'noise_steps': 4}, 'adversarial_success': {'enabled': True, 'titel': 'adversarial dynamic', 'save_samples': True}, 'accuracy_adversarial': {'enabled': False, 'adv_titel': 'adv_deep', 'orig_titel': 'orig_deep', 'adv_dataset_path': 'experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images', 'orig_dataset_path': 'experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images', 'batch_size': 32, 'shuffle': False}, 'grad_and_original': {'enabled': False, 'adv_dataset_path': None, 'grad_start_index': 799, 'grad_range': 10}, 'scoreCAM_and_original': {'enabled': False, 'adv_dataset_path': None, 'score_start_index': 0, 'score_range': 1}, 'grad': {'enabled': False, 'adv_dataset_path': None, 'grad_start_index': 0, 'grad_range': 1, 'target_layer': 'model.layer4.1.conv2'}, 'score_cam': {'enabled': False, 'adv_dataset_path': None, 'score_start_index': 0, 'score_range': 1, 'target_layer': 'model.layer4.1.conv2'}, 'feature_map': {'enabled': False, 'adv_dataset_path': None, 'feature_start_index': 0, 'feature_range': 1, 'target_layer': 'model.layer4.1.conv2'}, 'feature_maps_all_layer': {'enabled': False, 'adv_dataset_path': None, 'feature_start_index': 799, 'feature_range': 10}, 'saliency_and_original': {'enabled': False, 'adv_dataset_path': None, 'saliency_start_index': 799, 'saliency_range': 10}, 'saliency': {'enabled': False, 'adv_dataset_path': None, 'saliency_start_index': 0, 'saliency_range': 10}, 'topk_accuracy': {'enabled': False, 'adv_dataset_path': None, 'topk_start_index': 799, 'topk_range': 40, 'topk_pred': 3}}, 'changing_parameters': {'main_iterations': [40000, 80000, 120000, 160000, 200000, 240000], 'admm_iterations': [200, 400, 500, 800, 1000, 2000], 'epoch': [5, 10, 15, 20, 25], 'rho': [0.00025, 0.0005, 0.0025, 0.005], 'momentum': [0.2, 0.4, 0.6, 0.8, 0.9]}}:
+2024-07-29 17:47:30,605-configParser-INFO-Loaded adversarial_threat_model from ConfigRegistry.json:
+2024-07-29 17:47:30,606-configParser-INFO-Loaded adversarial_threat_model has path: configs/adversarial_configs/ThreatModelConfig.json:
+2024-07-29 17:47:30,606-configParser-INFO-Loaded adversarial_threat_model:
+2024-07-29 17:47:30,606-configurator-INFO-Loaded adversarial_threat_model from Registry:
+2024-07-29 17:47:30,607-configParser-INFO-Loaded adversarial_provider from ConfigRegistry.json:
+2024-07-29 17:47:30,607-configParser-INFO-Loaded adversarial_provider has path: configs/adversarial_configs/ProviderConfig.json:
+2024-07-29 17:47:30,607-configParser-INFO-Loaded adversarial_provider:
+2024-07-29 17:47:30,608-configurator-INFO-Loaded adversarial_provider from Registry:
+2024-07-29 17:47:30,608-configParser-INFO-Loaded adversarial_attacks from ConfigRegistry.json:
+2024-07-29 17:47:30,608-configParser-INFO-Loaded adversarial_attacks has path: configs/adversarial_configs/AttacksConfig.json:
+2024-07-29 17:47:30,608-configParser-INFO-Loaded adversarial_attacks:
+2024-07-29 17:47:30,609-configurator-INFO-Loaded adversarial_attacks from Registry:
+2024-07-29 17:47:30,609-Trainer.admmTrainer-WARNING-TensorBuffering is not activated:
+2024-07-29 17:47:30,610-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic:
+2024-07-29 17:47:30,673-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Base Model\original:
+2024-07-29 17:47:30,673-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Base Model\adversarial:
+2024-07-29 17:47:30,710-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Base Model\original\deepfool:
+2024-07-29 17:47:30,710-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Base Model\adversarial\deepfool:
+2024-07-29 17:57:37,910-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Base Model\original\pgd:
+2024-07-29 17:57:37,910-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Base Model\adversarial\pgd:
+2024-07-29 17:58:57,503-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Base Model\original\onepixel:
+2024-07-29 17:58:57,504-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Base Model\adversarial\onepixel:
+2024-07-29 18:16:28,221-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv Conn\original:
+2024-07-29 18:16:28,222-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv Conn\adversarial:
+2024-07-29 18:16:28,223-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv Conn\original\deepfool:
+2024-07-29 18:16:28,223-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv Conn\adversarial\deepfool:
+2024-07-29 18:18:50,287-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv Conn\original\pgd:
+2024-07-29 18:18:50,288-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv Conn\adversarial\pgd:
+2024-07-29 18:20:07,433-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv Conn\original\onepixel:
+2024-07-29 18:20:07,433-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv Conn\adversarial\onepixel:
+2024-07-29 18:26:07,923-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv\original:
+2024-07-29 18:26:07,924-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv\adversarial:
+2024-07-29 18:26:07,925-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv\original\deepfool:
+2024-07-29 18:26:07,925-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv\adversarial\deepfool:
+2024-07-29 18:28:16,390-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv\original\pgd:
+2024-07-29 18:28:16,391-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv\adversarial\pgd:
+2024-07-29 18:29:32,788-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv\original\onepixel:
+2024-07-29 18:29:32,789-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Adv\adversarial\onepixel:
+2024-07-29 18:35:43,796-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default Conn\original:
+2024-07-29 18:35:43,797-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default Conn\adversarial:
+2024-07-29 18:35:43,798-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default Conn\original\deepfool:
+2024-07-29 18:35:43,799-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default Conn\adversarial\deepfool:
+2024-07-29 18:42:26,979-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default Conn\original\pgd:
+2024-07-29 18:42:26,980-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default Conn\adversarial\pgd:
+2024-07-29 18:43:44,336-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default Conn\original\onepixel:
+2024-07-29 18:43:44,337-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default Conn\adversarial\onepixel:
+2024-07-29 18:55:08,502-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default\original:
+2024-07-29 18:55:08,502-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default\adversarial:
+2024-07-29 18:55:08,503-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default\original\deepfool:
+2024-07-29 18:55:08,504-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default\adversarial\deepfool:
+2024-07-29 19:02:57,922-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default\original\pgd:
+2024-07-29 19:02:57,923-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default\adversarial\pgd:
+2024-07-29 19:04:15,400-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default\original\onepixel:
+2024-07-29 19:04:15,401-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\SCP Default\adversarial\onepixel:
+2024-07-29 19:17:43,466-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv Conn\original:
+2024-07-29 19:17:43,467-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv Conn\adversarial:
+2024-07-29 19:17:43,468-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv Conn\original\deepfool:
+2024-07-29 19:17:43,468-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv Conn\adversarial\deepfool:
+2024-07-29 19:19:18,290-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv Conn\original\pgd:
+2024-07-29 19:19:18,292-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv Conn\adversarial\pgd:
+2024-07-29 19:20:34,138-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv Conn\original\onepixel:
+2024-07-29 19:20:34,139-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv Conn\adversarial\onepixel:
+2024-07-29 19:25:49,825-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv\original:
+2024-07-29 19:25:49,826-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv\adversarial:
+2024-07-29 19:25:49,827-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv\original\deepfool:
+2024-07-29 19:25:49,827-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv\adversarial\deepfool:
+2024-07-29 19:27:46,561-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv\original\pgd:
+2024-07-29 19:27:46,562-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv\adversarial\pgd:
+2024-07-29 19:29:02,639-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv\original\onepixel:
+2024-07-29 19:29:02,640-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Adv\adversarial\onepixel:
+2024-07-29 19:34:37,283-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default Conn\original:
+2024-07-29 19:34:37,284-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default Conn\adversarial:
+2024-07-29 19:34:37,285-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default Conn\original\deepfool:
+2024-07-29 19:34:37,285-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default Conn\adversarial\deepfool:
+2024-07-29 19:36:55,458-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default Conn\original\pgd:
+2024-07-29 19:36:55,459-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default Conn\adversarial\pgd:
+2024-07-29 19:38:10,796-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default Conn\original\onepixel:
+2024-07-29 19:38:10,797-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default Conn\adversarial\onepixel:
+2024-07-29 19:44:07,533-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default\original:
+2024-07-29 19:44:07,533-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default\adversarial:
+2024-07-29 19:44:07,534-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default\original\deepfool:
+2024-07-29 19:44:07,535-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default\adversarial\deepfool:
+2024-07-29 19:47:21,142-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default\original\pgd:
+2024-07-29 19:47:21,142-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default\adversarial\pgd:
+2024-07-29 19:48:36,588-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default\original\onepixel:
+2024-07-29 19:48:36,589-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Trivial Default\adversarial\onepixel:
+2024-07-29 19:55:26,920-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Adv\original:
+2024-07-29 19:55:26,921-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Adv\adversarial:
+2024-07-29 19:55:26,921-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Adv\original\deepfool:
+2024-07-29 19:55:26,922-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Adv\adversarial\deepfool:
+2024-07-29 19:57:25,007-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Adv\original\pgd:
+2024-07-29 19:57:25,007-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Adv\adversarial\pgd:
+2024-07-29 19:58:42,585-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Adv\original\onepixel:
+2024-07-29 19:58:42,585-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Adv\adversarial\onepixel:
+2024-07-29 20:04:46,112-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Default\original:
+2024-07-29 20:04:46,112-analyzer.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Default\adversarial:
+2024-07-29 20:04:46,113-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Default\original\deepfool:
+2024-07-29 20:04:46,114-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Default\adversarial\deepfool:
+2024-07-29 20:15:00,820-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Default\original\pgd:
+2024-07-29 20:15:00,820-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Default\adversarial\pgd:
+2024-07-29 20:16:18,586-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Default\original\onepixel:
+2024-07-29 20:16:18,587-analyzer.adversial.utils.utils-WARNING-created directory at experiment\LeNet\cic\ResNet\test_finishing\Adversarial_Dynamic\Unstruct Default\adversarial\onepixel:
+2024-07-29 20:33:51,272-analyzer.utils-WARNING-Destination directory 'experiment\LeNet\cic\ResNet\test_finishing\configs' already exists.:

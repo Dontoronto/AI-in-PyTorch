@@ -34,7 +34,7 @@ from .plotFuncs.plots import (plot_original_vs_observation, plot_model_compariso
 
 from .evaluationMapsStrategy import EvaluationMapsStrategy
 
-from .utils import weight_export, copy_directory, create_directory, subsample
+from .utils import weight_export, copy_directory, create_directory, subsample, capture_output_to_file
 
 from .adversial import adversarialAttacker
 
@@ -80,6 +80,8 @@ class Analyzer:
         self.adv_sample_range_end = None
         self.adv_only_success_flag = False
         self.adv_shuffle = False
+        self.generate_indices_list = False
+        self.indices_list_path = None
 
         self.cuda_enabled = False
         try:
@@ -164,7 +166,7 @@ class Analyzer:
 
         plt.close("all")
 
-    def report_adv_attack(self, model_filenames, titel='adversarial dynamic'):
+    def report_adv_attack(self, model_filenames, titel='adversarial dynamic', save_samples=False):
         accuracy_path = os.path.join(self.save_path, 'Adversarial_Dynamic')
         create_directory(accuracy_path)
 
@@ -181,7 +183,18 @@ class Analyzer:
             model_name = os.path.splitext(model_filename)[0]
             self.model.load_state_dict(torch.load(os.path.join(self.save_path, model_filename)))
 
-            dic_ratio, dic_success, dic_total, dict_above, dict_no_pert, dict_topk = self.start_adversarial_evaluation_preconfigured()
+            if save_samples is True:
+                model_sample_path = os.path.join(accuracy_path, model_name)
+                original_sample_path = os.path.join(model_sample_path, 'original')
+                adv_sample_path = os.path.join(model_sample_path, 'adversarial')
+                create_directory(original_sample_path)
+                create_directory(adv_sample_path)
+                self.enable_original_saving(original_sample_path)
+                self.enable_adversarial_saving(adv_sample_path)
+                with capture_output_to_file(os.path.join(model_sample_path, 'output.txt')):
+                    dic_ratio, dic_success, dic_total, dict_above, dict_no_pert, dict_topk = self.start_adversarial_evaluation_preconfigured()
+            else:
+                dic_ratio, dic_success, dic_total, dict_above, dict_no_pert, dict_topk = self.start_adversarial_evaluation_preconfigured()
 
 
             for key in dic_ratio:
@@ -1156,7 +1169,10 @@ class Analyzer:
 
         elif method == 'adversarial_success' and params.get("enabled", False) is True:
 
-            self.report_adv_attack(model_filenames, titel=params.get('titel', 'test'))
+            save_adv_samples = params.get("save_samples", False)
+
+            self.report_adv_attack(model_filenames, titel=params.get('titel', 'test'),
+                                   save_samples=save_adv_samples)
 
         elif method == 'noisy_accuracy' and params.get("enabled", False) is True:
 
@@ -1557,6 +1573,10 @@ class Analyzer:
                                                     self.adv_attack_selection_range)
                 else:
                     self.select_attacks_from_config(self.adv_attack_selection, 1)
+        if self.indices_list_path is not None:
+            self.adversarial_module.set_indices_list_path(self.indices_list_path)
+        if self.generate_indices_list is True:
+            self.adversarial_module.set_generate_indices_list_flag(self.generate_indices_list)
 
     def set_threat_model_config(self, threat_model_config):
         self.adversarial_module.setThreatModel(threat_model_config)
