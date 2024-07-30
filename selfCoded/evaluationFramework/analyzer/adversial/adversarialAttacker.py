@@ -14,7 +14,7 @@ from .adversialModelWrapper import AdversarialModelWrapper
 from .adversialAttackFactory import AdversarialAttackerFactory
 from .threadModelFactory import ThreatModelFactory
 from .providerFactory import ProviderFactory
-from .utils import transformators
+from .utils import transformators, utils
 
 
 # TODO: schauen wie ich die Backwards Transformation Methode von Datahandler nachbauen kann als mock
@@ -87,6 +87,8 @@ class AdversarialAttacker(Attack):
         self.attack_instance_list_names = list()
         self.adv_only_success_flag = False
         self.adv_shuffle = True
+        self.generate_indices_list = False
+        self.indices_list_path = None
 
     def createAdversarialEvaluationModel(self):
         self.adversarialModel = AdversarialModelWrapper(self._model, self.transform)
@@ -141,6 +143,12 @@ class AdversarialAttacker(Attack):
     def set_adv_only_success_flag(self, success_falg = False):
         self.adv_only_success_flag = success_falg
 
+    def set_generate_indices_list_flag(self, generate_indices_list_flag):
+        self.generate_indices_list = generate_indices_list_flag
+
+    def set_indices_list_path(self, indices_list_path):
+        self.indices_list_path = indices_list_path
+
     def selectAttacks(self, start_index: int = None, amount_of_attacks: int = None):
 
         configuration = self.attack_type_config
@@ -184,25 +192,49 @@ class AdversarialAttacker(Attack):
         result_above_threshold = dict()
         result_no_perturbation = dict()
         result_topk = dict()
-
         if self.save_original_images_flag or self.save_adversarial_images_flag:
             if len(self.attack_instances_list) > 1:
                 print(f"Image saving Mode is not possible while using multiple attacks.")
                 print(f"Please configure AttacksConfig.json or Arguments of selectAttacks-method")
-                return
+                # return
             if self.save_original_images_flag is True:
                 delete_folders_with_only_png(self.save_original_path)
             if self.save_adversarial_images_flag is True:
                 delete_folders_with_only_png(self.save_adversarial_path)
 
-        if self.adv_shuffle is True and self.indices_list is None:
-            self.indices_list = generate_indices(start, end, dataset_size=dataset_size, shuffle=self.adv_shuffle)
-        elif self.indices_list is None:
-            self.indices_list = generate_indices(start, end, shuffle=False)
+        # if self.generate_indices_list is True and self.indices_list_path is not None:
+        # :self.indices_list_path
+        # if os.path.exists(os.path.join(self.indices_list_path,'adversarial_indices_list.txt'))
+        if self.indices_list_path is None:
+            if self.adv_shuffle is True and self.indices_list is None:
+                self.indices_list = generate_indices(start, end, dataset_size=dataset_size, shuffle=self.adv_shuffle)
+            elif self.indices_list is None:
+                self.indices_list = generate_indices(start, end, shuffle=False)
+        else:
+            indices_list_path = os.path.join(self.indices_list_path,'adversarial_indices_list.txt')
+            if os.path.exists(indices_list_path):
+                self.indices_list = utils.load_list_from_file(indices_list_path)
+            elif self.adv_shuffle is True and self.indices_list is None:
+                self.indices_list = generate_indices(start, end, dataset_size=dataset_size, shuffle=self.adv_shuffle)
+            elif self.indices_list is None:
+                self.indices_list = generate_indices(start, end, shuffle=False)
+
+            if self.generate_indices_list is True and os.path.exists(indices_list_path) is False:
+                utils.save_list_to_file(self.indices_list, indices_list_path)
+
+
+
 
         for i in range(len(self.attack_instances_list)):
 
             self.attack_instance = self.attack_instances_list[i]
+            attack_name = self.attack_instance.__module__.split('.')[-1]
+            if self.save_original_images_flag is True:
+                attack_original_save_path = os.path.join(self.save_original_path, attack_name)
+                utils.create_directory(attack_original_save_path)
+            if self.save_adversarial_images_flag is True:
+                attack_adv_save_path = os.path.join(self.save_adversarial_path, attack_name)
+                utils.create_directory(attack_adv_save_path)
             print("========================================")
             print("========================================")
             print(self.attack_instance)
@@ -241,9 +273,9 @@ class AdversarialAttacker(Attack):
                 # topk = [correct / total * 100 for correct in topk_correct]
 
                 if self.save_adversarial_images_flag is True:
-                    save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
+                    save_dataset(self.save_adversarial_arrays, self.save_labels, attack_adv_save_path)
                 if self.save_original_images_flag is True:
-                    save_dataset(self.save_original_arrays, self.save_labels, self.save_original_path)
+                    save_dataset(self.save_original_arrays, self.save_labels, attack_original_save_path)
                 self.clear_image_buffers()
 
             print(f"Adversarial succeeded in l-norm with rate: {res_success/res_total}")
@@ -322,6 +354,8 @@ class AdversarialAttacker(Attack):
     def remove_adv_image_over_threshold(self):
         if self.save_threshold_flag is True:
             if self.save_adversarial_images_flag or self.save_original_images_flag:
+                if len(self.save_labels) < 1:
+                    return
                 self.save_labels.pop()
                 if self.save_adversarial_images_flag:
                     self.save_adversarial_arrays.pop()

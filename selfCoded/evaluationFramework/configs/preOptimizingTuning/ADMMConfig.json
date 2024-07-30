@@ -16,8 +16,8 @@
     "epsilon_Z": 1.5,
     "threshold_warmup": 0.05,
     "unstructured_magnitude_pruning_enabled": false,
-    "pattern_pruning_all_patterns_enabled": false,
-    "pattern_pruning_elog_patterns_enabled": true,
+    "pattern_pruning_all_patterns_enabled": true,
+    "pattern_pruning_elog_patterns_enabled": false,
     "connectivity_pruning_enabled": true,
     "load_pruning_mask": false,
     "pruning_mask_path": "experiment\\LeNet\\cic\\ResNet\\elog_adv_double_v2_cic\\admm_checkpoints_mask.csv"

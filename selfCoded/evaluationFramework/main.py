@@ -427,8 +427,8 @@ def main():
     #Trainer.setAdversarialTraining(atk, 0.2)
 
     train_kwargs = {
-        'test': True,
-        'tensorboard': True
+        'test': False,
+        'tensorboard': False
     }
     # # create_missing_folders("experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images",
     # #                        1000)

@@ -100,6 +100,18 @@ class AnalyzerConfigMapper:
         else:
             logger.error(f"adv_shuffle was not able to map config: {adv_config}")
 
+        if 'indices_list_path' in adv_config:
+            self.analyzer.indices_list_path = adv_config.get('indices_list_path')
+            logger.debug(f"indices_list_path set to {self.analyzer.indices_list_path}")
+        else:
+            logger.error(f"indices_list_path was not able to map config: {adv_config}")
+
+        if 'generate_indices_list' in adv_config:
+            self.analyzer.generate_indices_list = adv_config.get('generate_indices_list')
+            logger.debug(f"generate_indices_list set to {self.analyzer.generate_indices_list}")
+        else:
+            logger.error(f"generate_indices_list was not able to map config: {adv_config}")
+
         #if 'cuda_enabled' in self.config:
         #    self.analyzer.cuda_enabled = self.config.get('cuda_enabled')
         #    logger.debug(f"cuda_enabled set to {self.analyzer.cuda_enabled}")

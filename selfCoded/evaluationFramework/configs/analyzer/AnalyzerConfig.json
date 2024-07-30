@@ -1,7 +1,7 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment\\LeNet\\cic\\ResNet\\elog_conn_default_double_v2_cic",
+  "save_path": "experiment\\LeNet\\cic\\ResNet\\test_finishing",
   "name": "ResNet",
   "copy_config": true,
   "config_path": "configs",
@@ -11,16 +11,18 @@
     "adv_attack_selection": 0,
     "adv_attack_selection_range": 3,
     "adv_sample_range_start": 0,
-    "adv_sample_range_end": 200,
+    "adv_sample_range_end": 100,
     "adv_only_success_flag": true,
-    "adv_shuffle": true
+    "adv_shuffle": true,
+    "generate_indices_list": true,
+    "indices_list_path": "configs\\adversarial_configs\\indices_list"
   },
   "analysis_methods": {
     "epsilon_distance": {
       "enabled": false
     },
     "pruning": {
-      "enabled": true
+      "enabled": false
     },
     "accuracy_testset": {
       "enabled": false,
@@ -38,8 +40,9 @@
       "noise_steps": 4
     },
     "adversarial_success": {
-      "enabled": false,
-      "titel": "adversarial dynamic"
+      "enabled": true,
+      "titel": "adversarial dynamic",
+      "save_samples": true
     },
     "accuracy_adversarial": {
       "enabled": false,

@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 
 import torch
 import logging
@@ -9,6 +10,45 @@ import random
 
 
 logger = logging.getLogger(__name__)
+
+
+from contextlib import contextmanager
+from io import StringIO
+
+# @contextmanager
+# def capture_output_to_file(file_path):
+#     # Save the original stdout
+#     original_stdout = sys.stdout
+#     sys.stdout = StringIO()
+#
+#     try:
+#         yield
+#         # Get the output and write it to the specified file
+#         output = sys.stdout.getvalue()
+#         with open(file_path, 'w') as f:
+#             f.write(output)
+#     finally:
+#         # Restore the original stdout
+#         sys.stdout = original_stdout
+
+@contextmanager
+def capture_output_to_file(file_path):
+    # Save the original stdout
+    original_stdout = sys.stdout
+    sys.stdout = StringIO()
+
+    try:
+        yield
+        # Get the output
+        output = sys.stdout.getvalue()
+        # Write the output to the specified file
+        with open(file_path, 'w') as f:
+            f.write(output)
+        # Write the output to the terminal
+        original_stdout.write(output)
+    finally:
+        # Restore the original stdout
+        sys.stdout = original_stdout
 
 def weight_export(model, layer_name, path):
 
@@ -110,6 +150,8 @@ def collate_fn(batch):
     images = torch.stack(images).to('cuda')
     labels = torch.tensor(labels).to('cuda')
     return images, labels
+
+
 
 
 
