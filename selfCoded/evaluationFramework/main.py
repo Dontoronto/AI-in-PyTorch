@@ -50,9 +50,7 @@ def check_filepath(path):
     filename = os.path.basename(path)
     return not filename.startswith("._")
 
-#
-
-def main():
+def main(target_model):
 
     matplotlib.use('Agg')  # Use a non-interactive backend
 
@@ -97,29 +95,30 @@ def main():
     # Model.eval()
 
     # ResNet18 settings
-    _weights = ResNet18_Weights.IMAGENET1K_V1
-    _model = resnet18(_weights)
-    _model.to('cuda')
-    Model = modelWrapper.ModelWrapper(_model)
-    # Model.load_state_dict(torch.load(os.path.join("experiment\\LeNet\\cic\\ResNet\\"
-    #                                               "elog_adv_double_v2_cic", "admm_checkpoint.pth")))
-    Model.to('cuda')
-    Model.eval()
+    if target_model == "ResNet18":
+        _weights = ResNet18_Weights.IMAGENET1K_V1
+        _model = resnet18(_weights)
+        _model.to('cuda')
+        Model = modelWrapper.ModelWrapper(_model)
+        # Model.load_state_dict(torch.load(os.path.join("experiment\\LeNet\\cic\\ResNet\\"
+        #                                               "elog_adv_double_v2_cic", "admm_checkpoint.pth")))
+        Model.to('cuda')
+        Model.eval()
 
 
-    Configurator = configurator.Configurator()
-    DataHandler = dataHandler.DataHandler(Configurator)
-    DataHandler.setAdversarialTransformer(transformators.adv_imagenet_transformer())
+        Configurator = configurator.Configurator()
+        DataHandler = dataHandler.DataHandler(Configurator)
+        DataHandler.setAdversarialTransformer(transformators.adv_imagenet_transformer())
 
 
-    try:
-        device = next(Model.parameters()).device
-        if device.type == 'cuda':
-            torch.set_default_device('cuda')
-        print(f"Device= {device}")
-    except Exception:
-        device = None
-        print("Failed to set device automatically, please try set_device() manually.")
+        try:
+            device = next(Model.parameters()).device
+            if device.type == 'cuda':
+                torch.set_default_device('cuda')
+            print(f"Device= {device}")
+        except Exception:
+            device = None
+            print("Failed to set device automatically, please try set_device() manually.")
 
 
     # Note: delete
@@ -190,28 +189,29 @@ def main():
 
     # ================= Note: LeNet
     # LeNet Test
-    # _model = LeNet()
-    # Model = modelWrapper.ModelWrapper(_model)
-    # Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
-    # Model.to('cuda')
-    # Model.eval()
-    #
-    # Configurator = configurator.Configurator()
-    # DataHandler = dataHandler.DataHandler(Configurator)
-    #
-    # DataHandler.setTransformer(Configurator.loadTransformerNEW())
-    #
-    # #DataHandler.setAdversarialTransformer(transformators.mnist_transformer())
-    # #
-    # #
-    # try:
-    #     device = next(Model.parameters()).device
-    #     if device.type == 'cuda':
-    #         torch.set_default_device('cuda')
-    #     print(f"Device= {device}")
-    # except Exception:
-    #     device = None
-    #     print("Failed to set device automatically, please try set_device() manually.")
+    if target_model == "LeNet":
+        _model = LeNet()
+        Model = modelWrapper.ModelWrapper(_model)
+        Model.load_state_dict(torch.load("LeNet_admm_train.pth"))
+        Model.to('cuda')
+        Model.eval()
+
+        Configurator = configurator.Configurator()
+        DataHandler = dataHandler.DataHandler(Configurator)
+
+        DataHandler.setTransformer(Configurator.loadTransformerNEW())
+
+        #DataHandler.setAdversarialTransformer(transformators.mnist_transformer())
+        #
+        #
+        try:
+            device = next(Model.parameters()).device
+            if device.type == 'cuda':
+                torch.set_default_device('cuda')
+            print(f"Device= {device}")
+        except Exception:
+            device = None
+            print("Failed to set device automatically, please try set_device() manually.")
 
     # ==========================================
 
@@ -479,7 +479,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # parser = argparse.ArgumentParser(description="Which mode should be activated")
+    # parser.add_argument('--model', type=str, required=True, help='Model to optimize')
+    #
+    # args = parser.parse_args()
+    # target_model = args.model
+    target_model = "ResNet18"
+    main(target_model)
 
 
 #%%

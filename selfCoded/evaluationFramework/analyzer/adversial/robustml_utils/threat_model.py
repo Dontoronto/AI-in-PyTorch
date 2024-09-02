@@ -86,8 +86,10 @@ class Lp(ThreatModel):
     def adv_success(self, original, perturbed):
         original = np.ndarray.flatten(original)
         perturbed = np.ndarray.flatten(perturbed)
+        if np.min(perturbed) < -self._SLOP or np.max(perturbed) > 1+self._SLOP:
+            return False
         norm = np.linalg.norm(original - perturbed, ord=self._p)
-        if norm !=0:
+        if norm > self._SLOP:
             return True
         else:
             return False

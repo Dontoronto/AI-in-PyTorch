@@ -7,6 +7,8 @@ import logging
 import torchvision.transforms as T
 from torch.utils.data import DataLoader, Subset
 import random
+import pandas as pd
+import csv
 
 
 logger = logging.getLogger(__name__)
@@ -14,22 +16,6 @@ logger = logging.getLogger(__name__)
 
 from contextlib import contextmanager
 from io import StringIO
-
-# @contextmanager
-# def capture_output_to_file(file_path):
-#     # Save the original stdout
-#     original_stdout = sys.stdout
-#     sys.stdout = StringIO()
-#
-#     try:
-#         yield
-#         # Get the output and write it to the specified file
-#         output = sys.stdout.getvalue()
-#         with open(file_path, 'w') as f:
-#             f.write(output)
-#     finally:
-#         # Restore the original stdout
-#         sys.stdout = original_stdout
 
 @contextmanager
 def capture_output_to_file(file_path):
@@ -144,6 +130,55 @@ def subsample(dataset, num_samples_per_class, batch_size, cuda_enabled=False):
         subset_loader = DataLoader(subset_dataset, batch_size=batch_size, shuffle=False)
 
     return subset_loader
+
+
+
+
+def save_dataframe_to_csv(df, file_path, index=False, na_rep='NA', sep=';', encoding='utf-8', columns=None, header=True, quoting=csv.QUOTE_MINIMAL):
+    """
+    Save a Pandas DataFrame to a CSV file with specified options.
+
+    Parameters:
+    - df: The DataFrame to save.
+    - file_path: The file path where the CSV will be saved.
+    - index: Whether to include the DataFrame's index in the CSV file.
+    - na_rep: Representation for missing values.
+    - sep: The delimiter to use in the CSV file.
+    - encoding: The encoding for the CSV file.
+    - columns: Specific columns to save.
+    - header: Whether to include the header row in the CSV file.
+    - quoting: Control the quoting behavior.
+    """
+    df.to_csv(
+        file_path,
+        index=index,
+        na_rep=na_rep,
+        sep=sep,
+        encoding=encoding,
+        columns=columns,
+        header=header,
+        quoting=quoting
+    )
+
+def load_dataframe_from_csv(file_path, sep=';',encoding='utf-8', na_values='NA'):
+    """
+    Load a Pandas DataFrame from a CSV file with specified options.
+
+    Parameters:
+    - file_path: The file path of the CSV file to load.
+    - encoding: The encoding of the CSV file.
+    - na_values: Additional strings to recognize as NA/NaN.
+
+    Returns:
+    - df: The loaded DataFrame.
+    """
+    df = pd.read_csv(
+        file_path,
+        sep=sep,
+        encoding=encoding,
+        na_values=na_values
+    )
+    return df
 
 def collate_fn(batch):
     images, labels = zip(*batch)

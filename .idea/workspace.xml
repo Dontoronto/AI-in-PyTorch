@@ -5,7 +5,43 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90dc711a-a117-4371-bc8d-d9f91274e417" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/BPDA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/Classic_adversialAttackFactory.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig_lenet.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig_lenet_hard.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig_res_v2.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig_res_v3.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/AttacksConfig_res_v4.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig_lenet.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig_lenet_hard.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig_res_v2.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig_res_v3.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig_res_v4.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig_lenet.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMMConfig_lenet.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfCoded/tests/PathExtractionTest/PathExtractorTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/scoreCAM.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/scoreCAM.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialAttackFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialAttackFactory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialModelWrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversialModelWrapper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/evaluate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/robustml_utils/threat_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/utils/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ThreatModelConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/indices_list/adversarial_indices_list.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/mnist_windows_ProviderConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/adversarial_configs/ProviderConfig_lenet_windows.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/analyzer/AnalyzerConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/mnist_TrainerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/TrainerConfig_lenet.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/mnist_windows_DataHandlerConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/DataHandlerConfig_lenet.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/lenet_ADMModelArchitecture.json" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/configs/preOptimizingTuning/ADMModelArchitecture_lenet.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/logs/log.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfCoded/evaluationFramework/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,8 +51,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="Jupyter Notebook" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -38,23 +74,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.admmTrainer.executor": "Run",
-    "Python.analyzer.executor": "Run",
-    "Python.cudaAvailableTest.executor": "Run",
-    "Python.distributionDensity.executor": "Run",
-    "Python.imagenet.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.maskLoadingTest.executor": "Run",
-    "Python.unbindCudaCheckTest.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "windows__v3",
-    "last_opened_file_path": "C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/tests/maskReloadTest",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.notebooks.jupyter.connections.configuration.JupyterServerConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.admmTrainer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.cudaAvailableTest.executor&quot;: &quot;Run&quot;,
+    &quot;Python.distributionDensity.executor&quot;: &quot;Run&quot;,
+    &quot;Python.imagenet.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.maskLoadingTest.executor&quot;: &quot;Run&quot;,
+    &quot;Python.unbindCudaCheckTest.executor&quot;: &quot;Run&quot;,
+    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;windows__v3&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Domin/Documents/AI-in-PyTorch/selfCoded/evaluationFramework/configs/adversarial_configs&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings>
@@ -64,11 +101,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\tests\maskReloadTest" />
-      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\analyzer\activationMaps" />
-      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\analyzer\adversial" />
-      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configs" />
       <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configs\adversarial_configs" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configs\analyzer" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configs\preOptimizingTuning" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\configs" />
+      <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\tests\maskReloadTest" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Domin\Documents\AI-in-PyTorch\selfCoded\evaluationFramework\analyzer\adversial\utils" />
@@ -111,28 +148,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/measurement/distributionDensity.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="imagenet" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="AI-in-PyTorch" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/tests/datasetTestsIsolated" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/tests/datasetTestsIsolated/imagenet.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -185,13 +200,35 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="utils" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI-in-PyTorch" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/utils.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.distributionDensity" />
+        <item itemvalue="Python.utils" />
         <item itemvalue="Python.analyzer" />
+        <item itemvalue="Python.distributionDensity" />
         <item itemvalue="Python.maskLoadingTest" />
-        <item itemvalue="Python.imagenet" />
       </list>
     </recent_temporary>
   </component>
@@ -219,17 +256,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>610</line>
+          <line>670</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>705</line>
+          <line>765</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>766</line>
+          <line>826</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -238,29 +275,9 @@
           <option name="timeStamp" value="34" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
-          <line>350</line>
-          <option name="timeStamp" value="54" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
-          <line>357</line>
-          <option name="timeStamp" value="55" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/featureMaps/featureMap.py</url>
           <line>26</line>
           <option name="timeStamp" value="71" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>405</line>
-          <option name="timeStamp" value="85" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>1369</line>
-          <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/tests/robustml_testing/properConfiguration/robustModel.py</url>
@@ -268,29 +285,39 @@
           <option name="timeStamp" value="87" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
-          <line>285</line>
-          <option name="timeStamp" value="89" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
-          <line>1150</line>
+          <line>1220</line>
           <option name="timeStamp" value="90" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py</url>
-          <line>424</line>
+          <line>430</line>
           <option name="timeStamp" value="96" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/activationMaps/cic.py</url>
-          <line>376</line>
+          <line>381</line>
           <option name="timeStamp" value="97" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/selfCoded/tests/maskReloadTest/maskLoadingTest.py</url>
           <line>54</line>
           <option name="timeStamp" value="112" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
+          <line>236</line>
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/adversial/adversarialAttacker.py</url>
+          <line>132</line>
+          <option name="timeStamp" value="124" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfCoded/evaluationFramework/analyzer/analyzer.py</url>
+          <line>1450</line>
+          <option name="timeStamp" value="130" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -70,6 +70,7 @@ class AdversarialAttacker(Attack):
         self.save_labels = list()
         self.save_adversarial_path = None
         self.save_original_images_flag = False
+        self.save_original_images_single_flag = False
         self.save_original_arrays = list()
         self.save_original_path = None
         self.save_threshold_flag = False
@@ -127,6 +128,9 @@ class AdversarialAttacker(Attack):
 
     def enableOriginalSaveMode(self, flag):
         self.save_original_images_flag = flag
+
+    def enableOriginalSaveModeSingleDataset(self, flag):
+        self.save_original_images_single_flag = flag
 
     def setAdversarialSavePath(self, path):
         self.save_adversarial_path = path
@@ -197,10 +201,10 @@ class AdversarialAttacker(Attack):
                 print(f"Image saving Mode is not possible while using multiple attacks.")
                 print(f"Please configure AttacksConfig.json or Arguments of selectAttacks-method")
                 # return
-            if self.save_original_images_flag is True:
-                delete_folders_with_only_png(self.save_original_path)
-            if self.save_adversarial_images_flag is True:
-                delete_folders_with_only_png(self.save_adversarial_path)
+            # if self.save_original_images_flag is True:
+            #     delete_folders_with_only_png(self.save_original_path)
+            # if self.save_adversarial_images_flag is True:
+            #     delete_folders_with_only_png(self.save_adversarial_path)
 
         # if self.generate_indices_list is True and self.indices_list_path is not None:
         # :self.indices_list_path
@@ -240,14 +244,14 @@ class AdversarialAttacker(Attack):
             print(self.attack_instance)
             print("========================================")
             print("========================================")
-            chunk_size = 100
+            chunk_size = 50
             chunk_start = start
             res_total = 0
             res_success = 0
             res_above_thresh = 0
             res_no_perturb = 0
             res_topk = [0, 0, 0, 0]
-            chunks = math.ceil((end - start)/chunk_size)
+            #chunks = math.ceil((end - start)/chunk_size)
 
             while chunk_start < end:
                 chunk_end = min(chunk_start + chunk_size, end)
@@ -273,9 +277,15 @@ class AdversarialAttacker(Attack):
                 # topk = [correct / total * 100 for correct in topk_correct]
 
                 if self.save_adversarial_images_flag is True:
+                    attack_adv_save_path = os.path.join(self.save_adversarial_path, attack_name)
                     save_dataset(self.save_adversarial_arrays, self.save_labels, attack_adv_save_path)
+                    #output_classes = self.getDatasetProvider().labels
+                    #utils.create_missing_folders(attack_adv_save_path, output_classes)
                 if self.save_original_images_flag is True:
+                    attack_original_save_path = os.path.join(self.save_original_path, attack_name)
                     save_dataset(self.save_original_arrays, self.save_labels, attack_original_save_path)
+                    #output_classes = self.getDatasetProvider().labels
+                    #utils.create_missing_folders(attack_original_save_path, output_classes)
                 self.clear_image_buffers()
 
             print(f"Adversarial succeeded in l-norm with rate: {res_success/res_total}")
@@ -287,6 +297,7 @@ class AdversarialAttacker(Attack):
             result_above_threshold[self.attack_instance_list_names[i]] = res_above_thresh
             result_no_perturbation[self.attack_instance_list_names[i]] = res_no_perturb
             result_topk[self.attack_instance_list_names[i]] = [correct / res_total * 100 for correct in res_topk]
+
 
         # if self.save_adversarial_images_flag is True:
         #     save_dataset(self.save_adversarial_arrays, self.save_labels, self.save_adversarial_path)
@@ -303,7 +314,7 @@ class AdversarialAttacker(Attack):
         # #x with shape (32, 32, 3) to tensor with shape (1,3,32,32)
         # x_in = self.transform(x)
 
-        x_in = self.no_change_transformer(x).unsqueeze(0)
+        x_in = self.no_change_transformer(x).unsqueeze(0).contiguous()
 
 
         #y as int to tensor with shape (1),  1 -> tensor([1])
@@ -319,6 +330,7 @@ class AdversarialAttacker(Attack):
             x_test = self.transform(x)
             if len(x_test.shape) < 4:
                 x_test = x_test.unsqueeze(0)
+            self._model.eval()
             valid_adv_input = self._model(x_test.to(self.device)).squeeze(0).argmax().item()
             if valid_adv_input != y:
                 return x
@@ -332,14 +344,14 @@ class AdversarialAttacker(Attack):
 
 
         #adv_numpy_img = self.backwards_transform_function(adv_images, numpy_original_shape_flag=True)
-        adv_numpy_img = np.transpose(adv_images.squeeze(0).cpu().numpy(),(1,2,0))
+        adv_numpy_img = np.transpose(adv_images.squeeze(0).cpu().detach().numpy(),(1,2,0))
 
-        if self.save_adversarial_images_flag or self.save_original_images_flag:
-            self.save_labels.append(y)
-            if self.save_adversarial_images_flag:
-                self.save_adversarial_arrays.append(adv_numpy_img)
-            if self.save_original_images_flag:
-                self.save_original_arrays.append(x)
+        # if self.save_adversarial_images_flag or self.save_original_images_flag:
+        #     self.save_labels.append(y)
+        #     if self.save_adversarial_images_flag:
+        #         self.save_adversarial_arrays.append(adv_numpy_img)
+        #     if self.save_original_images_flag:
+        #         self.save_original_arrays.append(x)
 
         # plotten_real = np.copy(x)
         # plot_real_img = Image.fromarray((plotten_real[:,:,0] * 255).astype('uint8'))
@@ -347,9 +359,33 @@ class AdversarialAttacker(Attack):
         #
         # plot_img = Image.fromarray((np.copy(adv_numpy_img[:,:,0]) * 255).astype('uint8'))
         # plot_img.show("adversarial")
-
-
         return adv_numpy_img
+
+    def extract_single_original_dataset(self):
+        self.clear_image_buffers()
+        provider = self.getDatasetProvider()
+        for i in self.indices_list:
+            x, y = provider[i]
+
+            self.save_labels.append(y)
+            self.save_original_arrays.append(x)
+
+        save_dataset_index_naming(self.save_original_arrays, self.save_labels,
+                                  self.save_original_path, self.indices_list)
+        self.clear_image_buffers()
+
+
+    def add_images_label_to_buffer(self, x, x_adv, y):
+
+        if self.save_adversarial_images_flag or self.save_original_images_flag:
+            self.save_labels.append(y)
+            if self.save_adversarial_images_flag:
+                self.save_adversarial_arrays.append(x_adv)
+            if self.save_original_images_flag:
+                self.save_original_arrays.append(x)
+
+
+
 
     def remove_adv_image_over_threshold(self):
         if self.save_threshold_flag is True:
@@ -415,6 +451,30 @@ def save_dataset(arrays, labels, root_dir):
 
         # Pfad für das Bild
         save_path = os.path.join(label_dir, f"image_{file_count}.png")
+
+        # Konvertieren und Speichern
+        array_to_image(array, save_path)
+
+def save_dataset_index_naming(arrays, labels, root_dir, indices_list):
+    """
+    Speichert eine Serie von NumPy-Arrays als Bilder in einer Ordnerstruktur.
+
+    :param arrays: Liste von NumPy-Arrays, die die Bilddaten enthalten.
+    :param labels: Liste von Labels, die den Arrays entsprechen.
+    :param root_dir: Wurzelverzeichnis, unter dem die Bilder gespeichert werden sollen.
+    """
+    # delete_folders_with_only_png(root_dir)
+    for i, (array, label, index) in enumerate(zip(arrays, labels, indices_list)):
+        # Erstellen des Ordners für das Label, wenn er nicht existiert
+        # Note: delete existing folder in accuracy dynamic evaluation folder otherwise it will stop program
+        label_dir = os.path.join(root_dir, str(label))
+        os.makedirs(label_dir, exist_ok=True)
+
+        existing_files = os.listdir(label_dir)
+        file_count = len(existing_files)
+
+        # Pfad für das Bild
+        save_path = os.path.join(label_dir, f"image_index_{index}.png")
 
         # Konvertieren und Speichern
         array_to_image(array, save_path)

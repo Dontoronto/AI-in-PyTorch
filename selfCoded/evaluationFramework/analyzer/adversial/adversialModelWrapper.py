@@ -41,6 +41,7 @@ class AdversarialModelWrapper:
             x_in = x_in.unsqueeze(0)
         if self.cuda_enabled:
             x_in = x_in.to('cuda')
+        self._model.eval()
         prediction = self._model(x_in).squeeze(0)
         class_id = prediction.argmax().item()
         return class_id
@@ -56,6 +57,5 @@ class AdversarialModelWrapper:
         if self.cuda_enabled:
             x_in = x_in.to('cuda')
         self._model.eval()
-        with torch.no_grad():
-            prediction = self._model(x_in).squeeze(0)
+        prediction = self._model(x_in).squeeze(0)
         return prediction

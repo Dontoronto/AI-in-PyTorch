@@ -50,8 +50,10 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
             if debug:
                 print('check failed')
             above_threshold += 1
-            attack.remove_adv_image_over_threshold()
+            #attack.remove_adv_image_over_threshold()
             continue
+        else:
+            attack.add_images_label_to_buffer(x, x_adv, y)
         y_adv = model.classify(np.copy(x_adv))
         if debug:
             print('true = %d, adv = %d' % (y, y_adv))
@@ -60,10 +62,10 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
                 success += 1
         else:
             if only_success is True:
-                if threat_model.adv_success(x, x_adv) is False:
+                if threat_model.adv_success(np.copy(x), np.copy(x_adv)) is False:
                     if y_adv != y:
                         no_perturbation_failure += 1
-                        attack.remove_adv_image_over_threshold()
+                    attack.remove_adv_image_over_threshold()
                     continue
             if y_adv != y:
                 success += 1
@@ -75,6 +77,7 @@ def evaluate(model, attack, provider, start=None, end=None, deterministic=False,
 
 
     return success, total, above_threshold, no_perturbation_failure, topk_correct
+
 
 def choose_target(index, true_label, num_labels, deterministic=False):
     if deterministic:

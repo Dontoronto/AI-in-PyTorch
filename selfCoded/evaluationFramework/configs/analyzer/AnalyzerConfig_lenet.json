@@ -1,7 +1,7 @@
 {
   "testrun": "clip_grad_1",
   "save": true,
-  "save_path": "experiment\\LeNet\\cic\\ResNet\\adv_tests_ResNet\\last_test",
+  "save_path": "experiment\\LeNet\\cic\\report_after_noise_advtrain_dynadv\\noisy_again",
   "name": "ResNet",
   "copy_config": true,
   "config_path": "configs",
@@ -9,13 +9,13 @@
     "adv_save_enabled": false,
     "adv_original_save_enabled": false,
     "adv_attack_selection": 0,
-    "adv_attack_selection_range": 1,
+    "adv_attack_selection_range": 4,
     "adv_sample_range_start": 0,
-    "adv_sample_range_end": 50000,
+    "adv_sample_range_end": 10000,
     "adv_only_success_flag": true,
     "adv_shuffle": false,
     "generate_indices_list": false,
-    "indices_list_path": "configs\\adversarial_configs\\indices_list"
+    "indices_list_path": null
   },
   "analysis_methods": {
     "epsilon_distance": {
@@ -32,16 +32,16 @@
       "enabled": false,
       "num_samples": 1,
       "batch_size": 16,
-      "perturbation_function": null,
+      "perturbation_function": "PGD",
       "perturbation_function_parameters": {
-        "eps": 3.0,
-        "alpha": 0.00205,
+        "eps": 0.14137254901960784,
+        "alpha": 0.0156862745098039,
         "steps": 20,
         "random_start": false
       }
     },
     "noisy_accuracy": {
-      "enabled": false,
+      "enabled": true,
       "titel": "NoisyAccuracy",
       "noise_ratio": 0.2,
       "noise_steps": 4
@@ -49,7 +49,7 @@
     "adversarial_success": {
       "enabled": false,
       "titel": "adversarial dynamic",
-      "save_samples": false
+      "save_samples": null
     },
     "accuracy_adversarial": {
       "enabled": false,

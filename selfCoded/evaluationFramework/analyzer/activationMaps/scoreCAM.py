@@ -39,7 +39,7 @@ class ScoreCAM(EvaluationMapsStrategy):
         img = transform(original_image.copy().convert('RGB'))
 
         with torch.no_grad():
-            cam_extractor = _ScoreCAM(model, target_layer=target_layer)
+            cam_extractor = _ScoreCAM(model, target_layer=target_layer, batch_size=single_batch.shape[0])
 
             batch = single_batch.detach().clone()
             # Preprocess your data and feed it to the model

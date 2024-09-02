@@ -2,7 +2,7 @@ dataset/
 backup/
 Referenzcode/ADMM/Robustness-Aware-Pruning-ADMM/ADMM_examples/cifar10/data/
 Referenzcode/1xN/experiments/
-selfCoded/evaluationFramework/experiment/
+selfCoded/evaluationFramework/experiment
 selfCoded/evaluationFramework/models/LeNet/
 selfCoded/evaluationFramework/models/AlexNet/
 selfCoded/evaluationFramework/testImages/

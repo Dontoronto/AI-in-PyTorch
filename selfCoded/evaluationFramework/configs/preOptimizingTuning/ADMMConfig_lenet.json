@@ -1,0 +1,29 @@
+{
+  "admm_trainer": {
+    "phase_list": [
+      "admm",
+      "retrain"
+    ],
+    "main_iterations": 80000,
+    "admm_iterations": 200,
+    "dynamic_masking": true,
+    "rho": 0.0005,
+    "gradient_threshold": 1,
+    "batch_size": 32,
+    "regularization_l2_norm_enabled": true,
+    "regularization_l_norm_decay": 5e-06,
+    "epsilon_W": 1.5,
+    "epsilon_Z": 1.5,
+    "threshold_warmup": 0.05,
+    "unstructured_magnitude_pruning_enabled": false,
+    "pattern_pruning_all_patterns_enabled": true,
+    "pattern_pruning_elog_patterns_enabled": false,
+    "connectivity_pruning_enabled": true,
+    "load_pruning_mask": false,
+    "pruning_mask_path": null
+  },
+  "save": true,
+  "save_path": "experiment\\LeNet\\windows\\train_admm_retrain\\first",
+  "onnx_enabled": false,
+  "tensor_buffering_enabled": false
+}

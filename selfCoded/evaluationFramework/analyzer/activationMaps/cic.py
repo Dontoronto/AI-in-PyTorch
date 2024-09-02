@@ -373,7 +373,12 @@ def get_single_layer_cic(
         device = None
         print("Failed to set device automatically, please try set_device() manually.")
 
-    with torch.no_grad():
+    if perturbation_function is None:
+        context = torch.no_grad()
+    else:
+        context = torch.enable_grad()
+
+    with context:
         for inputs, labels in test_loader:
             with CIC(
                     model, layername, input_shape=inputs.shape[1:], batch_size=inputs.shape[0]
@@ -382,7 +387,7 @@ def get_single_layer_cic(
                 inputs, labels = inputs.to(device, non_blocking=True), labels.to(device, non_blocking=True)
 
                 if perturbation_function is not None:
-                    inputs = perturbation_function(inputs)
+                    inputs = perturbation_function(inputs, labels)
 
                 out = model(inputs)
 
@@ -419,7 +424,8 @@ def get_cic(model, test_loader, perturbation_function=None):
     values_pos = []
     values_neg = []
 
-    conv_layer_names_list = get_conv_layer_names(model)[:3]
+    # conv_layer_names_list = get_conv_layer_names(model)[:3] # only first 3 layers
+    conv_layer_names_list = get_conv_layer_names(model)
 
     for layername in conv_layer_names_list:
         pos, neg = get_single_layer_cic(

@@ -2,6 +2,7 @@ import copy
 import logging
 import os, sys
 import threading
+import time
 
 import numpy as np
 from PIL.Image import Image
@@ -34,7 +35,8 @@ from .plotFuncs.plots import (plot_original_vs_observation, plot_model_compariso
 
 from .evaluationMapsStrategy import EvaluationMapsStrategy
 
-from .utils import weight_export, copy_directory, create_directory, subsample, capture_output_to_file
+from .utils import (weight_export, copy_directory, create_directory, subsample, capture_output_to_file,
+                    save_dataframe_to_csv, load_dataframe_from_csv)
 
 from .adversial import adversarialAttacker
 
@@ -185,11 +187,17 @@ class Analyzer:
 
             if save_samples is True:
                 model_sample_path = os.path.join(accuracy_path, model_name)
-                original_sample_path = os.path.join(model_sample_path, 'original')
+                create_directory(model_sample_path)
+                #original_sample_path = os.path.join(model_sample_path, 'original')
+                original_sample_path_single_dataset = os.path.join(accuracy_path, 'original')
+                if os.path.exists(original_sample_path_single_dataset) is False:
+                    create_directory(original_sample_path_single_dataset)
+                    self.enable_single_original_dataset(original_sample_path_single_dataset)
                 adv_sample_path = os.path.join(model_sample_path, 'adversarial')
-                create_directory(original_sample_path)
+                #create_directory(original_sample_path)
+
                 create_directory(adv_sample_path)
-                self.enable_original_saving(original_sample_path)
+                # self.enable_original_saving(original_sample_path)
                 self.enable_adversarial_saving(adv_sample_path)
                 with capture_output_to_file(os.path.join(model_sample_path, 'output.txt')):
                     dic_ratio, dic_success, dic_total, dict_above, dict_no_pert, dict_topk = self.start_adversarial_evaluation_preconfigured()
@@ -205,6 +213,11 @@ class Analyzer:
                 adv_topk_dynamic_list.append([dic_ratio[key], *dict_topk[key], dic_total[key]])
             # accuracy_list.append([percentage, correct_classified, dataset_length])
             # model_name_list.append(model_name)
+
+        if save_samples is True:
+            original_sample_path_single_dataset = os.path.join(accuracy_path, 'original')
+            if os.path.exists(original_sample_path_single_dataset):
+                self.save_single_original_dataset()
 
         combined = list(zip(model_name_list, adv_dynamic_list))
         combined.sort()
@@ -258,7 +271,7 @@ class Analyzer:
                     dpi=300, facecolor='dimgray', bbox_inches='tight')
         plt.close(fig)
 
-    def report_cic(self, model_filenames, test_loader):
+    def report_cic(self, model_filenames, test_loader, perturbation_function=None):
         cic_path = os.path.join(self.save_path, "CIC")
         create_directory(cic_path)
 
@@ -277,7 +290,8 @@ class Analyzer:
             conv_layer_names_list, _filter_sum_pos, _filter_sum_neg, positive_scores, negative_scores = (
                 cic.get_cic(
                     self.model,
-                    test_loader
+                    test_loader,
+                    perturbation_function=perturbation_function
                 )
             )
 
@@ -321,6 +335,10 @@ class Analyzer:
         pos_norm = cic.display_table_norm(
             model_name_list, new_list_pos, conv_layer_names_list
         )
+        save_dataframe_to_csv(pos, os.path.join(cic_path,"cic_positive_architecture.csv"))
+        save_dataframe_to_csv(pos_norm, os.path.join(cic_path,"cic_positive_architecture_norm.csv"))
+
+
         cic.display_safe_table_new(pos, cic_path, f"cic_positive_architecture")
         cic.display_safe_table_new(pos_norm, cic_path, "cic_positive_architecture_norm")
 
@@ -343,11 +361,31 @@ class Analyzer:
         neg_norm = cic.display_table_norm(
             model_name_list, new_list_neg, conv_layer_names_list
         )
+
+        save_dataframe_to_csv(neg, os.path.join(cic_path,"cic_negative_architecture.csv"))
+        save_dataframe_to_csv(neg_norm, os.path.join(cic_path,"cic_negative_architecture_norm.csv"))
+
         cic.display_safe_table_new(neg, cic_path, f"cic_neg_architecture")
         cic.display_safe_table_new(neg_norm, cic_path, "cic_neg_architecture_norm")
 
         inverted_comb_norm = cic.display_table_combi_norm(model_name_list, new_list_pos, new_list_neg,
                                                           conv_layer_names_list)
+
+        save_dataframe_to_csv(inverted_comb_norm, os.path.join(cic_path, "cic_inverted_combi_norm.csv"))
+
+        inverted_names = inverted_comb_norm.columns.tolist()
+        inverted_data_points = [torch.tensor(inverted_comb_norm[col].values, dtype=torch.float32) for col in inverted_comb_norm.columns]
+
+        fig = cic.plot_cic_scatter_single_layer(inverted_names, inverted_data_points, titel="CIC-Inverted Architecture Plot")
+        fig.savefig(
+            os.path.join(cic_path, f"cic_inverted_norm_architecture.png"),
+            dpi=300,
+            facecolor="dimgray",
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+        plt.close('all')
+
         cic.display_safe_table_new(inverted_comb_norm, cic_path, f"cic_inverted_combi_norm")
 
 
@@ -371,6 +409,10 @@ class Analyzer:
 
             pos_filter = cic.display_table(model_name_list, layer_tensor)
             pos_norm_filter = cic.display_table_norm(model_name_list, layer_tensor)
+
+            save_dataframe_to_csv(pos_filter, os.path.join(cic_path,f"cic_pos_{layer_name}.csv"))
+            save_dataframe_to_csv(pos_norm_filter, os.path.join(cic_path,f"cic_pos_{layer_name}.csv"))
+
             cic.display_safe_table_new(pos_filter, cic_path, f"cic_pos_{layer_name}")
             cic.display_safe_table_new(
                 pos_norm_filter, cic_path, f"cic_pos_norm_{layer_name}"
@@ -396,6 +438,11 @@ class Analyzer:
 
             neg_filter = cic.display_table(model_name_list, layer_tensor)
             neg_norm_filter = cic.display_table_norm(model_name_list, layer_tensor)
+
+            save_dataframe_to_csv(neg_filter, os.path.join(cic_path,f"cic_neg_{layer_name}.csv"))
+            save_dataframe_to_csv(neg_norm_filter, os.path.join(cic_path,f"cic_neg_{layer_name}csv"))
+
+
             cic.display_safe_table_new(neg_filter, cic_path, f"cic_neg_{layer_name}")
             cic.display_safe_table_new(
                 neg_norm_filter, cic_path, f"cic_neg_norm_{layer_name}"
@@ -1155,13 +1202,24 @@ class Analyzer:
             num_samples = params.get("num_samples", None)
             batch_size = params.get("batch_size", None)
 
+            perturbation_function = params.get("perturbation_function", None)
+            perturbation_params = params.get("perturbation_function_parameters", None)
+
+            perturbation_func = None
+
             if num_samples is None or batch_size is None:
                 logger.critical(f"Params for cic test are not properly injected")
                 return
             else:
                 loader = subsample(self.datahandler.loadDataset(testset=True), num_samples, batch_size,
                                             self.cuda_enabled)
-                self.report_cic(model_filenames, loader)
+
+                if perturbation_function is not None:
+                    if perturbation_function == "PGD":
+                        perturbation_func = self.getSingleAttack(self.model, perturbation_function, **perturbation_params)
+
+                self.report_cic(model_filenames, loader, perturbation_function=perturbation_func)
+
                 if self.cuda_enabled is True:
                     del loader
                     torch.cuda.empty_cache()
@@ -1382,10 +1440,33 @@ class Analyzer:
         test_loader = test_loader
         mean_tensor = torch.tensor(mean).view(1, -1, 1, 1)
         std_tensor = torch.tensor(std).view(1, -1, 1, 1)
+
+        # max_l2_difference = 0.0
+        # last_original_sample = None
+        # last_perturbed_sample = None
+
         with torch.no_grad():
             for data, target in test_loader:
+                # Clamp the perturbed data to ensure it stays within valid range for normalized data
                 noise_overlay = (torch.randn_like(data) - mean_tensor) / std_tensor * noise_ratio
+                noise_overlay = torch.clamp(noise_overlay, -noise_ratio, noise_ratio)
+
+                # perturbed_data = data + noise_overlay
+                # perturbed_data = torch.clamp(perturbed_data, -1, 1)
+
+                # # Select a single sample from the batch
+                # original_sample = data[0].clone()
+                # perturbed_sample = perturbed_data[0].clone()
+                #
+                # # Calculate the l2 difference for the first sample
+                # l2_difference = torch.norm(original_sample - perturbed_sample, p=2).item()
+                #
+                # # Update the maximum l2 difference
+                # if l2_difference > max_l2_difference:
+                #     max_l2_difference = l2_difference
+
                 data += noise_overlay
+                data = torch.clamp(data, -1, 1)
                 output = model(data)
                 test_loss += loss_func(output, target).item()
                 pred = output.argmax(dim=1, keepdim=True)
@@ -1393,6 +1474,10 @@ class Analyzer:
 
                 for i, k in enumerate(ks):
                     topk_correct[i] += calculate_topk_accuracy(output, target, k)
+
+                # # Save the last sample
+                # last_original_sample = original_sample
+                # last_perturbed_sample = perturbed_sample
 
         test_loss /= dataset_length
 
@@ -1406,6 +1491,12 @@ class Analyzer:
         for i, k in enumerate(ks):
             logger.info(f"Top-{k} Accuracy: {topk_accuracy[i]:.2f}%")
 
+        # print(f"Maximum l_2 difference for the first element of each batch: {max_l2_difference}")
+        # original = self.datahandler.preprocessBackwardsNonBatched(last_original_sample, numpy_original_shape_flag=False)
+        # perturbed = self.datahandler.preprocessBackwardsNonBatched(last_perturbed_sample, numpy_original_shape_flag=False)
+        # tim = time.strftime("%H_%M_%S", time.localtime())
+        # original.save(rf'experiment\LeNet\cic\report_after_noise_advtrain_dynadv\noisy_again\NoisyAccuracy\last_original_sample_r={noise_ratio}_{tim}.png')
+        # perturbed.save(rf'experiment\LeNet\cic\report_after_noise_advtrain_dynadv\noisy_again\NoisyAccuracy\last_perturbed_sample_r={noise_ratio}_{tim}.png')
         return correct_classified, dataset_length, percentage, topk_accuracy
 
     def evaluate(self, model, img, single_batch, target_layer):
@@ -1600,7 +1691,7 @@ class Analyzer:
     def start_adversarial_evaluation_preconfigured(self):
         '''
         start mechanism if adv_configs were set via AnalyzerConfig.json
-        :return: result of true positiv classification of adv samples in between Lp norm
+        return: result of true positiv classification of adv samples in between Lp norm
         '''
         self.adversarial_module.enable_threshold_saving()
         if self.adv_sample_range_start is not None or self.adv_sample_range_end is not None:
@@ -1609,12 +1700,19 @@ class Analyzer:
                 return self.adversarial_module.evaluate(self.adv_sample_range_start, self.adv_sample_range_end)
 
 
+    def save_single_original_dataset(self):
+        self.adversarial_module.extract_single_original_dataset()
+
     def enable_adversarial_saving(self, path):
         self.adversarial_module.enableAdversarialSaveMode(True)
         self.adversarial_module.setAdversarialSavePath(path)
 
     def enable_original_saving(self, path):
         self.adversarial_module.enableOriginalSaveMode(True)
+        self.adversarial_module.setOriginalSavePath(path)
+
+    def enable_single_original_dataset(self, path):
+        self.adversarial_module.enableOriginalSaveModeSingleDataset(True)
         self.adversarial_module.setOriginalSavePath(path)
 
     # -----------------------------
