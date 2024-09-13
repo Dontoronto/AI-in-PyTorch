@@ -1,0 +1,15 @@
+Identifier;Evaluation;Tricked;2-Norm for Adv.-Image;Class;filename;match_count
+JSMA;297;False;3,611070156097412;0,0;SCP Default.csv;
+JSMA;297;False;2,5433084964752197;0,0;Unstruct Adv.csv;
+JSMA;297;False;2,1663100719451904;0,0;SCP Adv.csv;
+JSMA;297;False;1,8902831077575684;0,0;Trivial Adv.csv;
+JSMA;297;False;3,6276042461395264;0,0;Unstruct Default.csv;
+JSMA;297;False;2,9302897453308105;0,0;Trivial Default.csv;
+JSMA;297;True;3,5327792167663574;0,0;Base Model.csv;6,0
+OnePixel;326;False;4,134250164031982;2,0;SCP Default.csv;
+OnePixel;326;False;4,130807876586914;2,0;Unstruct Adv.csv;
+OnePixel;326;False;3,858659267425537;2,0;SCP Adv.csv;
+OnePixel;326;False;4,041116714477539;2,0;Trivial Adv.csv;
+OnePixel;326;False;3,846016407012939;2,0;Unstruct Default.csv;
+OnePixel;326;False;4,392582416534424;2,0;Trivial Default.csv;
+OnePixel;326;True;4,1925153732299805;2,0;Base Model.csv;6,0

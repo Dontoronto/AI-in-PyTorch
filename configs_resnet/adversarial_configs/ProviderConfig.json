@@ -1,0 +1,7 @@
+{
+  "provider": "ImageNet",
+  "init_params": {
+    "path": "D:\\imagenet",
+    "shape": [224,224,3]
+  }
+}

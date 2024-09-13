@@ -1,0 +1,16 @@
+Identifier,Evaluation,Tricked,2-Norm for Adv.-Image,Class,filename,match_count
+BPDA,819,False,12.16826057434082,16,SCP Default.csv,
+BPDA,819,False,12.16835594177246,16,Trivial Default.csv,
+BPDA,819,True,12.168989181518556,16,Base Model.csv,2.0
+BPDA,12766,False,12.143299102783203,255,SCP Default.csv,
+BPDA,12766,False,12.144472122192385,255,Trivial Default.csv,
+BPDA,12766,True,12.14357852935791,255,Base Model.csv,2.0
+CW,10143,False,5.600217718892964,202,SCP Default.csv,
+CW,10143,False,5.600217718892964,202,Trivial Default.csv,
+CW,10143,True,0.9927182793617249,202,Base Model.csv,2.0
+Jitter,49287,False,8.762323379516602,985,SCP Default.csv,
+Jitter,49287,False,9.876049041748049,985,Trivial Default.csv,
+Jitter,49287,True,8.820117950439453,985,Base Model.csv,2.0
+Jitter,49504,False,8.624345779418945,990,SCP Default.csv,
+Jitter,49504,False,9.27675724029541,990,Trivial Default.csv,
+Jitter,49504,True,8.4785737991333,990,Base Model.csv,2.0

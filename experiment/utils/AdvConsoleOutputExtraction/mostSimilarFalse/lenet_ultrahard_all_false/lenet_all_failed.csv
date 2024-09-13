@@ -1,0 +1,5 @@
+Identifier,Evaluation,Tricked,2-Norm for Adv.-Image,Class,filename,match_count
+BPDA,5997,True,0.6850623488426208,5,SCP Default.csv,
+BPDA,5997,True,0.4650926887989044,5,Unstruct Adv.csv,
+BPDA,5997,True,0.4323937892913818,5,SCP Adv.csv,
+BPDA,5997,True,0.6636875867843628,5,Base Model.csv,3.0

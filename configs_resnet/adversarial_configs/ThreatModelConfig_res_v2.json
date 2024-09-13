@@ -1,0 +1,6 @@
+{
+  "thread_model": "L2",
+  "init_params": {
+    "epsilon": 20
+  }
+}

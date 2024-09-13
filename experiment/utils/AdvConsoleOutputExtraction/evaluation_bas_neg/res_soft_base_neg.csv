@@ -1,0 +1,7 @@
+Identifier;Evaluation;Tricked;2-Norm for Adv.-Image;Class;filename;match_count
+CW;3727;False;1,423187683;8;SCP Default.csv;
+CW;3727;False;1,423187683;8;SCP Adv.csv;
+CW;3727;False;0,421624422;8;Trivial Adv.csv;
+CW;3727;False;1,423187683;8;Unstruct Default.csv;
+CW;3727;False;1,423187683;8;Trivial Default.csv;
+CW;3727;True;0;8;Base Model.csv;5

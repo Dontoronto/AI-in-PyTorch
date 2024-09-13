@@ -1,0 +1,27 @@
+[
+    {
+        "class": "DeepFool",
+        "init_params": {
+            "steps": 50,
+            "overshoot": 14.0
+        }
+    },
+    {
+        "class": "PGD",
+        "init_params": {
+            "eps": 3.0,
+            "alpha": 0.00205,
+            "steps": 20,
+            "random_start": false
+        }
+    },
+    {
+        "class": "OnePixel",
+        "init_params": {
+            "pixels": 45,
+            "steps": 15,
+            "popsize": 10,
+            "inf_batch": 128
+        }
+    }
+]

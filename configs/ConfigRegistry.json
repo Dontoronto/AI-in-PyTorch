@@ -1,0 +1,9 @@
+{
+  "admm_settings": "configs/preOptimizingTuning/ADMMConfig.json",
+  "admm_model_architecture": "configs/preOptimizingTuning/ADMModelArchitecture.json",
+  "adversarial_threat_model": "configs/adversarial_configs/ThreatModelConfig.json",
+  "adversarial_provider": "configs/adversarial_configs/ProviderConfig.json",
+  "adversarial_attacks": "configs/adversarial_configs/AttacksConfig.json",
+  "tensor_buffer": "configs/tensorBuffer_configs/TensorBufferConfig.json",
+  "analyzer": "configs/analyzer/AnalyzerConfig.json"
+}

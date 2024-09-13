@@ -1,0 +1,115 @@
+{
+  "testrun": "clip_grad_1",
+  "save": true,
+  "save_path": "experiment\\output",
+  "name": "LeNet",
+  "copy_config": true,
+  "config_path": "configs",
+  "adv_settings": {
+    "adv_save_enabled": false,
+    "adv_original_save_enabled": false,
+    "adv_attack_selection": 0,
+    "adv_attack_selection_range": 1,
+    "adv_sample_range_start": 0,
+    "adv_sample_range_end": 100,
+    "adv_only_success_flag": true,
+    "adv_shuffle": false,
+    "generate_indices_list": false,
+    "indices_list_path": "configs\\adversarial_configs\\indices_list"
+  },
+  "analysis_methods": {
+    "epsilon_distance": {
+      "enabled": true
+    },
+    "pruning": {
+      "enabled": true
+    },
+    "accuracy_testset": {
+      "enabled": true,
+      "titel": "testset"
+    },
+    "cic_test": {
+      "enabled": true,
+      "num_samples": 300,
+      "batch_size": 32,
+      "perturbation_function": null,
+      "perturbation_function_parameters": {
+        "eps": 3.0,
+        "alpha": 0.00205,
+        "steps": 20,
+        "random_start": false
+      }
+    },
+    "noisy_accuracy": {
+      "enabled": false,
+      "titel": "NoisyAccuracy",
+      "noise_ratio": 0.2,
+      "noise_steps": 4
+    },
+    "adversarial_success": {
+      "enabled": true,
+      "titel": "adversarial dynamic",
+      "save_samples": false
+    },
+    "accuracy_adversarial": {
+      "enabled": false,
+      "adv_titel": "adv_deep",
+      "orig_titel": "orig_deep",
+      "adv_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\adv_images",
+      "orig_dataset_path": "experiment\\adv_data\\ResNet18\\deepfool_only_adv_success\\adv_image_generation\\original_images",
+      "batch_size": 32,
+      "shuffle": false
+    },
+    "grad_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "grad_start_index": 799,
+      "grad_range": 3
+    },
+    "scoreCAM_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "score_start_index": 0,
+      "score_range": 1
+    },
+    "grad": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "grad_start_index": 0,
+      "grad_range": 1,
+      "target_layer": "model.conv2"
+    },
+    "score_cam": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "score_start_index": 0,
+      "score_range": 1,
+      "target_layer": "model.conv2"
+    },
+    "feature_map": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "feature_start_index": 0,
+      "feature_range": 1,
+      "target_layer": "model.conv1"
+    },
+    "feature_maps_all_layer": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "feature_start_index": 799,
+      "feature_range": 3
+    },
+    "saliency_and_original": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "saliency_start_index": 799,
+      "saliency_range": 10
+    },
+    "saliency": {
+      "enabled": true,
+      "adv_dataset_path": null,
+      "saliency_start_index": 0,
+      "saliency_range": 3
+    }
+  }
+}
